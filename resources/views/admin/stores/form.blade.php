@@ -1,0 +1,235 @@
+@php
+    // create/edit dono me safe:
+    $store = $store ?? new \App\Models\Store;
+
+    $selectedCategoryIds = (array) old(
+        'category_ids',
+        $store->relationLoaded('categories') ? $store->categories->pluck('id')->toArray() : []
+    );
+
+    $selectedEventIds = (array) old(
+        'event_ids',
+        $store->relationLoaded('events') ? $store->events->pluck('id')->toArray() : []
+    );
+@endphp
+@csrf
+<!-- Top Toggles -->
+<div class="d-flex flex-wrap mb-3 gap-3">
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" name="covid_disable" id="covid_disable" value="1"
+            {{ old('covid_disable', $store->covid_disable ?? false) ? 'checked' : '' }}>
+        <label class="form-check-label" for="covid_disable">COVID-19 Disable</label>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" name="featured" id="featured" value="1"
+            {{ old('featured', $store->featured ?? false) ? 'checked' : '' }}>
+        <label class="form-check-label" for="featured">Featured</label>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" name="recommended" id="recommended" value="1"
+            {{ old('recommended', $store->recommended ?? false) ? 'checked' : '' }}>
+        <label class="form-check-label" for="recommended">Recommended</label>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" name="auto_sort" id="auto_sort" value="1"
+            {{ old('auto_sort', $store->auto_sort ?? false) ? 'checked' : '' }}>
+        <label class="form-check-label" for="auto_sort">Auto Sort</label>
+    </div>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" name="show_trending" id="show_trending" value="1"
+            {{ old('show_trending', $store->show_trending ?? false) ? 'checked' : '' }}>
+        <label class="form-check-label" for="show_trending">Show Trending Stores</label>
+    </div>
+
+    <div class="d-flex align-items-center ms-auto">
+        <label>Disable</label>
+        <div class="form-check form-switch mx-2">
+            <input class="form-check-input" type="checkbox" name="status" value="1"
+                {{ old('status', $store->status ?? true) ? 'checked' : '' }}>
+        </div>
+        <label>Enable</label>
+    </div>
+</div>
+
+<!-- Store Name + Affiliate URL -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="text" class="form-control" name="store_name" placeholder="Store Name"
+                value="{{ old('store_name', $store->store_name ?? '') }}" required>
+            <label>Store Name *</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="url" class="form-control" name="affiliate_url" placeholder="Affiliate URL"
+                value="{{ old('affiliate_url', $store->affiliate_url ?? '') }}">
+            <label>Affiliate URL</label>
+        </div>
+    </div>
+</div>
+
+<!-- Category + Event -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline">
+            <select name="categories[]" multiple class="form-select select2">
+    @foreach($categories as $id => $name)
+        <option value="{{ $id }}" {{ in_array($id, $store->categories->pluck('id')->toArray()) ? 'selected' : '' }}>
+            {{ $name }}
+        </option>
+    @endforeach
+</select>
+            <label for="category_ids">Categories *</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline">
+            <select name="events[]" multiple class="form-select select2">
+    @foreach($events as $id => $name)
+        <option value="{{ $id }}" {{ in_array($id, $store->events->pluck('id')->toArray()) ? 'selected' : '' }}>
+            {{ $name }}
+        </option>
+    @endforeach
+</select>
+            <label for="event_ids">Events</label>
+        </div>
+    </div>
+</div>
+
+
+<!-- Media Section -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <label>Store Logo</label>
+        <div class="image-upload-box" onclick="document.getElementById('store_logo').click()">
+            <img id="store_logo_preview"
+                 src="{{ ($store->store_logo ?? false) ? asset('storage/'.$store->store_logo) : '' }}"
+                 style="{{ ($store->store_logo ?? false) ? '' : 'display:none;' }}">
+            <!-- ✅ fixed unique placeholder id -->
+            <svg id="store_logo_placeholder" style="{{ ($store->store_logo ?? false) ? 'display:none;' : '' }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M20,5A2,2 0 0,1 22,7V17A2,2 0 0,1 20,19H4C2.89,19 2,18.1 2,17V7C2,5.89 2.89,5 4,5H20M5,16H19L14.5,10L11,14.5L8.5,11.5L5,16Z" />
+            </svg>
+        </div>
+        <input type="file" id="store_logo" name="store_logo" style="display:none;" accept="image/*"
+               onchange="previewImage(event, 'store_logo_preview', 'store_logo_placeholder')">
+    </div>
+
+    <div class="col-md-6">
+        <label>Cover Image</label>
+        <div class="image-upload-box" onclick="document.getElementById('cover_image').click()">
+            <img id="cover_image_preview"
+                 src="{{ ($store->cover_image ?? false) ? asset('storage/'.$store->cover_image) : '' }}"
+                 style="{{ ($store->cover_image ?? false) ? '' : 'display:none;' }}">
+            <!-- ✅ fixed unique placeholder id -->
+            <svg id="cover_image_placeholder" style="{{ ($store->cover_image ?? false) ? 'display:none;' : '' }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M20,5A2,2 0 0,1 22,7V17A2,2 0 0,1 20,19H4C2.89,19 2,18.1 2,17V7C2,5.89 2.89,5 4,5H20M5,16H19L14.5,10L11,14.5L8.5,11.5L5,16Z" />
+            </svg>
+        </div>
+        <input type="file" id="cover_image" name="cover_image" style="display:none;" accept="image/*"
+               onchange="previewImage(event, 'cover_image_preview', 'cover_image_placeholder')">
+    </div>
+</div>
+
+<!-- Current / Available Network -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline">
+            <select name="current_network" class="form-select">
+                <option value="">Select Network</option>
+                @foreach($networks as $id => $name)
+                    <option value="{{ $id }}" {{ (string)old('current_network', $store->current_network ?? '') === (string)$id ? 'selected' : '' }}>
+                        {{ $name }}
+                    </option>
+                @endforeach
+            </select>
+            <label>Current Network</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline">
+            <select name="available_network" class="form-select">
+                <option value="">Select Network</option>
+                @foreach($networks as $id => $name)
+                    <option value="{{ $id }}" {{ (string)old('available_network', $store->available_network ?? '') === (string)$id ? 'selected' : '' }}>
+                        {{ $name }}
+                    </option>
+                @endforeach
+            </select>
+            <label>Available Network</label>
+        </div>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="form-floating form-floating-outline mb-3">
+    <textarea class="form-control h-px-100" name="content" placeholder="Store Content">{{ old('content', $store->content ?? '') }}</textarea>
+    <label>Content (Store Content)</label>
+</div>
+
+<!-- Description -->
+<div class="form-floating form-floating-outline mb-3">
+    <textarea class="form-control h-px-100" name="detail_description" placeholder="Detail Description">{{ old('detail_description', $store->detail_description ?? '') }}</textarea>
+    <label>Description (Detail Description)</label>
+</div>
+
+<!-- SEO Section -->
+<div class="card p-3 mb-3">
+    <h5>SEO Store SEO Section</h5>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <div class="form-floating form-floating-outline">
+                <input type="text" class="form-control" name="title_heading" placeholder="Title Heading"
+                    value="{{ old('title_heading', $store->title_heading ?? '') }}">
+                <label>Title Heading</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-floating form-floating-outline">
+                <input type="text" class="form-control" name="seo_url" placeholder="SEO URL" required
+                    value="{{ old('seo_url', $store->seo_url ?? '') }}">
+                <label>SEO URL *</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-floating form-floating-outline">
+                <input type="text" class="form-control" name="meta_title" placeholder="Meta Title"
+                    value="{{ old('meta_title', $store->meta_title ?? '') }}">
+                <label>Meta Title</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-floating form-floating-outline mb-3">
+        <textarea class="form-control h-px-100" name="meta_description" placeholder="Meta Description">{{ old('meta_description', $store->meta_description ?? '') }}</textarea>
+        <label>Meta Description</label>
+    </div>
+</div>
+
+<!-- Save Button -->
+<div class="text-end">
+    <button type="submit" class="btn btn-primary">
+        {{ isset($store) && $store->exists ? '💾 Update' : '💾 Save' }}
+    </button>
+</div>
+
+<script>
+function previewImage(event, previewId, placeholderId) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(){
+        const img = document.getElementById(previewId);
+        const ph  = document.getElementById(placeholderId);
+        if (img) { img.src = reader.result; img.style.display = 'block'; }
+        if (ph)  { ph.style.display = 'none'; }
+    };
+    reader.readAsDataURL(file);
+}
+  $(document).ready(function() {
+        $('.select2').select2({
+            placeholder: "Click to select",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
