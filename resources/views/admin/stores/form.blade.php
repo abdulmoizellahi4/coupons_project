@@ -12,6 +12,20 @@
         $store->relationLoaded('events') ? $store->events->pluck('id')->toArray() : []
     );
 @endphp
+
+<style>
+.ql-snow.ql-toolbar button svg{
+        fill: #433c50 !important;
+        stroke: #433c50 !important;
+    }
+.ql-snow.ql-toolbar button svg path{
+        stroke: #433c50 !important;
+    }
+.ql-snow.ql-toolbar button svg line, polyline{
+        stroke: #433c50 !important;
+    }
+</style>
+
 @csrf
 <!-- Top Toggles -->
 <div class="d-flex flex-wrap mb-3 gap-3">
@@ -161,6 +175,40 @@
     </div>
 </div>
 
+<!-- Social Links -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="url" class="form-control" name="facebook_url" placeholder="Facebook URL"
+                value="{{ old('facebook_url', $store->facebook_url ?? '') }}">
+            <label>Facebook URL</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="url" class="form-control" name="twitter_url" placeholder="Twitter URL"
+                value="{{ old('twitter_url', $store->twitter_url ?? '') }}">
+            <label>Twitter URL</label>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="url" class="form-control" name="instagram_url" placeholder="Instagram URL"
+                value="{{ old('instagram_url', $store->instagram_url ?? '') }}">
+            <label>Instagram URL</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline">
+            <input type="url" class="form-control" name="youtube_url" placeholder="YouTube URL"
+                value="{{ old('youtube_url', $store->youtube_url ?? '') }}">
+            <label>YouTube URL</label>
+        </div>
+    </div>
+</div>
+
 <!-- Content -->
 <div class="form-floating form-floating-outline mb-3">
     <textarea class="form-control h-px-100" name="content" placeholder="Store Content">{{ old('content', $store->content ?? '') }}</textarea>
@@ -171,6 +219,20 @@
 <div class="form-floating form-floating-outline mb-3">
     <textarea class="form-control h-px-100" name="detail_description" placeholder="Detail Description">{{ old('detail_description', $store->detail_description ?? '') }}</textarea>
     <label>Description (Detail Description)</label>
+</div>
+
+<!-- FAQs (single HTML field: heading + answer together) -->
+<div class="mb-3">
+    <div class="card">
+      <h5 class="card-header">FAQ (Heading + Answer - single field)</h5>
+      <div class="card-body">
+    <!-- Quill editor: visual editing area (use theme's editor id and allow theme CSS) -->
+    <div id="full-editor" class="form-control">{!! old('faqs', $store->faqs ?? '') !!}</div>
+    <!-- Hidden textarea that will be posted -->
+    <textarea id="faqs" name="faqs" class="d-none">{{ old('faqs', $store->faqs ?? '') }}</textarea>
+    <small class="form-text text-muted">Enter FAQ content as HTML (use &lt;h3&gt; for questions and &lt;p&gt; for answers). A rich editor is enabled below.</small>
+</div>
+</div>
 </div>
 
 <!-- SEO Section -->
@@ -232,4 +294,42 @@ function previewImage(event, previewId, placeholderId) {
             width: '100%'
         });
     });
+</script>
+
+<!-- TinyMCE for FAQs field -->
+<!-- Sync existing Quill instance (initialized by theme's forms-editors.js) to hidden textarea on submit -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const editorNode = document.getElementById('full-editor');
+    const hidden = document.getElementById('faqs');
+    // Bind to the form that contains the editor to avoid selecting an unrelated form
+    const form = editorNode.closest ? editorNode.closest('form') : document.querySelector('form');
+    if (!editorNode || !hidden || !form) return;
+
+    // Always attach a submit handler. When Quill is available we use its API,
+    // otherwise we fall back to reading the editor DOM (.ql-editor) content.
+    form.addEventListener('submit', function (ev) {
+        try {
+            let html = '';
+            // Prefer the Quill instance if we can find it
+            const quill = (typeof Quill !== 'undefined' && Quill.find) ? Quill.find(editorNode) : null;
+            if (quill && quill.root) {
+                html = quill.root.innerHTML;
+            } else {
+                // Fall back to the editable container created by Quill
+                const editorContent = editorNode.querySelector('.ql-editor');
+                html = editorContent ? editorContent.innerHTML : editorNode.innerHTML;
+            }
+
+            // Debugging: log before and after setting hidden value so developer can inspect in DevTools Network
+            console.debug('FAQ editor html (preview):', html);
+            hidden.value = html;
+            console.debug('Hidden textarea #faqs value set to:', hidden.value);
+        } catch (err) {
+            // Best-effort: ensure we don't block submission
+            console.warn('FAQ editor sync failed:', err);
+        }
+        // allow form to continue submitting
+    });
+});
 </script>

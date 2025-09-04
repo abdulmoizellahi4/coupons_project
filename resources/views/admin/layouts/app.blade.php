@@ -29,16 +29,22 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/flag-icons.css') }}" />
     
     <!-- Menu waves for no-customizer fix -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
+        <!-- Quill & icon related vendor CSS (load before core to avoid overrides) -->
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/quill/typography.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/quill/editor.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/quill/katex.css') }}" />
 
-    <!-- Core css') }} -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/core.css') }}" class="template-customizer-core-css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/theme-bordered.css') }}" class="template-customizer-theme-css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
+        <!-- Menu waves for no-customizer fix -->
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
+
+        <!-- Core css') }} -->
+        <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/core.css') }}" class="template-customizer-core-css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/theme-bordered.css') }}" class="template-customizer-theme-css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
     
-    <!-- Vendors css') }} -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/typeahead-js/typeahead.css') }}" /> 
+        <!-- Vendors css') }} -->
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/typeahead-js/typeahead.css') }}" /> 
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/flatpickr/flatpickr.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/select2.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}">
@@ -180,6 +186,10 @@
     <script src="{{ asset('assets/js/tables-datatables-basic.js') }}"></script>
     <script src="{{ asset('assets/js/forms-pickers.js') }}"></script>
     <script src="{{ asset('assets/js/extended-ui-sweetalert2.js') }}"></script>
+    <!-- Quill editor and page editor init from Materio theme -->
+    <script src="{{ asset('assets/vendor/libs/quill/katex.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/quill/quill.js') }}"></script>
+    <script src="{{ asset('assets/js/forms-editors.js') }}"></script>
     <script src="https://cdn.datatables.net/rowreorder/1.4.1/js/dataTables.rowReorder.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>

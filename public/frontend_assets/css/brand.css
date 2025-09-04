@@ -28,7 +28,7 @@ a{color:var(--primaryColor)}
 .secondaryBtn, .btn-outline{background-color:var(--secondaryLightColor) !important;color:#fff !important}
 
 /* Ensure coupon reveal decoration uses brand */
-.cpn .cpBtn[data-code]::before{border-color:var(--primaryColor) !important;color:var(--primaryTextColor) !important}
+.cpn .cpBtn[data-code]::before{border-color:var(--primaryColor) !important;color:var(--primaryTextColor) !important;background: #f4f4f4;border: 2px solid; }
 
 /* Footer tweaks */
 footer .cols>div h4{color:var(--primaryColor) !important}

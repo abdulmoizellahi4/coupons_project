@@ -20,6 +20,10 @@ class Store extends Model
         'store_name',
         'affiliate_url',
         'store_logo',
+    'facebook_url',
+    'twitter_url',
+    'instagram_url',
+    'youtube_url',
         'current_network',
         'available_network',
         'content',
@@ -29,6 +33,7 @@ class Store extends Model
         'meta_title',
         'meta_description',
         'cover_image',
+    'faqs',
     ];
 
     // Relations

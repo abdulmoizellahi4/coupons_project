@@ -34,7 +34,7 @@
 
         <!-- lgo: Logo <start> -->
         <a href="{{ route('home') }}" class="lgo site-logo" title="Big Saving Hub">
-            <img class="site-logo-img" loading="lazy" decoding="async" src="{{ asset('assets/img/icons/logo.png') }}" alt="Big Saving Hub" title="Big Saving Hub" width="205" height="42">
+            <img class="site-logo-img" loading="lazy" decoding="async" src="{{ asset('assets/img/icons/logo.png') }}" alt="Big Saving Hub" title="Big Saving Hub">
         </a>
         <!-- lgo: Logo <end> -->
 

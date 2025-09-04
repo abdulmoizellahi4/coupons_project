@@ -8,6 +8,7 @@ use App\Models\Events;
 use App\Models\Networks;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class StoreController extends Controller
 {
@@ -35,18 +36,27 @@ public function create()
 }
     public function store(Request $request)
     {
-        $validated = $request->validate([
+    $validated = $request->validate([
             'store_name'        => 'required|string|max:255',
             'seo_url'           => 'required|string|unique:stores,seo_url',
+            'facebook_url'      => 'nullable|url',
+            'twitter_url'       => 'nullable|url',
+            'instagram_url'     => 'nullable|url',
+            'youtube_url'       => 'nullable|url',
             'current_network'   => 'nullable|exists:networks,id',
             'available_network' => 'nullable|exists:networks,id',
             'categories'        => 'nullable|array',
             'categories.*'      => 'exists:categories,id',
             'events'            => 'nullable|array',
             'events.*'          => 'exists:events,id',
+            'faqs'              => 'nullable|string',
         ]);
 
-        $data = $request->except(['admin.categories', 'events']);
+    // Log incoming faqs payload for debugging — will appear in storage/logs/laravel.log
+    Log::info('StoreController@store incoming faqs', ['faqs' => $request->input('faqs')]);
+
+    // fix: exclude the actual input names (categories, events)
+    $data = $request->except(['categories', 'events']);
 
         // Store Logo Upload
         if ($request->hasFile('store_logo')) {
@@ -88,15 +98,20 @@ public function edit(Store $store)
         $validated = $request->validate([
             'store_name'        => 'required|string|max:255',
             'seo_url'           => 'required|string|unique:stores,seo_url,' . $store->id,
+            'facebook_url'      => 'nullable|url',
+            'twitter_url'       => 'nullable|url',
+            'instagram_url'     => 'nullable|url',
+            'youtube_url'       => 'nullable|url',
             'current_network'   => 'nullable|exists:networks,id',
             'available_network' => 'nullable|exists:networks,id',
             'categories'        => 'nullable|array',
             'categories.*'      => 'exists:categories,id',
             'events'            => 'nullable|array',
             'events.*'          => 'exists:events,id',
+            'faqs'              => 'nullable|string',
         ]);
 
-        $data = $request->except(['categories', 'events']);
+    $data = $request->except(['categories', 'events']);
 
         // Store Logo Update
         if ($request->hasFile('store_logo')) {

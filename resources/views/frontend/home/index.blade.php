@@ -6,7 +6,7 @@
 @section('content')
 <!-- Page Content <start> -->
 <!-- Search section <start> -->
-<div class="Sec hschbg">
+<div class="Sec hschbg" style="background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('{{ $heroImage ?? asset('frontend_assets/images/search-bg.webp') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; color: #fff; padding: 120px 0 !important;">
     <div class="Wrp">
         <h1>Tired of searching for discounts online?</h1>
         <p>Get Free Voucher Codes &amp; Promo Codes on Brands You Crave For.</p>
@@ -23,9 +23,31 @@
     </div>
 </div>
 <!-- Search section <end> -->
+<!-- Featured Store section <start> -->
+<div class="Sec feSc" style="padding: 60px 0; max-width: 1230px;">
+    <h2>Featured Store</h2>
+    <div class="strsld">
+        @forelse($featuredStores ?? [] as $store)
+        <div>
+            <a href="{{ route('store', $store->seo_url) }}" title="{{ $store->store_name }}" tabindex="-1">
+                @if($store->store_logo)
+                    <img decoding="async" loading="lazy" src="{{ asset('storage/' . $store->store_logo) }}" alt="{{ $store->store_name }} discount code" title="{{ $store->store_name }} discount code" width="150" height="150">
+                @else
+                    <div class="store-placeholder">{{ substr($store->store_name, 0, 2) }}</div>
+                @endif
+            </a>
+        </div>
+        @empty
+        <div class="no-stores">
+            <p>No featured stores available at the moment.</p>
+        </div>
+        @endforelse
+    </div>
+</div>
+<!-- Featured Store section <end> -->
 
 <!-- Featured Discount Voucher Offers section <start> -->
-<div class="Sec fdvo">
+<div class="Sec bg fdvo" style="padding: 60px 0;">
     <h2>Featured Discount Voucher Offers</h2>
     <a href="{{ route('top-discounts') }}" class="subHd" title="Top Offers">View All Top Offers</a>
     <div class="cpns">
@@ -81,28 +103,7 @@
 </div>
 <!-- Featured Discount Voucher Offers section <end> -->
 
-<!-- Featured Store section <start> -->
-<div class="Sec feSc">
-    <h2>Featured Store</h2>
-    <div class="strsld">
-        @forelse($featuredStores ?? [] as $store)
-        <div>
-            <a href="{{ route('store', $store->seo_url) }}" title="{{ $store->store_name }}" tabindex="-1">
-                @if($store->store_logo)
-                    <img decoding="async" loading="lazy" src="{{ asset('storage/' . $store->store_logo) }}" alt="{{ $store->store_name }} discount code" title="{{ $store->store_name }} discount code" width="150" height="150">
-                @else
-                    <div class="store-placeholder">{{ substr($store->store_name, 0, 2) }}</div>
-                @endif
-            </a>
-        </div>
-        @empty
-        <div class="no-stores">
-            <p>No featured stores available at the moment.</p>
-        </div>
-        @endforelse
-    </div>
-</div>
-<!-- Featured Store section <end> -->
+
 
 <!-- Slider Section <start> -->
 <div class="Sec bg">

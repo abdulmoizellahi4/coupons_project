@@ -87,7 +87,7 @@
       </div>
       <div class="btns">
         <span class="vsts"><i class="bp_views"></i> {{ number_format(rand(1000, 100000)) }}</span>
-        <button class="affiliate" data-aff-id="{{ $store->id }}" aria-label="Visit Site"><i class="bp_visit"></i> Visit Site</button>
+        <a href="{{ $store->affiliate_url ?? url('/') }}" class="affiliate btn" data-aff-id="{{ $store->id }}" aria-label="Visit Site" target="_blank" rel="nofollow noopener noreferrer" style="padding:0px 20px;"><i class="bp_visit"></i> Visit Site</a>
       </div>
     </div>
     <!-- Store Head <end> -->
@@ -175,32 +175,7 @@
         @endif
       </div>
 
-      <!-- animated video <start> -->
-      <div class="crd dsbox">
-        <div class="dsvdow">
-          <video id="extvdo" class="dsvdo" loading="lazy" decoding="async" poster="{{ asset('frontend_assets/images/vidthmb.png') }}" muted autoplay>
-            <source src="{{ asset('frontend_assets/videos/extension.mp4') }}" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-          <canvas id="celebration"></canvas>
-          <div class="reset" role="button" aria-label="Replay">
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 162.82 166.164">
-              <g transform="matrix(-1, 0, 0, 1, 162.992, 0)">
-                <g transform="translate(0.172 0)">
-                  <path d="M82.567.009h.33a2.42,2.42,0,0,1,.379,0,83.286,83.286,0,0,1,57.8,23.489L158.139,6.259a2.774,2.774,0,0,1,3.048-.631,2.883,2.883,0,0,1,1.805,2.63l-2.854,58.877h-55.47a2.853,2.853,0,0,1-1.407-5.319l16.792-17A52.822,52.822,0,0,0,82.858,29.981c-29.05.165-52.733,23.974-52.733,53.481.223,28.9,23.848,52.413,53.2,52.626a53.493,53.493,0,0,0,45.8-31.263l27.206,12.55-.184.379c-18.636,36.039-48.006,51.219-79.512,47.987A83,83,0,0,1,82.567.009Z" transform="translate(-0.172 0)" fill="#fff"></path>
-                </g>
-              </g>
-            </svg>
-          </div>
-        </div>
 
-        <div class="dscnt">
-          <h2>Apply all voucher codes now</h2>
-          <p>Install the free <strong>Deal Seeker</strong> extension to automatically apply all <strong>{{ $store->store_name }}</strong> vouchers at checkout instantly!</p>
-          <a href="{{ route('deal-seeker') }}" title="Add Now To Chrome">Add to Chrome <i class="bp_visit"></i></a>
-        </div>
-      </div>
-      <!-- animated video <end> -->
 
       <!-- store table <start> -->
       <div class="crd tbl">
@@ -228,31 +203,18 @@
       <!-- store table <end> -->
 
       <!-- store faq <start> -->
-      <div class="crd faqs" id="srtFaq">
-        <h3 class="hd">FAQ</h3>
-        
-        <div class="faq">
-          <h2>Payments</h2>
-          <h3>What are the acceptable payment methods at {{ $store->store_name }}?</h3>
-          <p>The store accepts all the major credit cards and debit cards.</p>
-          <hr>
+      @if(!empty($store->faqs))
+        <div class="crd faqs" id="srtFaq">
+          <h3 class="hd">FAQ</h3>
+              <div class="faq">
+              {!! $store->faqs !!}
+          </div>
         </div>
-        
-        <div class="faq">
-          <h2>Other questions</h2>
-          <h3>How can I track my order at {{ $store->store_name }}?</h3>
-          <p>You can easily track your order by going to the order tracking tab.</p>
-          <hr>
-          
-          <h3>How can I locate a store on their website?</h3>
-          <p>You can locate a store by going to the store locator tab.</p>
-          <hr>
-        </div>
-      </div>
+      @endif
       <!-- store faq <end> -->
 
       <!-- store more content <start> -->
-      @if($store->detail_description)
+      @if(!empty($store->detail_description))
       <div class="crd" id="abtStr">
         <h3 class="hd">More About {{ $store->store_name }}</h3>
         <div class="cnt 3">
@@ -289,15 +251,15 @@
       <div class="wgt">
         <div class="pst">
           <div class="hd">
-            <img src="{{ asset('frontend_assets/images/Female-01.png') }}" alt="Anna Lawrence" decoding="async" loading="lazy" width="64" height="64">
+            <!-- <img src="{{ asset('frontend_assets/images/Female-01.png') }}" alt="Anna Lawrence" decoding="async" loading="lazy" width="64" height="64"> -->
             <div>
               <h3>Why we love shopping at {{ $store->store_name }} <i class="bp_hrt"></i></h3>
-              <span>by <a href="{{ url('/') }}">Anna Lawrence</a></span>
-              <span>Content Executive - Interior and Pets</span>
+              <!-- <span>by <a href="{{ url('/') }}">Anna Lawrence</a></span>
+              <span>Content Executive - Interior and Pets</span> -->
             </div>
           </div>
           <div class="cnt">
-            <p>A person who loves sharing home-revamping ideas and simultaneously makes sure that pets are being taken care of defines Anna Lawrence completely. Her mission is to bring you a treasure of knowledge in tons of categories, along with money-saving discounts and vouchers. From minimizing your bills for dog treats to letting you alter the look of your house without paying over the odds. She does all this and much more with the help of Big Saving Hub through her content.</p>
+            <p>{{ $store->content }}</p>
           </div>
         </div>
       </div>
@@ -851,199 +813,146 @@
     }
 }
 </style>
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const modal = document.getElementById('couponModal');
-    if (!modal) return;
-    
-    const overlay = modal.querySelector('.cm-overlay');
-    const closeBtn = modal.querySelector('.cm-close');
-    const cmCode = document.getElementById('cmCode');
-    const cmCopy = document.getElementById('cmCopy');
-    const cmTitle = document.getElementById('cmTitle');
-    const cmNote = document.getElementById('cmNote');
-    const cmEmailTitle = document.getElementById('cmEmailTitle');
-    const cmEmailForm = document.getElementById('cmEmailForm');
-    const cmEmailInput = document.getElementById('cmEmailInput');
+  // Prevent double-init
+  if (window.__couponModalInit) return;
+  window.__couponModalInit = true;
 
-    function openModal(code, affiliate, store, title) {
-        // Update main popup content
-        cmCode.textContent = code || '';
-        cmTitle.textContent = title || 'Here is your code';
-        cmNote.textContent = `This ${store} website has been opened in a new tab. Simply copy and paste the code ${code} and enter it at the checkout.`;
-        
-        // Update email popup content
-        cmEmailTitle.textContent = `${store} straight to your inbox`;
-        
-        // Update brand logo with store name
-        const brandLogo = document.getElementById('cmBrandLogo');
-        if (brandLogo) {
-            // Take first 5 characters of store name for logo
-            const logoText = store ? store.substring(0, 5).toUpperCase() : 'STORE';
-            brandLogo.textContent = logoText;
-        }
-        
-        modal.style.display = 'flex';
-        modal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
+  const modal = document.getElementById('couponModal');
+  if (!modal) return;
+
+  const overlay = modal.querySelector('.cm-overlay');
+  const closeBtn = modal.querySelector('.cm-close');
+  const cmCode = document.getElementById('cmCode');
+  const cmCopy = document.getElementById('cmCopy');
+  const cmTitle = document.getElementById('cmTitle');
+  const cmNote = document.getElementById('cmNote');
+  const cmEmailTitle = document.getElementById('cmEmailTitle');
+  const cmEmailForm = document.getElementById('cmEmailForm');
+  const cmEmailInput = document.getElementById('cmEmailInput');
+
+  function openModal(code, affiliate, store, title) {
+    if (cmCode) cmCode.textContent = code || '';
+    if (cmTitle) cmTitle.textContent = title || 'Here is your code';
+    if (cmNote) cmNote.textContent = `This ${store} website has been opened in a new tab. Simply copy and paste the code ${code} and enter it at the checkout.`;
+    if (cmEmailTitle) cmEmailTitle.textContent = `${store} straight to your inbox`;
+
+    // update brand logo - preserve <img> if present
+    const brandLogo = document.getElementById('cmBrandLogo');
+    if (brandLogo) {
+      const img = brandLogo.querySelector('img');
+      if (img) {
+        img.alt = store + ' logo';
+        // optionally replace src: img.src = someUrl;
+      } else {
+        brandLogo.textContent = (store || 'STORE').substring(0,5).toUpperCase();
+      }
     }
 
-    function closeModal() {
-        modal.style.display = 'none';
-        modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-    }
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
 
-    // Handle Reveal Code buttons - UPDATED LOGIC
-    document.querySelectorAll('.cpBtn.reveal-code').forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            
-            const code = this.dataset.code;
-            const affiliate = this.dataset.affiliate;
-            const store = this.dataset.store;
-            const title = this.dataset.title;
-            
-            if (code && affiliate) {
-                // Open your website with popup in NEW tab
-                const currentUrl = window.location.href;
-                const popupUrl = currentUrl + '?show_coupon=1&code=' + encodeURIComponent(code) + '&affiliate=' + encodeURIComponent(affiliate) + '&store=' + encodeURIComponent(store) + '&title=' + encodeURIComponent(title);
-                window.open(popupUrl, '_blank');
-                
-                // Redirect CURRENT tab to affiliate URL
-                window.location.href = affiliate;
-            }
-        });
+  function closeModal() {
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
+
+  // Reveal code buttons
+  document.querySelectorAll('.cpBtn.reveal-code').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      const code = this.dataset.code;
+      const affiliate = this.dataset.affiliate;
+      const store = this.dataset.store;
+      const title = this.dataset.title;
+      if (code && affiliate) {
+        const currentUrl = window.location.href.split('#')[0].split('?')[0];
+        const popupUrl = currentUrl + '?show_coupon=1&code=' + encodeURIComponent(code) + '&affiliate=' + encodeURIComponent(affiliate) + '&store=' + encodeURIComponent(store) + '&title=' + encodeURIComponent(title);
+        window.open(popupUrl, '_blank');
+        window.location.href = affiliate;
+      }
     });
+  });
 
-    // Handle Get Deal buttons (direct affiliate links)
-    document.querySelectorAll('.cpBtn.get-deal').forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            // Let the default link behavior happen (opens in new tab)
-            // No modal needed for Get Deal buttons
-        });
+  // safe listeners
+  if (cmCopy) {
+    cmCopy.addEventListener('click', function () {
+      const text = (cmCode && cmCode.textContent || '').trim();
+      if (!text) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          const prev = cmCopy.textContent;
+          cmCopy.textContent = 'Copied!';
+          setTimeout(() => cmCopy.textContent = prev, 2000);
+        }).catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
     });
+  }
 
-    // Copy code functionality
+  function fallbackCopy(text) {
+    const tmp = document.createElement('textarea');
+    tmp.value = text;
+    tmp.style.position = 'fixed';
+    tmp.style.top = '-9999px';
+    document.body.appendChild(tmp);
+    tmp.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(tmp);
     if (cmCopy) {
-        cmCopy.addEventListener('click', function () {
-            const text = cmCode.textContent.trim();
-            if (!text) return;
-            
-            navigator.clipboard?.writeText(text).then(() => {
-                const prev = cmCopy.textContent;
-                cmCopy.textContent = 'Copied!';
-                cmCopy.style.background = '#059669';
-                
-                setTimeout(() => {
-                    cmCopy.textContent = prev;
-                    cmCopy.style.background = '#10b981';
-                }, 2000);
-            }).catch(() => {
-                // Fallback for older browsers
-                const tmp = document.createElement('input');
-                document.body.appendChild(tmp);
-                tmp.value = text;
-                tmp.select();
-                document.execCommand('copy');
-                document.body.removeChild(tmp);
-                
-                cmCopy.textContent = 'Copied!';
-                cmCopy.style.background = '#059669';
-                
-                setTimeout(() => {
-                    cmCopy.textContent = 'Copy Code';
-                    cmCopy.style.background = '#10b981';
-                }, 2000);
-            });
-        });
+      const prev = cmCopy.textContent;
+      cmCopy.textContent = 'Copied!';
+      setTimeout(() => { cmCopy.textContent = prev; }, 2000);
     }
+  }
 
-    // Email signup form
-    if (cmEmailForm) {
-        cmEmailForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            
-            const email = cmEmailInput.value.trim();
-            if (!email) return;
-            
-            // Here you can add AJAX call to your newsletter subscription endpoint
-            // For now, we'll just show a success message
-            
-            const submitBtn = this.querySelector('.cm-email-submit');
-            const originalText = submitBtn.textContent;
-            
-            submitBtn.textContent = 'Subscribed!';
-            submitBtn.style.background = '#059669';
-            cmEmailInput.value = '';
-            
-            setTimeout(() => {
-                submitBtn.textContent = originalText;
-                submitBtn.style.background = '#10b981';
-            }, 2000);
-        });
-    }
-
-    // Feedback buttons
-    document.querySelectorAll('.cm-feedback-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const feedback = this.dataset.feedback;
-            
-            // Remove active state from all buttons
-            document.querySelectorAll('.cm-feedback-btn').forEach(b => {
-                b.style.background = 'transparent';
-                b.style.borderColor = '#d1d5db';
-            });
-            
-            // Add active state to clicked button
-            this.style.background = feedback === 'positive' ? '#f0fdf4' : '#fef2f2';
-            this.style.borderColor = feedback === 'positive' ? '#10b981' : '#ef4444';
-            
-            // Here you can send feedback to your backend
-            console.log('Feedback:', feedback);
-        });
+  if (cmEmailForm) {
+    cmEmailForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const email = (cmEmailInput && cmEmailInput.value || '').trim();
+      if (!email) return;
+      const submitBtn = this.querySelector('.cm-email-submit');
+      const originalText = submitBtn ? submitBtn.textContent : '';
+      if (submitBtn) submitBtn.textContent = 'Subscribed!';
+      if (cmEmailInput) cmEmailInput.value = '';
+      setTimeout(() => { if (submitBtn) submitBtn.textContent = originalText; }, 2000);
     });
+  }
 
-    // More details toggle
-    const moreBtn = document.querySelector('.cm-more-btn');
-    if (moreBtn) {
-        moreBtn.addEventListener('click', function () {
-            const chevron = this.querySelector('.cm-chevron');
-            chevron.style.transform = chevron.style.transform === 'rotate(180deg)' 
-                ? 'rotate(0deg)' 
-                : 'rotate(180deg)';
-            
-            // Here you can toggle additional details
-            console.log('More details toggled');
-        });
-    }
-
-    // Close modal events
-    closeBtn.addEventListener('click', closeModal);
-    overlay.addEventListener('click', closeModal);
-    document.addEventListener('keydown', (ev) => { 
-        if (ev.key === 'Escape') closeModal(); 
+  // feedback & more toggle (guards added)
+  document.querySelectorAll('.cm-feedback-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.cm-feedback-btn').forEach(b => { b.style.background = 'transparent'; b.style.borderColor = '#d1d5db'; });
+      const feedback = this.dataset.feedback;
+      this.style.background = feedback === 'positive' ? '#f0fdf4' : '#fef2f2';
+      this.style.borderColor = feedback === 'positive' ? '#10b981' : '#ef4444';
     });
+  });
 
-    // Check if page loaded with modal parameters (for new tab functionality)
-    try {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('show_coupon') === '1' && urlParams.get('code')) {
-            const code = urlParams.get('code');
-            const affiliate = urlParams.get('affiliate') || '#';
-            const store = urlParams.get('store') || 'Store';
-            const title = urlParams.get('title') || 'Here is your code';
-            
-            openModal(code, affiliate, store, title);
-            
-            // Clean URL
-            const cleanUrl = window.location.pathname;
-            history.replaceState({}, '', cleanUrl);
-        }
-    } catch (err) {
-        // Ignore parsing errors
+  const moreBtn = document.querySelector('.cm-more-btn');
+  if (moreBtn) {
+    moreBtn.addEventListener('click', function () {
+      const chevron = this.querySelector('.cm-chevron');
+      if (chevron) chevron.style.transform = chevron.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
+    });
+  }
+
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (overlay) overlay.addEventListener('click', closeModal);
+
+  // show modal if params present
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('show_coupon') === '1' && urlParams.get('code')) {
+      openModal(urlParams.get('code'), urlParams.get('affiliate') || '#', urlParams.get('store') || 'Store', urlParams.get('title') || 'Here is your code');
+      history.replaceState({}, '', window.location.pathname);
     }
+  } catch (err) { /* ignore */ }
 });
 </script>
 
