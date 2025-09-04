@@ -7,7 +7,7 @@
             <h4 class="mb-0">Manage Coupons</h4>
             <div class="d-flex">
                 <button id="bulk-delete-btn" class="btn btn-danger btn-sm mx-3" disabled>Delete Selected</button>
-                <a href="{{ route('coupons.create') }}" class="btn btn-primary btn-sm">+ Add New Coupon</a>
+                <a href="{{ route('admin.coupons.create') }}" class="btn btn-primary btn-sm">+ Add New Coupon</a>
             </div>
         </div>
         <div class="card-body">
@@ -53,10 +53,10 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('coupons.edit', $coupon->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="{{ route('admin.coupons.edit', $coupon->id) }}" class="btn btn-warning btn-sm">Edit</a>
 
                             {{-- Single delete form --}}
-                            <form action="{{ route('coupons.destroy', $coupon->id) }}" 
+                            <form action="{{ route('admin.coupons.destroy', $coupon->id) }}" 
                                   method="POST" 
                                   id="coupon-{{$coupon->id}}"
                                   class="d-inline single-delete-form">
@@ -82,8 +82,8 @@
             bulkDeleteBtnSelector: '#bulk-delete-btn',
             selectAllSelector: '#selectAll',
             rowHandleSelector: 'td.reorder-handle',
-            reorderUrl: '{{ route("coupons.reorder") }}',
-            bulkDeleteUrl: '{{ route("coupons.bulkDelete") }}', // Bulk delete route
+            reorderUrl: '{{ route("admin.coupons.reorder") }}',
+            bulkDeleteUrl: '{{ route("admin.coupons.bulkDelete") }}', // Bulk delete route
             csrfToken: '{{ csrf_token() }}'
         });
     });

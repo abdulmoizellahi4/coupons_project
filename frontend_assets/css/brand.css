@@ -1,0 +1,48 @@
+/* Site theme variables for black/red/white brand */
+:root{
+  --bs-primary: #FF0000;      /* primary red */
+  --bs-primary-hover: #CC0000;/* darker red */
+  --bs-body-bg: #FFFFFF;      /* white background */
+  --bs-header-bg: #000000;    /* black header/footer */
+  --bs-card-bg: #F5F5F5;      /* light gray for cards */
+  --bs-body-color: #333333;   /* paragraph text dark gray */
+  --bs-success: #28A745;      /* green accent for badges */
+  --bs-border-color: #E5E5E5; /* subtle border */
+}
+
+/* Logo helpers */
+.site-logo{ display:inline-block; vertical-align:middle; }
+.site-logo img{ height:40px; width:auto; }
+
+/* Global background/text */
+body{background-color:var(--bs-body-bg);color:var(--bs-body-color)}
+
+/* Header & footer */
+.header, .footer{background-color:var(--bs-header-bg);color:#fff}
+.header a, .footer a{color:#fff}
+
+/* Cards */
+.cpn, .card-brand, .imgCnk, .abt .grd .col{background-color:var(--bs-card-bg);border:1px solid var(--bs-border-color)}
+
+/* Buttons & CTAs */
+.cpBtn, .primaryBtn, .btn, .gsf a.vwAl, a.subHd{background-color:var(--bs-primary);border-color:var(--bs-primary);color:#fff}
+.cpBtn:hover, .primaryBtn:hover, .btn:hover, .gsf a.vwAl:hover{background-color:var(--bs-primary-hover);border-color:var(--bs-primary-hover)}
+
+/* Outline buttons */
+.secondaryBtn, .btn-outline{background:transparent;border:1px solid var(--bs-primary);color:var(--bs-primary)}
+.secondaryBtn:hover, .btn-outline:hover{background:var(--bs-primary);color:#fff}
+
+/* Links */
+a{color:var(--bs-primary)}
+a:hover{color:var(--bs-primary-hover)}
+
+/* Reveal decoration */
+.cpn .cpBtn[data-code]::before{border-color:var(--bs-primary);color:var(--bs-body-color)}
+
+/* Success / discount badges */
+.badge-success, .discount-badge{background-color:var(--bs-success);color:#fff}
+
+/* Headings */
+h1,h2,footer .cols>div h4{color:#000000}
+
+@media (max-width: 768px){.site-logo img{height:34px}}

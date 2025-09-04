@@ -10,6 +10,7 @@ use App\Http\Controllers\NetworksController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\FrontendController;
 
 /*
 |--------------------------------------------------------------------------
@@ -99,9 +100,49 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| Frontend Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/', [FrontendController::class, 'home'])->name('home');
+
+Route::get('/top-discounts', [FrontendController::class, 'topDiscounts'])->name('top-discounts');
+Route::get('/categories', [FrontendController::class, 'categories'])->name('categories');
+
+Route::get('/events', [FrontendController::class, 'events'])->name('events');
+Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
+Route::get('/mobile-app', [FrontendController::class, 'mobileApp'])->name('mobile-app');
+
+Route::get('/share', [FrontendController::class, 'share'])->name('share');
+Route::get('/deal-seeker', [FrontendController::class, 'dealSeeker'])->name('deal-seeker');
+Route::get('/smash-voucher-codes', [FrontendController::class, 'smashVoucherCodes'])->name('smash-voucher-codes');
+
+Route::get('/student-discount', [FrontendController::class, 'studentDiscount'])->name('student-discount');
+Route::get('/black-friday-deals', [FrontendController::class, 'blackFridayDeals'])->name('black-friday-deals');
+Route::get('/cyber-monday-voucher-codes', [FrontendController::class, 'cyberMondayVoucherCodes'])->name('cyber-monday-voucher-codes');
+
+Route::get('/christmas-deals-online', [FrontendController::class, 'christmasDealsOnline'])->name('christmas-deals-online');
+Route::get('/about-us', [FrontendController::class, 'aboutUs'])->name('about-us');
+Route::get('/advertise-with-us', [FrontendController::class, 'advertiseWithUs'])->name('advertise-with-us');
+
+Route::get('/privacy-policy', [FrontendController::class, 'privacyPolicy'])->name('privacy-policy');
+Route::get('/blog', [FrontendController::class, 'blog'])->name('blog');
+Route::get('/all-brands-uk', [FrontendController::class, 'allBrandsUk'])->name('all-brands-uk');
+
+Route::get('/contact-details', [FrontendController::class, 'contactDetails'])->name('contact-details');
+Route::get('/category/{slug}', [FrontendController::class, 'category'])->name('category');
+Route::get('/store/{slug}', [FrontendController::class, 'store'])->name('store');
+
+// Search functionality
+Route::get('/search', [FrontendController::class, 'search'])->name('search');
+
+// Newsletter subscription
+Route::post('/newsletter/subscribe', [FrontendController::class, 'newsletterSubscribe'])->name('newsletter.subscribe');
+
+/*
+|--------------------------------------------------------------------------
 | Default Route
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return redirect()->route('login.form');
+Route::get('/admin', function () {
+    return redirect()->route('admin.dashboard');
 });

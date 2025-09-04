@@ -12,12 +12,12 @@ class EventsController extends Controller
     {
         // Coupons ki tarah sort_order par hi listing
         $events = Events::orderBy('sort_order')->get();
-        return view('events.index', compact('events'));
+        return view('admin.events.index', compact('events'));
     }
 
     public function create()
     {
-        return view('events.create');
+        return view('admin.events.create');
     }
 
     public function store(Request $request)
@@ -54,12 +54,12 @@ class EventsController extends Controller
 
         Events::create($validated);
 
-        return redirect()->route('events.index')->with('success', 'Event created successfully.');
+        return redirect()->route('admin.events.index')->with('success', 'Event created successfully.');
     }
 
     public function edit(Events $event)
     {
-        return view('events.edit', compact('event'));
+        return view('admin.events.edit', compact('event'));
     }
 
     public function update(Request $request, Events $event)
@@ -95,7 +95,7 @@ class EventsController extends Controller
 
         $event->update($validated);
 
-        return redirect()->route('events.index')->with('success', 'Event updated successfully.');
+        return redirect()->route('admin.events.index')->with('success', 'Event updated successfully.');
     }
 
     public function destroy(Events $event)
@@ -108,7 +108,7 @@ class EventsController extends Controller
         }
 
         $event->delete();
-        return redirect()->route('events.index')->with('success', 'Event deleted successfully.');
+        return redirect()->route('admin.events.index')->with('success', 'Event deleted successfully.');
     }
 
     // ===== Bulk Delete (Coupons jaisa) =====

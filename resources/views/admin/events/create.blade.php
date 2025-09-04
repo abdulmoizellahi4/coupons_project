@@ -7,8 +7,8 @@
             <h4>Create New Event</h4>
         </div>
         <div class="card-body">
-            <form action="{{ route('events.store') }}" method="POST" enctype="multipart/form-data">
-                @include('events.form')
+            <form action="{{ route('admin.events.store') }}" method="POST" enctype="multipart/form-data">
+                @include('admin.events.form')
             </form>
         </div>
     </div>

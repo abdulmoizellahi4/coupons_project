@@ -12,7 +12,7 @@ class NetworksController extends Controller
     public function index()
     {
         $networks = Networks::orderBy('sort_order')->get();
-        return view('networks.index', compact('networks'));
+        return view('admin.networks.index', compact('networks'));
     }
 
     // Store new network
@@ -54,7 +54,7 @@ class NetworksController extends Controller
         ]);
 
         return redirect()
-            ->route('networks.index')
+            ->route('admin.networks.index')
             ->with('success', 'Network updated successfully.');
     }
 
@@ -65,7 +65,7 @@ public function destroy($id)
     $network->delete();
 
     return redirect()
-        ->route('networks.index')
+        ->route('admin.networks.index')
         ->with('success', 'Network deleted successfully.');
 }
 
@@ -75,14 +75,14 @@ public function destroy($id)
     {
         if (!$request->has('ids') || count($request->ids) === 0) {
             return redirect()
-                ->route('networks.index')
+                ->route('admin.networks.index')
                 ->with('error', 'No networks selected.');
         }
 
         Networks::whereIn('id', $request->ids)->delete();
 
         return redirect()
-            ->route('networks.index')
+            ->route('admin.networks.index')
             ->with('success', 'Selected networks deleted successfully.');
     }
 

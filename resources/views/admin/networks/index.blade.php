@@ -53,7 +53,7 @@
                                     Edit
                                 </button>
 
-                                <form action="{{ route('networks.destroy', $network->id) }}"
+                                <form action="{{ route('admin.networks.destroy', $network->id) }}"
                                       method="POST"
                                       class="d-inline single-delete-form">
                                     @csrf
@@ -67,9 +67,9 @@
                         <div class="modal fade" id="editNetworkModal{{ $network->id }}" tabindex="-1">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form action="{{ route('networks.update', $network->id) }}" method="POST">
+                                    <form action="{{ route('admin.networks.update', $network->id) }}" method="POST">
                                         @csrf @method('PUT')
-                                        @include('networks.form', ['network' => $network])
+                                        @include('admin.networks.form', ['network' => $network])
                                     </form>
                                 </div>
                             </div>
@@ -79,7 +79,7 @@
             </table>
 
             {{-- Hidden form for bulk delete --}}
-            <form id="bulkDeleteForm" action="{{ route('networks.bulkDelete') }}" method="POST" style="display:none;">
+            <form id="bulkDeleteForm" action="{{ route('admin.networks.bulkDelete') }}" method="POST" style="display:none;">
                 @csrf
                 @method('DELETE')
             </form>
@@ -91,9 +91,9 @@
 <div class="modal fade" id="createNetworkModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="{{ route('networks.store') }}" method="POST">
+            <form action="{{ route('admin.networks.store') }}" method="POST">
                 @csrf
-                @include('networks.form', ['network' => null])
+                @include('admin.networks.form', ['network' => null])
             </form>
         </div>
     </div>
@@ -106,9 +106,9 @@ $(document).ready(function () {
         bulkDeleteBtnSelector: '#bulk-delete-btn',
         selectAllSelector: '#selectAll',
         rowHandleSelector: 'td.reorder-handle',
-        reorderUrl: "{{ route('networks.reorder') }}",
+        reorderUrl: "{{ route('admin.networks.reorder') }}",
         csrfToken: "{{ csrf_token() }}",
-        bulkDeleteUrl: "{{ route('networks.bulkDelete') }}" // JS bulk delete ke liye zaroori
+        bulkDeleteUrl: "{{ route('admin.networks.bulkDelete') }}" // JS bulk delete ke liye zaroori
     });
 });
 </script>

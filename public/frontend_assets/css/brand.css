@@ -1,0 +1,37 @@
+/* Brand overrides loaded after home.css — sets the CSS variables used by home.css to apply the site theme */
+:root{
+  /* override home.css variables to apply brand consistently */
+  --primaryColor: #FF0000 !important; /* main brand */
+  --secondaryColor: #E80101 !important; /* accent */
+  --secondaryLightColor: #FA364B !important;
+  --tertiaryColor: #fef08e !important;
+  --quaternaryColor: #FAF9F5 !important;
+  --quaternaryDarkColor: #F2F0E6 !important;
+  --greyColor: #4B5563 !important;
+  --lightGreyColor: #f8f9f8 !important;
+  --darkGreyColor: #172730 !important;
+  --primaryTextColor: #0F0F0F !important;
+  --greyTextColor: #6d6e71 !important;
+  --borderColor: #D5D5D5 !important;
+  --scbtc: #FF0000 !important; /* scrollbar/thumb color */
+}
+
+/* Small helpers that reinforce the brand look */
+.site-logo img{height:40px !important;width:auto !important}
+
+a{color:var(--primaryColor)}
+
+/* Make primary CTAs match brand */
+.cpBtn, .primaryBtn, .btn, .gsf a.vwAl{background-color:var(--primaryColor) !important;color:#fff !important}
+
+/* Outline and secondary buttons */
+.secondaryBtn, .btn-outline{background-color:var(--secondaryLightColor) !important;color:#fff !important}
+
+/* Ensure coupon reveal decoration uses brand */
+.cpn .cpBtn[data-code]::before{border-color:var(--primaryColor) !important;color:var(--primaryTextColor) !important}
+
+/* Footer tweaks */
+footer .cols>div h4{color:var(--primaryColor) !important}
+
+/* Small responsiveness */
+@media(max-width: 550px){.site-logo img{height:34px !important}}

@@ -7,7 +7,7 @@
             <h4>Manage Events</h4>
             <div>
                 <button id="bulk-delete-btn" class="btn btn-danger btn-sm mx-3" disabled>Delete Selected</button>
-                <a href="{{ route('events.create') }}" class="btn btn-primary btn-sm">+ Add New Event</a>
+                <a href="{{ route('admin.events.create') }}" class="btn btn-primary btn-sm">+ Add New Event</a>
             </div>
         </div>
         <div class="card-body">
@@ -50,8 +50,8 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('events.edit', $event->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="d-inline single-delete-form">
+                                <a href="{{ route('admin.events.edit', $event->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <form action="{{ route('admin.events.destroy', $event->id) }}" method="POST" class="d-inline single-delete-form">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm delete-btn">Delete</button>
@@ -63,7 +63,7 @@
             </table>
 
             {{-- Hidden form for bulk delete --}}
-            <form id="bulkDeleteForm" action="{{ route('events.bulkDelete') }}" method="POST" style="display:none;">
+            <form id="bulkDeleteForm" action="{{ route('admin.events.bulkDelete') }}" method="POST" style="display:none;">
                 @csrf
                 @method('DELETE')
             </form>
@@ -78,9 +78,9 @@ $(document).ready(function () {
         bulkDeleteBtnSelector: '#bulk-delete-btn',
         selectAllSelector: '#selectAll',
         rowHandleSelector: 'td.reorder-handle',
-        reorderUrl: '{{ route("events.reorder") }}',
+        reorderUrl: '{{ route("admin.events.reorder") }}',
         csrfToken: '{{ csrf_token() }}',
-        bulkDeleteUrl: '{{ route("events.bulkDelete") }}' // Important for JS bulk delete
+        bulkDeleteUrl: '{{ route("admin.events.bulkDelete") }}' // Important for JS bulk delete
     });
 });
 </script>

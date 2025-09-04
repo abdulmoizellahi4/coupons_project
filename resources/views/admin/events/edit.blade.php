@@ -7,9 +7,9 @@
             <h4>Edit Event</h4>
         </div>
         <div class="card-body">
-            <form action="{{ route('events.update', $event->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.events.update', $event->id) }}" method="POST" enctype="multipart/form-data">
                 @method('PUT')
-                @include('events.form')
+                @include('admin.events.form')
             </form>
         </div>
     </div>

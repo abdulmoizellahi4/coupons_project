@@ -43,8 +43,15 @@
     </div>
     <div class="col-md-6">
       <div class="form-floating form-floating-outline">
-        <input type="text" name="brand_store" class="form-control" placeholder="Brand/Store"
-               value="{{ old('brand_store', $coupon->brand_store ?? '') }}" required>
+        <select name="brand_store" class="form-control select2" required>
+          <option value="">-- Select Store --</option>
+          @foreach($stores as $store)
+            <option value="{{ $store->store_name }}"
+              {{ old('brand_store', $coupon->brand_store ?? '') == $store->store_name ? 'selected' : '' }}>
+              {{ $store->store_name }}
+            </option>
+          @endforeach
+        </select>
         <label>Brand/Store *</label>
       </div>
     </div>

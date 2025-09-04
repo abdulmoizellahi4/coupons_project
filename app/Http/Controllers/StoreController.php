@@ -17,7 +17,7 @@ class StoreController extends Controller
                        ->orderBy('sort_order')
                        ->paginate(10);
 
-        return view('stores.index', compact('stores'));
+        return view('admin.stores.index', compact('stores'));
     }
 
 public function create()
@@ -31,7 +31,7 @@ public function create()
     $store->setRelation('categories', collect([]));
     $store->setRelation('events', collect([]));
 
-    return view('stores.create', compact('categories', 'events', 'networks', 'store'));
+    return view('admin.stores.create', compact('categories', 'events', 'networks', 'store'));
 }
     public function store(Request $request)
     {
@@ -46,7 +46,7 @@ public function create()
             'events.*'          => 'exists:events,id',
         ]);
 
-        $data = $request->except(['categories', 'events']);
+        $data = $request->except(['admin.categories', 'events']);
 
         // Store Logo Upload
         if ($request->hasFile('store_logo')) {
@@ -68,7 +68,7 @@ public function create()
         $store->categories()->sync($request->categories ?? []);
         $store->events()->sync($request->events ?? []);
 
-        return redirect()->route('stores.index')->with('success', 'Store created successfully!');
+        return redirect()->route('admin.stores.index')->with('success', 'Store created successfully!');
     }
 
 
@@ -80,7 +80,7 @@ public function edit(Store $store)
 
     $store->load(['categories','events']); // edit pe pre-load
 
-    return view('stores.edit', compact('store', 'categories', 'events', 'networks'));
+    return view('admin.stores.edit', compact('store', 'categories', 'events', 'networks'));
 }
 
     public function update(Request $request, Store $store)
@@ -120,7 +120,7 @@ public function edit(Store $store)
         $store->categories()->sync($request->categories ?? []);
         $store->events()->sync($request->events ?? []);
 
-        return redirect()->route('stores.index')->with('success', 'Store updated successfully!');
+        return redirect()->route('admin.stores.index')->with('success', 'Store updated successfully!');
     }
 
     public function destroy(Store $store)
@@ -136,7 +136,7 @@ public function edit(Store $store)
         $store->events()->detach();
         $store->delete();
 
-        return redirect()->route('stores.index')->with('success', 'Store deleted successfully!');
+        return redirect()->route('admin.stores.index')->with('success', 'Store deleted successfully!');
     }
 
     // ✅ Bulk Delete

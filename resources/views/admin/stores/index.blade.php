@@ -11,7 +11,7 @@
             <h4>Manage Stores</h4>
             <div>
                 <button id="bulk-delete-btn" class="btn btn-danger btn-sm mx-3" disabled>Delete Selected</button>
-                <a href="{{ route('stores.create') }}" class="btn btn-primary btn-sm">+ Add New Store</a>
+                <a href="{{ route('admin.stores.create') }}" class="btn btn-primary btn-sm">+ Add New Store</a>
             </div>
         </div>
         <div class="card-body">
@@ -68,8 +68,8 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('stores.edit', $store->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <form action="{{ route('stores.destroy', $store->id) }}" method="POST" class="d-inline single-delete-form">
+                                <a href="{{ route('admin.stores.edit', $store->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <form action="{{ route('admin.stores.destroy', $store->id) }}" method="POST" class="d-inline single-delete-form">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm delete-btn">Delete</button>
@@ -81,7 +81,7 @@
             </table>
 
             {{-- Hidden form for bulk delete --}}
-            <form id="bulkDeleteForm" action="{{ route('stores.bulkDelete') }}" method="POST" style="display:none;">
+            <form id="bulkDeleteForm" action="{{ route('admin.stores.bulkDelete') }}" method="POST" style="display:none;">
                 @csrf
                 @method('DELETE')
             </form>
@@ -96,8 +96,8 @@ $(document).ready(function () {
         bulkDeleteBtnSelector: '#bulk-delete-btn',
         selectAllSelector: '#selectAll',
         rowHandleSelector: 'td.reorder-handle',
-        reorderUrl: '{{ route("stores.reorder") }}',
-        bulkDeleteUrl: '{{ route("stores.bulkDelete") }}',
+        reorderUrl: '{{ route("admin.stores.reorder") }}',
+        bulkDeleteUrl: '{{ route("admin.stores.bulkDelete") }}',
         csrfToken: '{{ csrf_token() }}'
     });
 });

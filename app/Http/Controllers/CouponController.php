@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Coupon;
+use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Events;
@@ -12,13 +13,14 @@ class CouponController extends Controller
     public function index()
     {
         $coupons = Coupon::orderBy('sort_order')->get();
-        return view('coupons.index', compact('coupons'));
+        return view('admin.coupons.index', compact('coupons'));
     }
     
    public function create()
 {
     $events = Events::all();
-    return view('coupons.create', compact('events'));
+    $stores = Store::where('status', 1)->orderBy('store_name')->get();
+    return view('admin.coupons.create', compact('events', 'stores'));
 }
 
 public function store(Request $request)
@@ -50,13 +52,14 @@ public function store(Request $request)
 
     Coupon::create($validated);
 
-    return redirect()->route('coupons.index')->with('success', 'Coupon Created Successfully');
+    return redirect()->route('admin.coupons.index')->with('success', 'Coupon Created Successfully');
 }
 
     public function edit(Coupon $coupon)
     {
         $events = Events::all();
-        return view('coupons.edit', compact('coupon', 'events'));
+        $stores = Store::where('status', 1)->orderBy('store_name')->get();
+        return view('admin.coupons.edit', compact('coupon', 'events', 'stores'));
     }
 
 public function update(Request $request, $id)
@@ -93,7 +96,7 @@ public function update(Request $request, $id)
 
     $coupon->update($validated);
 
-    return redirect()->route('coupons.index')->with('success', 'Coupon Updated Successfully');
+    return redirect()->route('admin.coupons.index')->with('success', 'Coupon Updated Successfully');
 }
 
     public function destroy($id)
@@ -106,7 +109,7 @@ public function update(Request $request, $id)
 
         $coupon->delete();
 
-        return redirect()->route('coupons.index')->with('success', 'Coupon Deleted Successfully');
+        return redirect()->route('admin.coupons.index')->with('success', 'Coupon Deleted Successfully');
     }
 
         public function reorder(Request $request)

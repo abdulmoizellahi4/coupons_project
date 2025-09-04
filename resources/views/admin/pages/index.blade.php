@@ -7,7 +7,7 @@
             <h4 class="mb-0">Manage Pages</h4>
             <div class="d-flex">
                 <button id="bulk-delete-btn" class="btn btn-danger btn-sm mx-3" disabled>Delete Selected</button>
-                <a href="{{ route('pages.create') }}" class="btn btn-success btn-sm">➕ Add Page</a>
+                <a href="{{ route('admin.pages.create') }}" class="btn btn-success btn-sm">➕ Add Page</a>
             </div>
         </div>
         <div class="card-body">
@@ -52,10 +52,10 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('pages.edit', $page->id) }}" class="btn btn-warning btn-sm">✏ Edit</a>
+                            <a href="{{ route('admin.pages.edit', $page->id) }}" class="btn btn-warning btn-sm">✏ Edit</a>
 
                             {{-- Single delete form --}}
-                            <form action="{{ route('pages.destroy', $page->id) }}" 
+                            <form action="{{ route('admin.pages.destroy', $page->id) }}" 
                                   method="POST" 
                                   id="page-{{$page->id}}"
                                   class="d-inline single-delete-form">
@@ -81,8 +81,8 @@
             bulkDeleteBtnSelector: '#bulk-delete-btn',
             selectAllSelector: '#selectAll',
             rowHandleSelector: 'td.reorder-handle',
-            reorderUrl: '{{ route("pages.reorder") }}',
-            bulkDeleteUrl: '{{ route("pages.bulk-delete") }}',
+            reorderUrl: '{{ route("admin.pages.reorder") }}',
+            bulkDeleteUrl: '{{ route("admin.pages.bulk-delete") }}',
             csrfToken: '{{ csrf_token() }}'
         });
         

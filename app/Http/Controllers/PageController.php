@@ -11,13 +11,13 @@ class PageController extends Controller
     public function index()
     {
         $pages = Page::orderBy('sort_order')->get();
-        return view('pages.index', compact('pages'));
+        return view('admin.pages.index', compact('pages'));
     }
 
     public function create()
     {
         // Create form ke liye blank page object bhejenge
-        return view('pages.create');
+        return view('admin.pages.create');
     }
 
     public function store(Request $request)
@@ -48,12 +48,12 @@ class PageController extends Controller
 
         Page::create($validated);
 
-        return redirect()->route('pages.index')->with('success', 'Page created successfully.');
+        return redirect()->route('admin.pages.index')->with('success', 'Page created successfully.');
     }
 
     public function edit(Page $page)
     {
-        return view('pages.edit', compact('page'));
+        return view('admin.pages.edit', compact('page'));
     }
 
     public function update(Request $request, Page $page)
@@ -87,7 +87,7 @@ class PageController extends Controller
 
         $page->update($validated);
 
-        return redirect()->route('pages.index')->with('success', 'Page updated successfully.');
+        return redirect()->route('admin.pages.index')->with('success', 'Page updated successfully.');
     }
 
     public function destroy($id)

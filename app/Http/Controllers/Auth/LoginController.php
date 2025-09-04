@@ -31,7 +31,7 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended('dashboard') // yahan apna route dal lo
+            return redirect()->intended('admin/dashboard') // yahan apna route dal lo
                              ->with('success', 'You are logged in successfully!');
         }
 

@@ -7,9 +7,9 @@
       <h4>Edit Coupon</h4>
     </div>
     <div class="card-body">
-      <form action="{{ route('coupons.update', $coupon->id) }}" method="POST" enctype="multipart/form-data">
+      <form action="{{ route('admin.coupons.update', $coupon->id) }}" method="POST" enctype="multipart/form-data">
         @method('PUT')
-        @include('coupons.form', ['coupon' => $coupon])
+        @include('admin.coupons.form', ['coupon' => $coupon])
       </form>
     </div>
   </div>
