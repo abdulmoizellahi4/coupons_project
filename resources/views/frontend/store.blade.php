@@ -2,6 +2,7 @@
 
 @section('title', $store->meta_title ?? $store->store_name . ' Discount Codes & Voucher Codes')
 @section('description', $store->meta_description ?? 'Get the latest ' . $store->store_name . ' discount codes, voucher codes, and promo codes. Save money on your purchases with verified offers.')
+@section('keywords', $store->store_name . ' discount codes, ' . $store->store_name . ' voucher codes, ' . $store->store_name . ' promo codes, ' . $store->store_name . ' coupons')
 
 @push('styles')
 <link rel="preload" href="{{ asset('frontend_assets/css/fonts.css') }}" as="style" crossorigin>

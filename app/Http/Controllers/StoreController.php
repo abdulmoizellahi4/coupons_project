@@ -9,6 +9,7 @@ use App\Models\Networks;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class StoreController extends Controller
 {
@@ -50,6 +51,7 @@ public function create()
             'events'            => 'nullable|array',
             'events.*'          => 'exists:events,id',
             'faqs'              => 'nullable|string',
+            'meta_keywords'     => 'nullable|string|max:255',
         ]);
 
     // Log incoming faqs payload for debugging — will appear in storage/logs/laravel.log
@@ -57,6 +59,20 @@ public function create()
 
     // fix: exclude the actual input names (categories, events)
     $data = $request->except(['categories', 'events']);
+
+    // Ensure seo_url is a slug (server-side safeguard)
+    if (empty($data['seo_url']) && !empty($request->input('store_name'))) {
+        $data['seo_url'] = Str::slug($request->input('store_name'));
+    } elseif (!empty($data['seo_url'])) {
+        $data['seo_url'] = Str::slug($data['seo_url']);
+    }
+
+        // Ensure seo_url is a slug (server-side safeguard)
+        if (empty($data['seo_url']) && !empty($request->input('store_name'))) {
+            $data['seo_url'] = Str::slug($request->input('store_name'));
+        } elseif (!empty($data['seo_url'])) {
+            $data['seo_url'] = Str::slug($data['seo_url']);
+        }
 
         // Store Logo Upload
         if ($request->hasFile('store_logo')) {
@@ -109,6 +125,7 @@ public function edit(Store $store)
             'events'            => 'nullable|array',
             'events.*'          => 'exists:events,id',
             'faqs'              => 'nullable|string',
+            'meta_keywords'     => 'nullable|string|max:255',
         ]);
 
     $data = $request->except(['categories', 'events']);

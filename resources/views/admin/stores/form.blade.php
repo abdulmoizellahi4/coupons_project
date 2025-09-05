@@ -247,8 +247,8 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="form-floating form-floating-outline">
-                <input type="text" class="form-control" name="seo_url" placeholder="SEO URL" required
+                <div class="form-floating form-floating-outline">
+                <input type="text" id="seo_url" class="form-control" name="seo_url" placeholder="SEO URL" required
                     value="{{ old('seo_url', $store->seo_url ?? '') }}">
                 <label>SEO URL *</label>
             </div>
@@ -264,6 +264,11 @@
     <div class="form-floating form-floating-outline mb-3">
         <textarea class="form-control h-px-100" name="meta_description" placeholder="Meta Description">{{ old('meta_description', $store->meta_description ?? '') }}</textarea>
         <label>Meta Description</label>
+    </div>
+    <div class="form-floating form-floating-outline mb-3">
+        <input type="text" name="meta_keywords" id="meta_keywords" class="form-control" placeholder="Meta Keywords (comma separated)" value="{{ old('meta_keywords', $store->meta_keywords ?? '') }}">
+        <label>Meta Keywords</label>
+        <small class="form-text text-muted">Enter keywords separated by commas. Example: sale, free delivery, student discount</small>
     </div>
 </div>
 
@@ -332,4 +337,53 @@ document.addEventListener('DOMContentLoaded', function () {
         // allow form to continue submitting
     });
 });
+</script>
+
+<script>
+// Auto-generate slug for seo_url from store_name input
+(function(){
+    function slugify(text) {
+        return text.toString().toLowerCase()
+            .normalize('NFKD') // split accented characters
+            .replace(/\p{Diacritic}/gu, '')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .trim()
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-');
+    }
+
+    const nameInput = document.querySelector('input[name="store_name"]');
+    const seoInput = document.getElementById('seo_url');
+    if (!nameInput || !seoInput) return;
+
+    // Track if user manually edited SEO field
+    let seoManuallyEdited = false;
+    seoInput.addEventListener('input', function () { seoManuallyEdited = true; });
+
+    // On blur or input of store name, populate seo if not manually edited
+    function tryFill() {
+        if (seoManuallyEdited) return;
+        const val = nameInput.value || '';
+        const slug = slugify(val);
+        if (slug && !seoInput.value) {
+            seoInput.value = slug;
+        } else if (slug && seoInput.value && !seoManuallyEdited) {
+            // If seo present but equals previous slug candidate, update it
+            // (helps when editing existing store_name)
+            const current = seoInput.value;
+            const currentSlug = slugify(current);
+            if (!current || currentSlug === currentSlug) {
+                seoInput.value = slug;
+            }
+        }
+    }
+
+    nameInput.addEventListener('blur', tryFill);
+    nameInput.addEventListener('input', function () {
+        // live update only when seo is empty and not manually edited
+        if (!seoManuallyEdited && !seoInput.value) {
+            seoInput.value = slugify(nameInput.value || '');
+        }
+    });
+})();
 </script>

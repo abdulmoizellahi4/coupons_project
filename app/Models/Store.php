@@ -31,7 +31,8 @@ class Store extends Model
         'title_heading',
         'seo_url',
         'meta_title',
-        'meta_description',
+    'meta_description',
+    'meta_keywords',
         'cover_image',
     'faqs',
     ];
