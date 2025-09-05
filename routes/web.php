@@ -127,6 +127,7 @@ Route::get('/advertise-with-us', [FrontendController::class, 'advertiseWithUs'])
 Route::get('/privacy-policy', [FrontendController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/blog', [FrontendController::class, 'blog'])->name('blog');
 Route::get('/all-brands-uk', [FrontendController::class, 'allBrandsUk'])->name('all-brands-uk');
+Route::get('/all-stores', [FrontendController::class, 'allBrandsUk'])->name('all-stores');
 
 Route::get('/contact-details', [FrontendController::class, 'contactDetails'])->name('contact-details');
 Route::get('/category/{slug}', [FrontendController::class, 'category'])->name('category');

@@ -262,14 +262,15 @@
         </div>
     </div>
     <div class="form-floating form-floating-outline mb-3">
-        <textarea class="form-control h-px-100" name="meta_description" placeholder="Meta Description">{{ old('meta_description', $store->meta_description ?? '') }}</textarea>
-        <label>Meta Description</label>
-    </div>
-    <div class="form-floating form-floating-outline mb-3">
         <input type="text" name="meta_keywords" id="meta_keywords" class="form-control" placeholder="Meta Keywords (comma separated)" value="{{ old('meta_keywords', $store->meta_keywords ?? '') }}">
         <label>Meta Keywords</label>
         <small class="form-text text-muted">Enter keywords separated by commas. Example: sale, free delivery, student discount</small>
     </div>
+    <div class="form-floating form-floating-outline mb-3">
+        <textarea class="form-control h-px-100" name="meta_description" placeholder="Meta Description">{{ old('meta_description', $store->meta_description ?? '') }}</textarea>
+        <label>Meta Description</label>
+    </div>
+    
 </div>
 
 <!-- Save Button -->

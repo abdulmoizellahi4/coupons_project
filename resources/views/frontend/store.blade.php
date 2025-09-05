@@ -2,7 +2,7 @@
 
 @section('title', $store->meta_title ?? $store->store_name . ' Discount Codes & Voucher Codes')
 @section('description', $store->meta_description ?? 'Get the latest ' . $store->store_name . ' discount codes, voucher codes, and promo codes. Save money on your purchases with verified offers.')
-@section('keywords', $store->store_name . ' discount codes, ' . $store->store_name . ' voucher codes, ' . $store->store_name . ' promo codes, ' . $store->store_name . ' coupons')
+@section('keywords', trim($store->meta_keywords ?? '') ? $store->meta_keywords : ($store->store_name . ' discount codes, ' . $store->store_name . ' voucher codes, ' . $store->store_name . ' promo codes, ' . $store->store_name . ' coupons'))
 
 @push('styles')
 <link rel="preload" href="{{ asset('frontend_assets/css/fonts.css') }}" as="style" crossorigin>
@@ -142,7 +142,12 @@
                         Reveal Code
                     </button>
                 @else
-                    <a href="{{ $coupon->affiliate_url ?? $store->affiliate_url }}" class="cpBtn get-deal" target="_blank" rel="nofollow">Get Deal</a>
+                    <button class="cpBtn get-deal" aria-label="Get Deal" 
+                            data-affiliate="{{ $coupon->affiliate_url ?? $store->affiliate_url }}"
+                            data-store="{{ $store->store_name }}"
+                            data-title="{{ $coupon->coupon_title }}">
+                        Get Deal
+                    </button>
                 @endif
 
                 @if($coupon->terms)
@@ -415,25 +420,13 @@
         <div class="cm-main-content">
             <h3 class="cm-title" id="cmTitle">Here is your code</h3>
             
-            <div class="cm-code-wrap">
-                <span id="cmCode" class="cm-code">CODE</span>
-                <button id="cmCopy" class="cm-copy" aria-label="Copy code">Copy Code</button>
+            <div class="cm-code-section">
+                <div class="cm-code-display" id="cmCode">CODE123</div>
+                <button class="cm-copy-btn" id="cmCopy">Copy Code</button>
             </div>
-
-            <p class="cm-note" id="cmNote">This store website has been opened in a new tab. Simply copy and paste the code and enter it at the checkout.</p>
-
-            <!-- Feedback Section -->
-            <div class="cm-feedback">
-                <p>Did this promotion work for you?</p>
-                <div class="cm-feedback-buttons">
-                    <button class="cm-feedback-btn" data-feedback="positive">👍</button>
-                    <button class="cm-feedback-btn" data-feedback="negative">👎</button>
-                </div>
-            </div>
-
-            <!-- More Details Link -->
-            <div class="cm-more-details">
-                <button class="cm-more-btn">More Details <span class="cm-chevron">▼</span></button>
+            
+            <div class="cm-note" id="cmNote">
+                <p>Copy the code above and use it at checkout to get your discount!</p>
             </div>
         </div>
     </div>
@@ -443,106 +436,90 @@
         <div class="cm-email-content">
             <div class="cm-brand-logo">
                 <div class="cm-brand-circle" id="cmBrandLogo">
-                    @if($store->store_logo)
-                        <img src="{{ asset('storage/' . $store->store_logo) }}" alt="{{ $store->store_name }} logo" width="140" height="40" style="border-radius: 100%; border: 3px solid #fff;">
-                    @else
-                        {{ substr($store->store_name, 0, 5) }}
-                    @endif
+                    <span id="cmBrandText">STORE</span>
                 </div>
             </div>
             
-            <h4 class="cm-email-title" id="cmEmailTitle">{{ $store->store_name }} straight to your inbox</h4>
+            <h3 class="cm-email-title" id="cmEmailTitle">Get More Deals!</h3>
+            <p class="cm-email-subtitle text-center">Subscribe to get exclusive offers and discounts</p>
             
             <form class="cm-email-form" id="cmEmailForm">
-                <label for="cmEmailInput">Email Address</label>
-                <input type="email" id="cmEmailInput" placeholder="Your Email Address" required>
-                <button type="submit" class="cm-email-submit">Send Me New Codes</button>
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit">Subscribe</button>
             </form>
             
-            <p class="cm-email-consent">
-                By signing up I agree to Big Saving Hub's <a href="{{ route('privacy-policy') }}" target="_blank">Privacy Policy</a> and consent to receive emails about offers.
-            </p>
-        </div>
-
-        <!-- Website Logo at Bottom -->
-        <div class="cm-website-logo">
-            <span class="cm-website-name">Big Saving Hub</span>
+            <p class="cm-email-privacy">We respect your privacy. Unsubscribe at any time.</p>
         </div>
     </div>
 </div>
 
 <style>
-/* Enhanced Modal CSS - Two Popup Layout */
-#couponModal { 
-    position: fixed; 
-    inset: 0; 
-    display: none; 
-    align-items: center; 
-    justify-content: center; 
-    z-index: 9999; 
-    flex-direction: column;
-    gap: 20px;
+/* Coupon Modal Styles */
+#couponModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-#couponModal .cm-overlay { 
-    position: absolute; 
+.cm-overlay {
+    position: absolute;
     inset: 0; 
     background: rgba(0,0,0,0.6); 
 }
 
 /* Main Voucher Code Popup */
 .cm-main-popup { 
-    position: relative; 
+  position: relative;
+  top: 20px;
+  margin: auto;
     width: 480px; 
-    max-width: calc(100% - 40px); 
+    max-width: calc(50% - 30px); 
     background: #fff; 
     border-radius: 16px; 
-    text-align: center; 
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     overflow: hidden;
     z-index: 2;
 }
 
 /* Email Subscription Popup */
 .cm-email-popup { 
-    position: relative; 
+  position: relative;
+  margin: auto;
+  top: 40px;
     width: 480px; 
-    max-width: calc(100% - 40px); 
+    max-width: calc(50% - 30px); 
     background: #fff; 
     border-radius: 16px; 
-    text-align: center; 
-    box-shadow: 0 15px 40px rgba(0,0,0,0.25); 
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     overflow: hidden;
-    z-index: 1;
+    z-index: 2;
 }
 
-#couponModal .cm-close { 
-    position: absolute; 
-    top: 15px; 
-    right: 15px; 
-    background: transparent; 
-    border: none; 
-    font-size: 24px; 
-    cursor: pointer; 
+.cm-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
     color: #666;
-    z-index: 10;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: background-color 0.2s;
+    z-index: 3;
 }
 
-#couponModal .cm-close:hover {
-    background: rgba(0,0,0,0.1);
+.cm-close:hover {
+    color: #000;
 }
 
-/* Main Popup Content */
 .cm-main-content {
-    padding: 40px 30px 30px;
-    background: #fff;
+    text-align: center;
 }
 
 .cm-title {
@@ -553,44 +530,35 @@
     line-height: 1.2;
 }
 
-.cm-code-wrap { 
-    display: flex; 
-    gap: 15px; 
-    align-items: center; 
-    justify-content: center; 
-    margin: 25px 0; 
+.cm-code-section {
+    margin: 20px 0;
 }
 
-.cm-code { 
-    background: #f0f9ff; 
-    padding: 18px 25px; 
-    border-radius: 10px; 
-    font-weight: 700; 
-    font-size: 20px;
-    letter-spacing: 1.5px; 
-    color: #0c4a6e;
-    border: 2px dashed #10b981;
-    min-width: 140px;
-    font-family: 'Courier New', monospace;
+.cm-code-display {
+    background: #f8f9fa;
+    border: 2px dashed #FF0000;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #FF0000;
+    margin-bottom: 15px;
+    font-family: monospace;
 }
 
-.cm-copy { 
-    background: #10b981; 
-    color: #fff; 
-    border: none; 
-    padding: 15px 25px; 
-    border-radius: 10px; 
-    cursor: pointer; 
-    font-weight: 600;
+.cm-copy-btn {
+    background: #FF0000;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
     font-size: 16px;
-    transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
-.cm-copy:hover {
-    background: #059669;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+.cm-copy-btn:hover {
+    background: #FF0000;
 }
 
 .cm-note { 
@@ -673,37 +641,35 @@
 }
 
 /* Email Popup Content */
-.cm-email-content {
+/* .cm-email-content {
     padding: 25px 20px 20px;
     background: #f8f9fa;
-}
+} */
 
 .cm-brand-logo {
     margin-bottom: 15px;
 }
 
 .cm-brand-circle {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background: #000;
-    color: white;
+    background: #FF0000;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 16px;
     margin: 0 auto;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .cm-email-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #111827;
-    margin: 0 0 15px;
+  text-align: center;
+  font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
 }
 
 .cm-email-form {
@@ -735,23 +701,20 @@
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
-.cm-email-submit {
-    background: #10b981;
-    color: #fff;
+.cm-email-form button {
+    width: 100%;
+    background: #FF0000;
+    color: white;
     border: none;
-    padding: 12px 18px;
+    padding: 12px;
     border-radius: 6px;
-    font-weight: 600;
-    font-size: 14px;
+    font-size: 16px;
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    transition: background 0.3s;
 }
 
-.cm-email-submit:hover {
-    background: #059669;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+.cm-email-form button:hover {
+    background: #FF0000;
 }
 
 .cm-email-consent {
@@ -851,8 +814,8 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    modal.style.display = 'flex';
-    modal.setAttribute('aria-hidden','false');
+    modal.style.display = 'block';
+    modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
   }
 
@@ -864,7 +827,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Reveal code buttons
   document.querySelectorAll('.cpBtn.reveal-code').forEach(btn => {
-    btn.addEventListener('click', function (e) {
+    btn.addEventListener('click', function(e) {
       e.preventDefault();
       const code = this.dataset.code;
       const affiliate = this.dataset.affiliate;
@@ -879,49 +842,56 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // safe listeners
+  // Get Deal buttons - same logic as Reveal Code but without code
+  document.querySelectorAll('.cpBtn.get-deal').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const affiliate = this.getAttribute('href') || this.dataset.affiliate || '#';
+      const store = this.dataset.store || this.dataset.title || '';
+      const title = this.dataset.title || '';
+      
+      if (affiliate && affiliate !== '#') {
+        const currentUrl = window.location.href.split('#')[0].split('?')[0];
+        const popupUrl = currentUrl + '?show_coupon=1&code=&affiliate=' + encodeURIComponent(affiliate) + '&store=' + encodeURIComponent(store) + '&title=' + encodeURIComponent(title);
+        window.open(popupUrl, '_blank');
+        window.location.href = affiliate;
+      }
+    });
+  });
+
+  // Copy button
   if (cmCopy) {
-    cmCopy.addEventListener('click', function () {
-      const text = (cmCode && cmCode.textContent || '').trim();
-      if (!text) return;
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(() => {
-          const prev = cmCopy.textContent;
+    cmCopy.addEventListener('click', function() {
+      const code = cmCode ? cmCode.textContent : '';
+      if (code) {
+        navigator.clipboard.writeText(code).then(function() {
+          const originalText = cmCopy.textContent;
           cmCopy.textContent = 'Copied!';
-          setTimeout(() => cmCopy.textContent = prev, 2000);
-        }).catch(() => fallbackCopy(text));
-      } else {
-        fallbackCopy(text);
+          cmCopy.style.backgroundColor = '#218838';
+          
+          setTimeout(function() {
+            cmCopy.textContent = originalText;
+            cmCopy.style.backgroundColor = '#28a745';
+          }, 2000);
+        }).catch(function(err) {
+          console.error('Could not copy text: ', err);
+          alert('Coupon Code: ' + code);
+        });
       }
     });
   }
 
-  function fallbackCopy(text) {
-    const tmp = document.createElement('textarea');
-    tmp.value = text;
-    tmp.style.position = 'fixed';
-    tmp.style.top = '-9999px';
-    document.body.appendChild(tmp);
-    tmp.select();
-    try { document.execCommand('copy'); } catch (e) {}
-    document.body.removeChild(tmp);
-    if (cmCopy) {
-      const prev = cmCopy.textContent;
-      cmCopy.textContent = 'Copied!';
-      setTimeout(() => { cmCopy.textContent = prev; }, 2000);
-    }
-  }
-
-  if (cmEmailForm) {
-    cmEmailForm.addEventListener('submit', function (e) {
+  // Email form
+  const emailForm = document.getElementById('cmEmailForm');
+  if (emailForm) {
+    emailForm.addEventListener('submit', function(e) {
       e.preventDefault();
-      const email = (cmEmailInput && cmEmailInput.value || '').trim();
-      if (!email) return;
-      const submitBtn = this.querySelector('.cm-email-submit');
-      const originalText = submitBtn ? submitBtn.textContent : '';
-      if (submitBtn) submitBtn.textContent = 'Subscribed!';
-      if (cmEmailInput) cmEmailInput.value = '';
-      setTimeout(() => { if (submitBtn) submitBtn.textContent = originalText; }, 2000);
+      const email = this.querySelector('input[type="email"]').value;
+      if (email) {
+        // Here you can add AJAX call to subscribe
+        alert('Thank you for subscribing!');
+        closeModal();
+      }
     });
   }
 
@@ -949,11 +919,29 @@ document.addEventListener('DOMContentLoaded', function () {
   // show modal if params present
   try {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('show_coupon') === '1' && urlParams.get('code')) {
-      openModal(urlParams.get('code'), urlParams.get('affiliate') || '#', urlParams.get('store') || 'Store', urlParams.get('title') || 'Here is your code');
+    if (urlParams.get('show_coupon') === '1') {
+      const code = urlParams.get('code') || '';
+      const affiliate = urlParams.get('affiliate') || '#';
+      const store = urlParams.get('store') || 'Store';
+      const title = urlParams.get('title') || 'Here is your code';
+      
+      openModal(code, affiliate, store, title);
+      
+      // If no code, show "No code required" message
+      if (!code) {
+        if (cmCode) cmCode.textContent = 'No code required';
+        if (cmCopy) {
+          cmCopy.disabled = true;
+          cmCopy.style.opacity = '0.6';
+          cmCopy.style.cursor = 'not-allowed';
+        }
+      }
+      
       history.replaceState({}, '', window.location.pathname);
     }
-  } catch (err) { /* ignore */ }
+  } catch (e) {
+    console.log('URL params not supported');
+  }
 });
 </script>
 

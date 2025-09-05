@@ -67,13 +67,23 @@ class FrontendController extends Controller
 
     public function topDiscounts()
     {
-        // Load top coupons based on usage and verification
-        $topCoupons = Coupon::where('status', 1)
+        // Load exclusive coupons only
+        $topCoupons = Coupon::with('store')
+            ->where('status', 1)
+            ->where('exclusive', 1)
             ->where('verified', 1)
             ->orderBy('sort_order', 'asc')
-            ->paginate(20);
+            ->take(20)
+            ->get();
 
-        return view('frontend.top-discounts', compact('topCoupons'));
+        // Load trending stores for sidebar
+        $trendingStores = Store::where('show_trending', 1)
+            ->where('status', 1)
+            ->orderBy('sort_order', 'asc')
+            ->take(20)
+            ->get();
+
+        return view('frontend.top-discounts', compact('topCoupons', 'trendingStores'));
     }
 
     public function categories()
@@ -259,14 +269,42 @@ class FrontendController extends Controller
         return view('frontend.blog');
     }
 
-    public function allBrandsUk()
+    public function allBrandsUk(Request $request)
     {
-        // Load all active stores with pagination
-        $stores = Store::where('status', 1)
-            ->orderBy('sort_order', 'asc')
-            ->paginate(24);
+        $query = $request->get('q');
+        
+        // If no query parameter, show all stores grouped by alphabet
+        if (!$query) {
+            $allStores = Store::where('status', 1)
+                ->orderBy('store_name', 'asc')
+                ->get();
+            
+            // Group stores by first letter
+            $storesByLetter = $allStores->groupBy(function($store) {
+                $firstLetter = strtoupper(substr($store->store_name, 0, 1));
+                // Group numbers together
+                if (is_numeric($firstLetter)) {
+                    return '0-9';
+                }
+                return $firstLetter;
+            });
+            
+            return view('frontend.all-brands', compact('storesByLetter', 'query'));
+        }
+        
+        // Load stores filtered by alphabet
+        $storesQuery = Store::where('status', 1);
+        
+        // Filter by alphabet if query parameter exists
+        if ($query && $query !== '0-9') {
+            $storesQuery->where('store_name', 'like', $query . '%');
+        } elseif ($query === '0-9') {
+            $storesQuery->whereRaw('store_name REGEXP "^[0-9]"');
+        }
+        
+        $stores = $storesQuery->orderBy('store_name', 'asc')->get();
 
-        return view('frontend.all-brands-uk', compact('stores'));
+        return view('frontend.all-brands', compact('stores', 'query'));
     }
 
     public function contactDetails()

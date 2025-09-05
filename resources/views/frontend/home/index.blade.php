@@ -4,163 +4,321 @@
 @section('description', 'Discover the latest UK discount and voucher codes at Big Saving Hub. Explore exclusive online deals, and save big on your favourite brands. Start saving today!')
 
 @section('content')
-<!-- Page Content <start> -->
-<!-- Search section <start> -->
-<div class="Sec hschbg" style="background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('{{ $heroImage ?? asset('frontend_assets/images/search-bg.webp') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; color: #fff; padding: 120px 0 !important;">
-    <div class="Wrp">
-        <h1>Tired of searching for discounts online?</h1>
-        <p>Get Free Voucher Codes &amp; Promo Codes on Brands You Crave For.</p>
-
-        <label class="hsform">
-            <span class="sclfd">Search ...</span>
-            <button class="bp_search" href="javascript:;" title="Search" aria-label="Search"></button>
-        </label>
-
-        <div class="spcnt">
-            <div class="spcvrf"><strong>All Codes</strong> <span>Verified</span></div>
-            <div class="spcdsc"><strong>{{ number_format($totalCoupons ?? 20000) }}+</strong> <span>Discount Codes</span></div>
+<!-- Modern Hero Section -->
+<div class="modern-hero">
+    <div class="hero-background">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
         </div>
     </div>
-</div>
-<!-- Search section <end> -->
-<!-- Featured Store section <start> -->
-<div class="Sec feSc" style="padding: 60px 0; max-width: 1230px;">
-    <h2>Featured Store</h2>
-    <div class="strsld">
-        @forelse($featuredStores ?? [] as $store)
-        <div>
-            <a href="{{ route('store', $store->seo_url) }}" title="{{ $store->store_name }}" tabindex="-1">
-                @if($store->store_logo)
-                    <img decoding="async" loading="lazy" src="{{ asset('storage/' . $store->store_logo) }}" alt="{{ $store->store_name }} discount code" title="{{ $store->store_name }} discount code" width="150" height="150">
-                @else
-                    <div class="store-placeholder">{{ substr($store->store_name, 0, 2) }}</div>
-                @endif
-            </a>
-        </div>
-        @empty
-        <div class="no-stores">
-            <p>No featured stores available at the moment.</p>
-        </div>
-        @endforelse
-    </div>
-</div>
-<!-- Featured Store section <end> -->
-
-<!-- Featured Discount Voucher Offers section <start> -->
-<div class="Sec bg fdvo" style="padding: 60px 0;">
-    <h2>Featured Discount Voucher Offers</h2>
-    <a href="{{ route('top-discounts') }}" class="subHd" title="Top Offers">View All Top Offers</a>
-    <div class="cpns">
-        @forelse($featuredCoupons ?? [] as $coupon)
-        <div class="cpn {{ $coupon->coupon_code ? 'dl' : 'cd' }}" data-id="{{ $coupon->id }}">
-            <div class="imgs cvr">
-                @if($coupon->cover_logo)
-                    <img decoding="async" class="cvr" src="{{ asset('storage/' . $coupon->cover_logo) }}" alt="{{ $coupon->store->store_name ?? 'Store' }} voucher code" title="{{ $coupon->store->store_name ?? 'Store' }} voucher code" width="328" height="160">
-                @endif
-                @if($coupon->store && $coupon->store->store_logo)
-                    <a href="{{ route('store', $coupon->store->seo_url) }}" title="{{ $coupon->store->store_name }}">
-                        <img decoding="async" loading="lazy" src="{{ asset('storage/' . $coupon->store->store_logo) }}" alt="{{ $coupon->store->store_name }} discount code" title="{{ $coupon->store->store_name }} discount code" width="80" height="80">
-                    </a>
-                @endif
-            </div>
-            <div class="cnt">
-                <div class="str-vrf">
-                    @if($coupon->store)
-                        <a href="{{ route('store', $coupon->store->seo_url) }}" title="{{ $coupon->store->store_name }}">{{ $coupon->store->store_name }}</a>
-                    @endif
-                    @if($coupon->verified)
-                        <span>Verified</span>
-                    @endif
-                </div>
-                <h3 role="button" aria-label="{{ $coupon->coupon_code ? 'Reveal Code' : 'Get Deal' }}">
-                    {{ $coupon->coupon_title }}
-                </h3>
-                <div class="trm-cnt">
-                    @if($coupon->terms)
-                        <button aria-label="View Terms" class="ctb">View Terms</button>
-                    @endif
-                    <span>{{ number_format($coupon->sort_order ?? rand(500, 5000)) }} Used</span>
-                </div>
-                @if($coupon->coupon_code)
-                    <button class="cpBtn reveal-code" aria-label="Reveal Code" 
-                            data-code="{{ $coupon->coupon_code }}" 
-                            data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                            data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                            data-title="{{ $coupon->coupon_title }}">
-                        Reveal Code
-                    </button>
-                @else
-                    <a href="{{ $coupon->affiliate_url }}" class="cpBtn get-deal" target="_blank" rel="nofollow" aria-label="Get Deal">Get Deal</a>
-                @endif
-            </div>
-        </div>
-        @empty
-        <div class="no-coupons">
-            <p>No featured coupons available at the moment. Check back soon!</p>
-        </div>
-        @endforelse
-    </div>
-</div>
-<!-- Featured Discount Voucher Offers section <end> -->
-
-
-
-<!-- Slider Section <start> -->
-<div class="Sec bg">
-
-    <!-- Clothing & Accessories <start> -->
-    <div class="slds">
-        <h2><a href="{{ route('category', 'clothing-and-accessories') }}" title="Clothing & Accessories">Clothing & Accessories <i class="bp_drprgt-r"></i></a></h2>
-        <div class="cpns">
-            @forelse($clothingCoupons ?? [] as $coupon)
-            <div class="cpn {{ $coupon->coupon_code ? 'dl' : 'cd' }}" data-id="{{ $coupon->id }}">
-                <div class="imgs">
-                    @if($coupon->store && $coupon->store->store_logo)
-                        <a href="{{ route('store', $coupon->store->seo_url) }}" title="{{ $coupon->store->store_name }}">
-                            <img src="{{ asset('storage/' . $coupon->store->store_logo) }}" alt="{{ $coupon->store->store_name }} discount code" title="{{ $coupon->store->store_name }} discount code" decoding="async" loading="lazy" width="80" height="80">
-                        </a>
-                    @endif
-                    <button title="Add to Favourite" aria-label="Add to Favourite" class="cfb bp_save"></button>
-                </div>
-                <div class="cnt">
-                    <div class="str-vrf">
-                        @if($coupon->store)
-                            <a href="{{ route('store', $coupon->store->seo_url) }}">{{ $coupon->store->store_name }}</a>
-                        @endif
-                        @if($coupon->verified)
-                            <span>Verified</span>
-                        @endif
-                    </div>
-                    <h3 role="button" aria-label="{{ $coupon->coupon_code ? 'Reveal Code' : 'Get Deal' }}">
-                        {{ $coupon->coupon_title }}
-                    </h3>
-                    <div class="trm-cnt">
-                        @if($coupon->terms)
-                            <button aria-label="View Terms" class="ctb">View Terms</button>
-                        @endif
-                        <span>{{ number_format($coupon->sort_order ?? rand(500, 5000)) }} Used</span>
-                    </div>
-                    @if($coupon->coupon_code)
-                        <button class="cpBtn reveal-code" aria-label="Reveal Code" 
-                                data-code="{{ $coupon->coupon_code }}" 
-                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                                data-title="{{ $coupon->coupon_title }}">
-                            Reveal Code
+    
+    <div class="hero-content">
+        <div class="container">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <span class="gradient-text">Save Big</span> with Exclusive
+                    <span class="highlight">Coupon Codes</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Discover thousands of verified discount codes from your favorite brands. 
+                    Start saving money on every purchase today!
+                </p>
+                
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" placeholder="Search for stores, brands, or products..." class="search-input">
+                        <button class="search-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                         </button>
+                    </div>
+                </div>
+                
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ number_format($totalCoupons ?? 20000) }}+</div>
+                        <div class="stat-label">Active Coupons</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ number_format($totalStores ?? 1000) }}+</div>
+                        <div class="stat-label">Partner Stores</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Verified Codes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Featured Brands Section -->
+<div class="featured-brands-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Featured Brands</h2>
+            <p class="section-subtitle">Shop from your favorite brands with exclusive discounts</p>
+        </div>
+        
+        <div class="brands-carousel">
+            <div class="carousel-container">
+                <button class="carousel-btn prev-btn" onclick="moveCarousel(-1)">‹</button>
+                <div class="brands-slider" id="brandsSlider">
+                    @forelse($featuredStores ?? [] as $store)
+                    <div class="brand-item">
+                        <a href="{{ route('store', $store->seo_url) }}" class="brand-link">
+                            <div class="brand-logo-circle">
+                                @if($store->store_logo)
+                                    <img src="{{ asset('storage/' . $store->store_logo) }}" alt="{{ $store->store_name }}" class="brand-logo">
+                                @else
+                                    <div class="brand-placeholder">
+                                        <span class="brand-initials">{{ substr($store->store_name, 0, 2) }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </a>
+                    </div>
+                    @empty
+                    <div class="no-brands">
+                        <div class="no-brands-icon">🏪</div>
+                        <h3>No Featured Brands</h3>
+                        <p>We're working on adding amazing brands for you!</p>
+                    </div>
+                    @endforelse
+                </div>
+                <button class="carousel-btn next-btn" onclick="moveCarousel(1)">›</button>
+            </div>
+            
+            <!-- Pagination Dots -->
+            <div class="carousel-dots" id="carouselDots">
+                <!-- Dots will be generated dynamically by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="view-all-brands">
+            <a href="{{ route('all-brands-uk') }}" class="btn-outline">View All Brands</a>
+        </div>
+    </div>
+</div>
+<!-- Hot Deals Section -->
+<div class="hot-deals-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">🔥 Hot Deals</h2>
+   
+         <p class="section-subtitle">Limited time offers you can't miss</p>
+            <a href="{{ route('top-discounts') }}" class="view-all-link">View All Deals →</a>
+        </div>
+        
+        <div class="deals-grid">
+            @forelse($featuredCoupons ?? [] as $coupon)
+            <div class="deal-card {{ $coupon->coupon_code ? 'has-code' : 'deal-only' }}" data-id="{{ $coupon->id }}">
+                <!-- Coupon Image Section -->
+                <div class="deal-image-section">
+                    @if($coupon->cover_logo)
+                        <img src="{{ asset('storage/' . $coupon->cover_logo) }}" alt="{{ $coupon->coupon_title }}" class="deal-cover-image">
                     @else
-                        <button class="cpBtn get-deal" aria-label="Get Deal">Get Deal</button>
+                        <div class="deal-placeholder-image">
+                            <div class="placeholder-icon">🎁</div>
+                            <span>{{ $coupon->store->store_name ?? 'Deal' }}</span>
+                        </div>
                     @endif
+                    
+                    <!-- Discount Badge -->
+                    <div class="discount-badge">
+                        {{ rand(10, 70) }}% OFF
+                    </div>
+                    
+                    <!-- Exclusive Badge -->
+                    @if($coupon->exclusive)
+                        <div class="exclusive-badge">
+                            <span class="exclusive-icon">⭐</span>
+                            EXCLUSIVE
+                        </div>
+                    @endif
+                </div>
+                
+                <!-- Deal Content -->
+                <div class="deal-content-wrapper">
+                    <div class="deal-header">
+                        <div class="store-info">
+                            @if($coupon->store && $coupon->store->store_logo)
+                                <img src="{{ asset('storage/' . $coupon->store->store_logo) }}" alt="{{ $coupon->store->store_name }}" class="store-logo">
+                            @endif
+                            <div class="store-details">
+                                <h3 class="store-name">{{ $coupon->store->store_name ?? 'Store' }}</h3>
+                                @if($coupon->verified)
+                                    <span class="verified-badge">✓ Verified</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="deal-type">
+                            @if($coupon->coupon_code)
+                                <span class="type-badge code">
+                                    <span class="badge-icon">🔑</span>
+                                    CODE
+                                </span>
+                            @else
+                                <span class="type-badge deal">
+                                    <span class="badge-icon">🎯</span>
+                                    DEAL
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                    
+                    <div class="deal-content">
+                        <h4 class="deal-title">{{ $coupon->coupon_title }}</h4>
+                        <div class="deal-meta">
+                            <div class="meta-item">
+                                <span class="meta-icon">👥</span>
+                                <span class="usage-count">{{ number_format($coupon->sort_order ?? rand(500, 5000)) }} used</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-icon">⏰</span>
+                                <span class="expiry-time">Limited Time</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="deal-footer">
+                        
+                        @if($coupon->coupon_code)
+                            <button class="deal-btn reveal-code" 
+                                    data-code="{{ $coupon->coupon_code }}" 
+                                    data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
+                                    data-store="{{ $coupon->store->store_name ?? 'Store' }}"
+                                    data-title="{{ $coupon->coupon_title }}">
+                                <span class="btn-icon">🔓</span>
+                                <span class="btn-text">Reveal Code</span>
+                                <span class="btn-arrow">→</span>
+                            </button>
+                        @else
+                            <button class="deal-btn get-deal" 
+                                    data-affiliate="{{ $coupon->affiliate_url }}"
+                                    data-store="{{ $coupon->store->store_name ?? 'Store' }}"
+                                    data-title="{{ $coupon->coupon_title }}">
+                                <span class="btn-icon">🎯</span>
+                                <span class="btn-text">Get Deal</span>
+                                <span class="btn-arrow">→</span>
+                            </button>
+                        @endif
+                    </div>
                 </div>
             </div>
             @empty
-            <div class="no-coupons">
-                <p>No clothing coupons available at the moment.</p>
+            <div class="no-deals">
+                <div class="no-deals-icon">😔</div>
+                <h3>No Hot Deals Available</h3>
+                <p>Check back soon for amazing offers!</p>
             </div>
             @endforelse
         </div>
     </div>
-    <!-- Clothing & Accessories <end> -->
+</div>
+
+
+
+<!-- Categories Section -->
+<div class="categories-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Shop by Category</h2>
+            <p class="section-subtitle">Find deals in your favorite shopping categories</p>
+        </div>
+        
+        <div class="categories-grid">
+            <div class="category-card">
+                <div class="category-icon">👕</div>
+                <h3>Fashion & Style</h3>
+                <p>Clothing, shoes, accessories</p>
+                <a href="{{ route('category', 'clothing-and-accessories') }}" class="category-link">Shop Now →</a>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">🏠</div>
+                <h3>Home & Garden</h3>
+                <p>Furniture, decor, tools</p>
+                <a href="{{ route('category', 'home-and-garden') }}" class="category-link">Shop Now →</a>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">💄</div>
+                <h3>Beauty & Health</h3>
+                <p>Cosmetics, skincare, wellness</p>
+                <a href="{{ route('category', 'health-and-beauty') }}" class="category-link">Shop Now →</a>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">💍</div>
+                <h3>Jewelry & Watches</h3>
+                <p>Luxury accessories, timepieces</p>
+                <a href="{{ route('category', 'jewelry-and-watches') }}" class="category-link">Shop Now →</a>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">👶</div>
+                <h3>Baby & Kids</h3>
+                <p>Toys, clothing, essentials</p>
+                <a href="{{ route('category', 'baby-and-kids') }}" class="category-link">Shop Now →</a>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">🌸</div>
+                <h3>Flowers & Gifts</h3>
+                <p>Bouquets, presents, occasions</p>
+                <a href="{{ route('category', 'flowers-and-gifts') }}" class="category-link">Shop Now →</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Category Deals Section -->
+<div class="category-deals-section">
+    <div class="container">
+        <!-- Clothing & Accessories -->
+        <div class="category-section">
+            <div class="category-header">
+                <h3 class="category-title">👕 Clothing & Accessories</h3>
+                <a href="{{ route('category', 'clothing-and-accessories') }}" class="view-more">View All →</a>
+            </div>
+            <div class="category-deals">
+                @forelse($clothingCoupons ?? [] as $coupon)
+                <div class="mini-deal-card">
+                    <div class="deal-store">
+                        @if($coupon->store && $coupon->store->store_logo)
+                            <img src="{{ asset('storage/' . $coupon->store->store_logo) }}" alt="{{ $coupon->store->store_name }}" class="mini-store-logo">
+                        @endif
+                        <span class="mini-store-name">{{ $coupon->store->store_name ?? 'Store' }}</span>
+                    </div>
+                    <div class="deal-info">
+                        <h4 class="mini-deal-title">{{ Str::limit($coupon->coupon_title, 40) }}</h4>
+                        <div class="deal-actions">
+                            @if($coupon->coupon_code)
+                                <button class="mini-btn reveal-code" 
+                                        data-code="{{ $coupon->coupon_code }}" 
+                                        data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
+                                        data-store="{{ $coupon->store->store_name ?? 'Store' }}"
+                                        data-title="{{ $coupon->coupon_title }}">
+                                    Reveal Code
+                                </button>
+                            @else
+                                <button class="mini-btn get-deal" 
+                                        data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
+                                        data-store="{{ $coupon->store->store_name ?? 'Store' }}"
+                                        data-title="{{ $coupon->coupon_title }}">
+                                    Get Deal
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="no-category-deals">
+                    <p>No clothing deals available at the moment.</p>
+                </div>
+                @endforelse
+            </div>
+        </div>
 
     <!-- Home & Garden <start> -->
     <div class="slds Sec">
@@ -203,7 +361,12 @@
                             Reveal Code
                         </button>
                     @else
-                        <button class="cpBtn get-deal" aria-label="Get Deal">Get Deal</button>
+                        <button class="cpBtn get-deal" aria-label="Get Deal" 
+                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
+                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
+                                data-title="{{ $coupon->coupon_title }}">
+                            Get Deal
+                        </button>
                     @endif
                 </div>
             </div>
@@ -270,7 +433,12 @@
                             Reveal Code
                         </button>
                     @else
-                        <button class="cpBtn get-deal" aria-label="Get Deal">Get Deal</button>
+                        <button class="cpBtn get-deal" aria-label="Get Deal" 
+                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
+                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
+                                data-title="{{ $coupon->coupon_title }}">
+                            Get Deal
+                        </button>
                     @endif
                 </div>
             </div>
@@ -324,7 +492,12 @@
                             Reveal Code
                         </button>
                     @else
-                        <button class="cpBtn get-deal" aria-label="Get Deal">Get Deal</button>
+                        <button class="cpBtn get-deal" aria-label="Get Deal" 
+                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
+                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
+                                data-title="{{ $coupon->coupon_title }}">
+                            Get Deal
+                        </button>
                     @endif
                 </div>
             </div>
@@ -392,7 +565,12 @@
                             Reveal Code
                         </button>
                     @else
-                        <button class="cpBtn get-deal" aria-label="Get Deal">Get Deal</button>
+                        <button class="cpBtn get-deal" aria-label="Get Deal" 
+                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
+                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
+                                data-title="{{ $coupon->coupon_title }}">
+                            Get Deal
+                        </button>
                     @endif
                 </div>
             </div>
@@ -446,7 +624,12 @@
                             Reveal Code
                         </button>
                     @else
-                        <button class="cpBtn get-deal" aria-label="Get Deal">Get Deal</button>
+                        <button class="cpBtn get-deal" aria-label="Get Deal" 
+                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
+                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
+                                data-title="{{ $coupon->coupon_title }}">
+                            Get Deal
+                        </button>
                     @endif
                 </div>
             </div>
@@ -521,7 +704,7 @@
     </div>
 </div>
 
-        <!-- Enhanced Coupon Modal -->
+<!-- Enhanced Coupon Modal -->
 <div id="couponModal" aria-hidden="true" style="display:none;">
     <div class="cm-overlay"></div>
     
@@ -530,112 +713,89 @@
         <button class="cm-close" aria-label="Close popup">&times;</button>
 
         <!-- Main Popup Content -->
-        <div class="cm-main-content">
+        <div class="cm-main-content text-center">
             <h3 class="cm-title" id="cmTitle">Here is your code</h3>
             
-            <div class="cm-code-wrap">
-                <span id="cmCode" class="cm-code">CODE</span>
-                <button id="cmCopy" class="cm-copy" aria-label="Copy code">Copy Code</button>
+            <div class="cm-code-section">
+                <div class="cm-code-display" id="cmCode">CODE123</div>
+                <button class="cm-copy-btn" id="cmCopy">Copy Code</button>
             </div>
-
-            <div class="cm-actions">
-                <a id="cmContinue" class="cm-continue" href="#" target="_blank" rel="noopener noreferrer">Continue to store</a>
-            </div>
-
-            <p class="cm-note" id="cmNote">This store website has been opened in a new tab. Simply copy and paste the code and enter it at the checkout.</p>
-
-            <!-- Feedback Section -->
-            <div class="cm-feedback">
-                <p>Did this promotion work for you?</p>
-                <div class="cm-feedback-buttons">
-                    <button class="cm-feedback-btn" data-feedback="positive">👍</button>
-                    <button class="cm-feedback-btn" data-feedback="negative">👎</button>
-                </div>
-            </div>
-
-            <!-- More Details Link -->
-            <div class="cm-more-details">
-                <button class="cm-more-btn">More Details <span class="cm-chevron">▼</span></button>
+            
+            <div class="cm-note" id="cmNote">
+                <p>Copy the code above and use it at checkout to get your discount!</p>
             </div>
         </div>
     </div>
 
-    <!-- Email Subscription Popup (Smaller, Below Main Popup) -->
+    <!-- Email Subscription Popup -->
     <div class="cm-email-popup" role="dialog" aria-modal="true" aria-label="Email Subscription Popup">
         <div class="cm-email-content">
             <div class="cm-brand-logo">
-                <div class="cm-brand-circle">
-                    @if($featuredStores->count() > 0 && $featuredStores->first()->store_logo)
-                        <img src="{{ asset('storage/' . $featuredStores->first()->store_logo) }}" alt="{{ $featuredStores->first()->store_name }} logo" width="140" height="40" style="border-radius: 100%; border: 3px solid #fff;">
-                    @else
-                        <img src="{{ asset('frontend_assets/images/logo.png') }}" alt="Brand logo" width="140" height="40">
-                    @endif
+                <div class="cm-brand-circle" id="cmBrandLogo">
+                    <span id="cmBrandText">STORE</span>
                 </div>
             </div>
             
-            <h4 class="cm-email-title" id="cmEmailTitle">Store straight to your inbox</h4>
+            <h3 class="cm-email-title" id="cmEmailTitle">Get More Deals!</h3>
+            <p class="cm-email-subtitle">Subscribe to get exclusive offers and discounts</p>
             
             <form class="cm-email-form" id="cmEmailForm">
-                <label for="cmEmailInput">Email Address</label>
-                <input type="email" id="cmEmailInput" placeholder="Your Email Address" required>
-                <button type="submit" class="cm-email-submit">Send Me New Codes</button>
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit">Subscribe</button>
             </form>
             
-            <p class="cm-email-consent">
-                By signing up I agree to topvoucherscode's <a href="{{ route('privacy-policy') }}" target="_blank">Privacy Policy</a> and consent to receive emails about offers.
-            </p>
-        </div>
-
-        <!-- Website Logo at Bottom -->
-        <div class="cm-website-logo">
-            <span class="cm-website-name">Crop Vouchers Code</span>
+            <p class="cm-email-privacy">We respect your privacy. Unsubscribe at any time.</p>
         </div>
     </div>
 </div>
 
 <style>
-/* Enhanced Modal CSS - Two Popup Layout */
-#couponModal { 
-    position: fixed; 
-    inset: 0; 
-    display: none; 
-    align-items: center; 
-    justify-content: center; 
-    z-index: 9999; 
-    flex-direction: column;
-    gap: 20px;
+/* Coupon Modal Styles */
+#couponModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-#couponModal .cm-overlay { 
-    position: absolute; 
+.cm-overlay {
+    position: absolute;
     inset: 0; 
     background: rgba(0,0,0,0.6); 
 }
 
 /* Main Voucher Code Popup */
 .cm-main-popup { 
-    position: relative; 
+  position: relative;
+  top: 20px;
+  margin: auto;
     width: 480px; 
-    max-width: calc(100% - 40px); 
+    max-width: calc(50% - 30px); 
     background: #fff; 
     border-radius: 16px; 
-    text-align: center; 
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     overflow: hidden;
     z-index: 2;
 }
 
 /* Email Subscription Popup */
 .cm-email-popup { 
-    position: relative; 
+  position: relative;
+  margin: auto;
+  top: 40px;
     width: 480px; 
-    max-width: calc(100% - 40px); 
+    max-width: calc(50% - 30px); 
     background: #fff; 
     border-radius: 16px; 
-    text-align: center; 
-    box-shadow: 0 15px 40px rgba(0,0,0,0.25); 
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     overflow: hidden;
-    z-index: 1;
+    z-index: 2;
 }
 
 #couponModal .cm-close { 
@@ -663,8 +823,8 @@
 
 /* Main Popup Content */
 .cm-main-content {
-    padding: 40px 30px 30px;
     background: #fff;
+    text-align: center;
 }
 
 .cm-title {
@@ -675,44 +835,35 @@
     line-height: 1.2;
 }
 
-.cm-code-wrap { 
-    display: flex; 
-    gap: 15px; 
-    align-items: center; 
-    justify-content: center; 
-    margin: 25px 0; 
+.cm-code-section {
+    margin: 20px 0;
 }
 
-.cm-code { 
-    background: #f0f9ff; 
-    padding: 18px 25px; 
-    border-radius: 10px; 
-    font-weight: 700; 
-    font-size: 20px;
-    letter-spacing: 1.5px; 
-    color: #0c4a6e;
-    border: 2px dashed #10b981;
-    min-width: 140px;
-    font-family: 'Courier New', monospace;
+.cm-code-display {
+    background: #f8f9fa;
+    border: 2px dashed #FF0000;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #FF0000;
+    margin-bottom: 15px;
+    font-family: monospace;
 }
 
-.cm-copy { 
-    background: #10b981; 
-    color: #fff; 
-    border: none; 
-    padding: 15px 25px; 
-    border-radius: 10px; 
-    cursor: pointer; 
-    font-weight: 600;
+.cm-copy-btn {
+    background: #FF0000;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
     font-size: 16px;
-    transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
-.cm-copy:hover {
-    background: #059669;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+.cm-copy-btn:hover {
+    background: #FF0000;
 }
 
 .cm-note { 
@@ -795,37 +946,35 @@
 }
 
 /* Email Popup Content */
-.cm-email-content {
+/* .cm-email-content {
     padding: 25px 20px 20px;
     background: #f8f9fa;
-}
+} */
 
 .cm-brand-logo {
     margin-bottom: 15px;
 }
 
 .cm-brand-circle {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background: #000;
-    color: white;
+    background: #FF0000;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 16px;
     margin: 0 auto;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .cm-email-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #111827;
-    margin: 0 0 15px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
 }
 
 .cm-email-form {
@@ -857,23 +1006,20 @@
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
-.cm-email-submit {
-    background: #10b981;
-    color: #fff;
+.cm-email-form button {
+    width: 100%;
+    background: #FF0000;
+    color: white;
     border: none;
-    padding: 12px 18px;
+    padding: 12px;
     border-radius: 6px;
-    font-weight: 600;
-    font-size: 14px;
+    font-size: 16px;
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    transition: background 0.3s;
 }
 
-.cm-email-submit:hover {
-    background: #059669;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+.cm-email-form button:hover {
+    background: #FF0000;
 }
 
 .cm-email-consent {
@@ -1188,32 +1334,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const cmCopy = document.getElementById('cmCopy');
     const cmContinue = document.getElementById('cmContinue');
     const cmTitle = document.getElementById('cmTitle');
-    const cmNote = document.getElementById('cmNote');
-    const cmEmailTitle = document.getElementById('cmEmailTitle');
-    const cmEmailForm = document.getElementById('cmEmailForm');
-    const cmEmailInput = document.getElementById('cmEmailInput');
+      const cmNote = document.getElementById('cmNote');
+  const cmEmailTitle = document.getElementById('cmEmailTitle');
+  const cmBrandLogo = document.getElementById('cmBrandLogo');
+  const cmBrandText = document.getElementById('cmBrandText');
 
-    function openModal(code, affiliate, store, title) {
-        // Update main popup content
-        cmCode.textContent = code || '';
-        cmTitle.textContent = title || 'Here is your code';
-        cmNote.textContent = `This ${store} website has been opened in a new tab. Simply copy and paste the code ${code} and enter it at the checkout.`;
-        
-        // Update email popup content
-        cmEmailTitle.textContent = `${store} straight to your inbox`;
-        
-        // Update brand logo with store name
-        const brandLogo = document.getElementById('cmBrandLogo');
-        if (brandLogo) {
-            // Take first 5 characters of store name for logo
-            const logoText = store ? store.substring(0, 5).toUpperCase() : 'STORE';
-            brandLogo.textContent = logoText;
-        }
-        
-        modal.style.display = 'flex';
-        modal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
+  function openModal(code, affiliate, store, title) {
+    if (cmCode) cmCode.textContent = code;
+    if (cmTitle) cmTitle.textContent = title || 'Here is your code';
+    if (cmEmailTitle) cmEmailTitle.textContent = `Get More ${store} Deals!`;
+    
+    if (cmBrandLogo && cmBrandText) {
+      if (store && store !== 'Store') {
+        cmBrandText.textContent = store.substring(0,5).toUpperCase();
+      } else {
+        cmBrandText.textContent = 'STORE';
+      }
     }
+
+    modal.style.display = 'block';
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
 
     function closeModal() {
         modal.style.display = 'none';
@@ -1221,117 +1363,75 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.style.overflow = '';
     }
 
-    // Handle Reveal Code buttons - UPDATED LOGIC
-    document.querySelectorAll('.cpBtn.reveal-code').forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            
-            const code = this.dataset.code;
-            const affiliate = this.dataset.affiliate;
-            const store = this.dataset.store;
-            const title = this.dataset.title;
-            
-            if (code && affiliate) {
-                // Open your website with popup in NEW tab
-                const currentUrl = window.location.href;
-                const popupUrl = currentUrl + '?show_coupon=1&code=' + encodeURIComponent(code) + '&affiliate=' + encodeURIComponent(affiliate) + '&store=' + encodeURIComponent(store) + '&title=' + encodeURIComponent(title);
-                window.open(popupUrl, '_blank');
-                
-                // Redirect CURRENT tab to affiliate URL
-                window.location.href = affiliate;
-            }
-        });
+  // Reveal code buttons
+  document.querySelectorAll('.cpBtn.reveal-code').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const code = this.dataset.code;
+      const affiliate = this.dataset.affiliate;
+      const store = this.dataset.store;
+      const title = this.dataset.title;
+      if (code && affiliate) {
+        const currentUrl = window.location.href.split('#')[0].split('?')[0];
+        const popupUrl = currentUrl + '?show_coupon=1&code=' + encodeURIComponent(code) + '&affiliate=' + encodeURIComponent(affiliate) + '&store=' + encodeURIComponent(store) + '&title=' + encodeURIComponent(title);
+        window.open(popupUrl, '_blank');
+        window.location.href = affiliate;
+      }
     });
+  });
 
-    // Handle Get Deal anchors to behave like Reveal: open new tab of our site (to show modal) and redirect current tab to affiliate
-    document.querySelectorAll('.cpBtn.get-deal').forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            // If it's an anchor, get href; if button (fallback), try data-affiliate
-            const affiliate = this.getAttribute('href') || this.dataset.affiliate || '#';
-            const store = this.dataset.store || this.dataset.title || '';
-            const title = this.dataset.title || '';
-
-            try {
-                const params = new URLSearchParams();
-                params.set('show_coupon', '1');
-                params.set('code', ''); // no code available
-                if (affiliate) params.set('affiliate', affiliate);
-                if (store) params.set('store', store);
-                if (title) params.set('title', title);
-                const newUrl = window.location.origin + window.location.pathname + '?' + params.toString();
-                window.open(newUrl, '_blank');
-            } catch (err) {
-                // ignore
-            }
-
-            // redirect current tab to affiliate
-            if (affiliate && affiliate !== '#') {
-                window.location.href = affiliate;
-            }
-
-            e.preventDefault();
-        });
+  // Get Deal buttons - same logic as Reveal Code but without code
+  document.querySelectorAll('.cpBtn.get-deal').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const affiliate = this.getAttribute('href') || this.dataset.affiliate || '#';
+      const store = this.dataset.store || this.dataset.title || '';
+      const title = this.dataset.title || '';
+      
+      if (affiliate && affiliate !== '#') {
+        const currentUrl = window.location.href.split('#')[0].split('?')[0];
+        const popupUrl = currentUrl + '?show_coupon=1&code=&affiliate=' + encodeURIComponent(affiliate) + '&store=' + encodeURIComponent(store) + '&title=' + encodeURIComponent(title);
+        window.open(popupUrl, '_blank');
+        window.location.href = affiliate;
+      }
     });
+  });
 
-    // Copy code functionality
-    if (cmCopy) {
-        cmCopy.addEventListener('click', function () {
-            const text = cmCode.textContent.trim();
-            if (!text) return;
-            
-            navigator.clipboard?.writeText(text).then(() => {
-                const prev = cmCopy.textContent;
-                cmCopy.textContent = 'Copied!';
-                cmCopy.style.background = '#059669';
-                
-                setTimeout(() => {
-                    cmCopy.textContent = prev;
-                    cmCopy.style.background = '#10b981';
-                }, 2000);
-            }).catch(() => {
-                // Fallback for older browsers
-                const tmp = document.createElement('input');
-                document.body.appendChild(tmp);
-                tmp.value = text;
-                tmp.select();
-                document.execCommand('copy');
-                document.body.removeChild(tmp);
-                
-                cmCopy.textContent = 'Copied!';
-                cmCopy.style.background = '#059669';
-                
-                setTimeout(() => {
-                    cmCopy.textContent = 'Copy Code';
-                    cmCopy.style.background = '#10b981';
-                }, 2000);
-            });
+  // Copy button
+  if (cmCopy) {
+    cmCopy.addEventListener('click', function() {
+      const code = cmCode ? cmCode.textContent : '';
+      if (code) {
+        navigator.clipboard.writeText(code).then(function() {
+          const originalText = cmCopy.textContent;
+          cmCopy.textContent = 'Copied!';
+          cmCopy.style.backgroundColor = '#218838';
+          
+          setTimeout(function() {
+            cmCopy.textContent = originalText;
+            cmCopy.style.backgroundColor = '#28a745';
+          }, 2000);
+        }).catch(function(err) {
+          console.error('Could not copy text: ', err);
+          alert('Coupon Code: ' + code);
         });
-    }
+      }
+    });
+  }
 
-    // Email signup form
-    if (cmEmailForm) {
-        cmEmailForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            
-            const email = cmEmailInput.value.trim();
-            if (!email) return;
-            
-            // Here you can add AJAX call to your newsletter subscription endpoint
-            // For now, we'll just show a success message
-            
-            const submitBtn = this.querySelector('.cm-email-submit');
-            const originalText = submitBtn.textContent;
-            
-            submitBtn.textContent = 'Subscribed!';
-            submitBtn.style.background = '#059669';
-            cmEmailInput.value = '';
-            
-            setTimeout(() => {
-                submitBtn.textContent = originalText;
-                submitBtn.style.background = '#10b981';
-            }, 2000);
-        });
-    }
+  // Email form
+  const emailForm = document.getElementById('cmEmailForm');
+  if (emailForm) {
+    emailForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = this.querySelector('input[type="email"]').value;
+      if (email) {
+        // Here you can add AJAX call to subscribe
+        alert('Thank you for subscribing!');
+        closeModal();
+      }
+    });
+  }
 
     // Feedback buttons
     document.querySelectorAll('.cm-feedback-btn').forEach(btn => {
@@ -1374,42 +1474,1599 @@ document.addEventListener('DOMContentLoaded', function () {
         if (ev.key === 'Escape') closeModal(); 
     });
 
-    // Check if page loaded with modal parameters (for new tab functionality)
-    try {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('show_coupon') === '1') {
-            const code = urlParams.get('code') || '';
-            const affiliate = urlParams.get('affiliate') || '#';
-            const store = urlParams.get('store') || 'Store';
-            const title = urlParams.get('title') || 'Here is your code';
-
-            openModal(code, affiliate, store, title);
-
-            // If no code, display 'No code required' instead and disable copy
-            if (!code) {
-                const codeEl = document.getElementById('cmCode');
-                if (codeEl) codeEl.textContent = 'No code required';
-                const copyBtn = document.getElementById('cmCopy');
-                if (copyBtn) {
-                    copyBtn.disabled = true;
-                    copyBtn.style.opacity = '0.6';
-                    copyBtn.style.cursor = 'not-allowed';
-                }
-                const continueBtn = document.getElementById('cmContinue');
-                if (continueBtn) continueBtn.href = affiliate || '#';
-            } else {
-                const continueBtn = document.getElementById('cmContinue');
-                if (continueBtn) continueBtn.href = affiliate || '#';
-            }
-
-            // Clean URL
-            const cleanUrl = window.location.pathname;
-            history.replaceState({}, '', cleanUrl);
+  // show modal if params present
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('show_coupon') === '1') {
+      const code = urlParams.get('code') || '';
+      const affiliate = urlParams.get('affiliate') || '#';
+      const store = urlParams.get('store') || 'Store';
+      const title = urlParams.get('title') || 'Here is your code';
+      
+      openModal(code, affiliate, store, title);
+      
+      // If no code, show "No code required" message
+      if (!code) {
+        if (cmCode) cmCode.textContent = 'No code required';
+        if (cmCopy) {
+          cmCopy.disabled = true;
+          cmCopy.style.opacity = '0.6';
+          cmCopy.style.cursor = 'not-allowed';
         }
-    } catch (err) {
-        // Ignore parsing errors
+      }
+      
+      history.replaceState({}, '', window.location.pathname);
     }
+  } catch (e) {
+    console.log('URL params not supported');
+  }
 });
+</script>
+
+<!-- Modern Home Page Styles -->
+<style>
+/* Modern Hero Section */
+.modern-hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow: hidden;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.floating-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 6s ease-in-out infinite;
+}
+
+.shape-1 {
+    width: 80px;
+    height: 80px;
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 120px;
+    height: 120px;
+    top: 60%;
+    right: 15%;
+    animation-delay: 2s;
+}
+
+.shape-3 {
+    width: 60px;
+    height: 60px;
+    top: 30%;
+    right: 30%;
+    animation-delay: 4s;
+}
+
+.shape-4 {
+    width: 100px;
+    height: 100px;
+    bottom: 20%;
+    left: 20%;
+    animation-delay: 1s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.hero-text {
+    text-align: center;
+    color: white;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.highlight {
+    color: #ffd93d;
+    text-shadow: 0 0 20px rgba(255, 217, 61, 0.5);
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search-container {
+    margin-bottom: 3rem;
+}
+
+.search-box {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.search-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+.hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #ffd93d;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+/* Featured Brands Section */
+.featured-brands-section {
+    padding: 4rem 0;
+    background: #ffffff;
+}
+
+.featured-brands-section .section-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.featured-brands-section .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333333 !important;
+    margin-bottom: 0.5rem;
+}
+
+.featured-brands-section .section-subtitle {
+    font-size: 1rem;
+    color: #666666 !important;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.brands-carousel {
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.carousel-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+}
+
+.brands-slider {
+    display: flex;
+    gap: 2rem;
+    overflow: visible;
+    padding: 1rem 0;
+    width: 100%;
+    max-width: 1000px;
+    transition: transform 0.5s ease;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #FF0000;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-btn:hover {
+    background: #cc0000;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.prev-btn {
+    left: -20px;
+}
+
+.next-btn {
+    right: -20px;
+}
+
+.brand-item {
+    flex: 0 0 120px;
+    text-align: center;
+    margin: 0 1rem;
+}
+
+.brand-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+}
+
+.brand-link:hover {
+    transform: translateY(-5px);
+}
+
+.brand-logo-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.brand-link:hover .brand-logo-circle {
+    border-color: #FF0000;
+    box-shadow: 0 8px 30px rgba(255, 0, 0, 0.2);
+    transform: scale(1.05);
+}
+
+.brand-logo {
+    max-width: 60px;
+    max-height: 60px;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+.brand-link:hover .brand-logo {
+    transform: scale(1.1);
+}
+
+.brand-placeholder {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #FF0000, #000000);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.brand-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="brand-pattern" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23brand-pattern)"/></svg>');
+    opacity: 0.3;
+}
+
+.brand-initials {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: #FF0000;
+    transform: scale(1.2);
+}
+
+.dot:hover {
+    background: #FF0000;
+    opacity: 0.7;
+}
+
+.no-brands {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+}
+
+.no-brands-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.no-brands h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.view-all-brands {
+    text-align: center;
+}
+
+.btn-outline {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    border: 2px solid #FF0000;
+    color: #FF0000;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+    background: #FF0000;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Hot Deals Section */
+.hot-deals-section {
+    padding: 3rem 0;
+    background: #ffffff;
+}
+
+.section-title {
+    color: #333333 !important;
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+    color: #666666 !important;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.view-all-link {
+    color: #FF0000;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+    display: block;
+    margin-bottom: 2rem;
+}
+
+.view-all-link:hover {
+    color: #cc0000;
+    text-decoration: underline;
+}
+
+.deals-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.deal-card {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e5e5;
+    transition: all 0.3s ease;
+    position: relative;
+    height: 320px;
+}
+
+.deal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Deal Image Section */
+.deal-image-section {
+    position: relative;
+    height: 140px;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.deal-cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.deal-card:hover .deal-cover-image {
+    transform: scale(1.05);
+}
+
+.deal-placeholder-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    color: #666;
+}
+
+.placeholder-icon {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+}
+
+.deal-placeholder-image span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Discount Badge */
+.discount-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #FF0000;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    z-index: 3;
+}
+
+/* Exclusive Badge */
+.exclusive-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #FF0000;
+    color: white;
+    padding: 0.2rem 0.4rem;
+    border-radius: 8px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+    z-index: 3;
+}
+
+.exclusive-icon {
+    font-size: 0.6rem;
+}
+
+/* Deal Content Wrapper */
+.deal-content-wrapper {
+    padding: 1rem;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.deal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.store-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.store-logo {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #e5e5e5;
+}
+
+.store-details h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.verified-badge {
+    background: #38a169;
+    color: white;
+    padding: 0.1rem 0.4rem;
+    border-radius: 8px;
+    font-size: 0.6rem;
+    font-weight: 600;
+    margin-top: 0.1rem;
+    display: inline-block;
+}
+
+.type-badge {
+    padding: 0.2rem 0.4rem;
+    border-radius: 8px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+}
+
+.type-badge.code {
+    background: #FF0000;
+    color: white;
+}
+
+.type-badge.deal {
+    background: #333;
+    color: white;
+}
+
+.badge-icon {
+    font-size: 0.6rem;
+}
+
+.deal-content {
+    margin-bottom: 0.75rem;
+}
+
+.deal-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+}
+
+.deal-description {
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.deal-meta {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+    font-size: 0.65rem;
+    color: #666;
+    background: #f8f9fa;
+    padding: 0.2rem 0.4rem;
+    border-radius: 8px;
+    border: 1px solid #e5e5e5;
+}
+
+.meta-icon {
+    font-size: 0.7rem;
+}
+
+.deal-footer {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.terms-btn {
+    background: #f8f9fa;
+    border: 1px solid #e5e5e5;
+    color: #666;
+    cursor: pointer;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    transition: all 0.3s ease;
+}
+
+.terms-btn:hover {
+    background: #e2e8f0;
+    color: #374151;
+}
+
+.terms-icon {
+    font-size: 0.9rem;
+}
+
+.deal-btn {
+    flex: 1;
+    /* padding: 0.5rem 1rem; */
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+}
+
+.deal-btn.reveal-code {
+    background: #FF0000;
+    color: white;
+}
+
+.deal-btn.get-deal {
+    background: #333;
+    color: white;
+}
+
+.deal-btn:hover {
+    transform: translateY(-1px);
+}
+
+.deal-btn.reveal-code:hover {
+    background: #cc0000;
+}
+
+.deal-btn.get-deal:hover {
+    background: #555;
+}
+
+.btn-icon {
+    font-size: 0.8rem;
+}
+
+.btn-arrow {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.deal-btn:hover .btn-arrow {
+    transform: translateX(3px);
+}
+
+.no-deals {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #64748b;
+    grid-column: 1 / -1;
+    background: white;
+    border-radius: 20px;
+    border: 2px dashed #e2e8f0;
+}
+
+.no-deals-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.no-deals h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+/* Categories Section */
+.categories-section {
+    padding: 5rem 0;
+    background: #f8fafc;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.category-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.category-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.category-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
+}
+
+.category-card p {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+}
+
+.category-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.category-link:hover {
+    color: #5a67d8;
+}
+
+/* Category Deals Section */
+.category-deals-section {
+    padding: 5rem 0;
+    background: white;
+}
+
+.category-section {
+    margin-bottom: 3rem;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.category-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a202c;
+}
+
+.view-more {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.category-deals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.mini-deal-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.mini-deal-card:hover {
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.deal-store {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.mini-store-logo {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.mini-store-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1a202c;
+}
+
+.mini-deal-title {
+    font-size: 0.95rem;
+    color: #374151;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.deal-actions {
+    text-align: right;
+}
+
+.mini-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mini-btn.reveal-code {
+    background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+    color: white;
+}
+
+.mini-btn.get-deal {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
+
+.mini-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.no-category-deals {
+    text-align: center;
+    padding: 2rem;
+    color: #64748b;
+    grid-column: 1 / -1;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .deals-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .deals-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .deal-card {
+        height: 300px;
+    }
+    
+    .deal-image-section {
+        height: 120px;
+    }
+    
+    .deal-content-wrapper {
+        padding: 0.75rem;
+        height: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-stats {
+        gap: 2rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .deals-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .deal-card {
+        max-width: 350px;
+        margin: 0 auto;
+        height: 280px;
+    }
+    
+    .deal-image-section {
+        height: 100px;
+    }
+    
+    .deal-content-wrapper {
+        padding: 0.75rem;
+        height: 180px;
+    }
+    
+    .categories-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    
+    .category-deals {
+        grid-template-columns: 1fr;
+    }
+    
+    .hot-deals-section {
+        padding: 3rem 0;
+    }
+    
+    .section-title {
+        font-size: 2rem !important;
+    }
+    
+    .brands-slider {
+        gap: 1.5rem;
+    }
+    
+    .brand-logo-circle {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .brand-logo {
+        max-width: 60px;
+        max-height: 60px;
+    }
+    
+    .brand-placeholder {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .brand-initials {
+        font-size: 1.2rem;
+    }
+    
+    .dot {
+        width: 10px;
+        height: 10px;
+    }
+    
+    .carousel-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 1.2rem;
+    }
+    
+    .prev-btn {
+        left: -15px;
+    }
+    
+    .next-btn {
+        right: -15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .search-input {
+        padding: 0.875rem 1.25rem;
+        font-size: 1rem;
+    }
+    
+    .brands-track {
+        gap: 1rem;
+    }
+    
+    .brand-card {
+        flex: 0 0 150px;
+        padding: 1rem;
+    }
+}
+</style>
+
+<!-- Enhanced Coupon Modal -->
+<div id="couponModal" aria-hidden="true" style="display:none;">
+    <div class="cm-overlay"></div>
+    
+    <!-- Main Voucher Code Popup -->
+    <div class="cm-main-popup" role="dialog" aria-modal="true" aria-label="Coupon Code Popup">
+        <button class="cm-close" aria-label="Close popup">&times;</button>
+
+        <!-- Main Popup Content -->
+        <div class="cm-main-content">
+            <h3 class="cm-title" id="cmTitle">Here is your code</h3>
+            
+            <div class="cm-code-section">
+                <div class="cm-code-display" id="cmCode">CODE123</div>
+                <button class="cm-copy-btn" id="cmCopy">Copy Code</button>
+            </div>
+            
+            <div class="cm-note" id="cmNote">
+                <p>Copy the code above and use it at checkout to get your discount!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Subscription Popup -->
+    <div class="cm-email-popup" role="dialog" aria-modal="true" aria-label="Email Subscription Popup">
+        <div class="cm-email-content">
+            <div class="cm-brand-logo">
+                <div class="cm-brand-circle" id="cmBrandLogo">
+                    <span id="cmBrandText">STORE</span>
+                </div>
+            </div>
+            
+            <h3 class="cm-email-title" id="cmEmailTitle">Get More Deals!</h3>
+            <p class="cm-email-subtitle">Subscribe to get exclusive offers and discounts</p>
+            
+            <form class="cm-email-form" id="cmEmailForm">
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit">Subscribe</button>
+            </form>
+            
+            <p class="cm-email-privacy">We respect your privacy. Unsubscribe at any time.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Coupon Modal Styles */
+#couponModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.cm-overlay {
+    position: absolute;
+    inset: 0; 
+    background: rgba(0,0,0,0.6); 
+}
+
+/* Main Voucher Code Popup */
+.cm-main-popup { 
+  position: relative;
+  top: 20px;
+  margin: auto;
+    width: 480px; 
+    max-width: calc(50% - 30px); 
+    background: #fff; 
+    border-radius: 16px; 
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    overflow: hidden;
+    z-index: 2;
+}
+
+/* Email Subscription Popup */
+.cm-email-popup { 
+  position: relative;
+  margin: auto;
+  top: 40px;
+    width: 480px; 
+    max-width: calc(50% - 30px); 
+    background: #fff; 
+    border-radius: 16px; 
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    overflow: hidden;
+    z-index: 2;
+}
+
+.cm-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    z-index: 3;
+}
+
+.cm-close:hover {
+    color: #000;
+}
+
+.cm-main-content {
+    text-align: center;
+}
+
+.cm-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.cm-code-section {
+    margin: 20px 0;
+}
+
+.cm-code-display {
+    background: #f8f9fa;
+    border: 2px dashed #FF0000;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #FF0000;
+    margin-bottom: 15px;
+    font-family: monospace;
+}
+
+.cm-copy-btn {
+    background: #FF0000;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.cm-copy-btn:hover {
+    background: #cc0000;
+}
+
+.cm-note {
+    margin-top: 20px;
+    color: #666;
+    font-size: 14px;
+}
+
+.cm-email-content {
+    text-align: center;
+}
+
+.cm-brand-logo {
+    margin-bottom: 20px;
+}
+
+.cm-brand-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #FF0000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.cm-brand-circle img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.cm-email-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.cm-email-subtitle {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.cm-email-form {
+    margin: 20px 0;
+}
+
+.cm-email-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.cm-email-form button {
+    width: 100%;
+    background: #FF0000;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.cm-email-form button:hover {
+    background: #cc0000;
+}
+
+.cm-email-privacy {
+    font-size: 12px;
+    color: #999;
+    margin-top: 15px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cm-main-popup {
+        top: 20px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-width: none;
+    }
+    
+    .cm-email-popup {
+        top: 400px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-width: none;
+    }
+    
+    .cm-main-content {
+        padding: 20px;
+    }
+    
+    .cm-title {
+        font-size: 20px;
+    }
+    
+    .cm-code-display {
+        font-size: 16px;
+        padding: 12px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Prevent double-init
+  if (window.__couponModalInit) return;
+  window.__couponModalInit = true;
+
+  const modal = document.getElementById('couponModal');
+  if (!modal) return;
+
+  const overlay = modal.querySelector('.cm-overlay');
+  const closeBtn = modal.querySelector('.cm-close');
+  const cmCode = document.getElementById('cmCode');
+  const cmCopy = document.getElementById('cmCopy');
+  const cmTitle = document.getElementById('cmTitle');
+  const cmNote = document.getElementById('cmNote');
+  const cmEmailTitle = document.getElementById('cmEmailTitle');
+  const cmBrandLogo = document.getElementById('cmBrandLogo');
+  const cmBrandText = document.getElementById('cmBrandText');
+
+  function openModal(code, affiliate, store, title) {
+    if (cmCode) cmCode.textContent = code;
+    if (cmTitle) cmTitle.textContent = title || 'Here is your code';
+    if (cmEmailTitle) cmEmailTitle.textContent = `Get More ${store} Deals!`;
+    
+    if (cmBrandLogo && cmBrandText) {
+      if (store && store !== 'Store') {
+        cmBrandText.textContent = store.substring(0,5).toUpperCase();
+      } else {
+        cmBrandText.textContent = 'STORE';
+      }
+    }
+
+    modal.style.display = 'block';
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
+
+  // Reveal code buttons
+  document.querySelectorAll('.deal-btn.reveal-code').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const code = this.dataset.code;
+      const affiliate = this.dataset.affiliate;
+      const store = this.dataset.store;
+      const title = this.dataset.title;
+      if (code && affiliate) {
+        const currentUrl = window.location.href.split('#')[0].split('?')[0];
+        const popupUrl = currentUrl + '?show_coupon=1&code=' + encodeURIComponent(code) + '&affiliate=' + encodeURIComponent(affiliate) + '&store=' + encodeURIComponent(store) + '&title=' + encodeURIComponent(title);
+        window.open(popupUrl, '_blank');
+        window.location.href = affiliate;
+      }
+    });
+  });
+
+  // Get deal buttons
+  document.querySelectorAll('.deal-btn.get-deal').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const affiliate = this.dataset.affiliate;
+      const store = this.dataset.store;
+      const title = this.dataset.title;
+      if (affiliate) {
+        const currentUrl = window.location.href.split('#')[0].split('?')[0];
+        const popupUrl = currentUrl + '?show_coupon=1&code=No%20code%20required&affiliate=' + encodeURIComponent(affiliate) + '&store=' + encodeURIComponent(store) + '&title=' + encodeURIComponent(title);
+        window.open(popupUrl, '_blank');
+        window.location.href = affiliate;
+      }
+    });
+  });
+
+  // Copy button
+  if (cmCopy) {
+    cmCopy.addEventListener('click', function() {
+      const code = cmCode ? cmCode.textContent : '';
+      if (code && code !== 'No code required') {
+        navigator.clipboard.writeText(code).then(function() {
+          const originalText = cmCopy.textContent;
+          cmCopy.textContent = 'Copied!';
+          cmCopy.style.backgroundColor = '#218838';
+          
+          setTimeout(function() {
+            cmCopy.textContent = originalText;
+            cmCopy.style.backgroundColor = '#FF0000';
+          }, 2000);
+        }).catch(function(err) {
+          console.error('Could not copy text: ', err);
+          alert('Coupon Code: ' + code);
+        });
+      } else if (code === 'No code required') {
+        // For deals without codes, just show message
+        const originalText = cmCopy.textContent;
+        cmCopy.textContent = 'No Code Needed!';
+        cmCopy.style.backgroundColor = '#218838';
+        
+        setTimeout(function() {
+          cmCopy.textContent = originalText;
+          cmCopy.style.backgroundColor = '#FF0000';
+        }, 2000);
+      }
+    });
+  }
+
+  // Email form
+  const emailForm = document.getElementById('cmEmailForm');
+  if (emailForm) {
+    emailForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = this.querySelector('input[type="email"]').value;
+      if (email) {
+        // Here you can add AJAX call to subscribe
+        alert('Thank you for subscribing!');
+        closeModal();
+      }
+    });
+  }
+
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (overlay) overlay.addEventListener('click', closeModal);
+
+  // show modal if params present
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('show_coupon') === '1') {
+      const code = urlParams.get('code') || '';
+      const affiliate = urlParams.get('affiliate') || '#';
+      const store = urlParams.get('store') || 'Store';
+      const title = urlParams.get('title') || 'Here is your code';
+      
+      openModal(code, affiliate, store, title);
+      
+      // If no code, show "No code required" message
+      if (!code || code === 'No code required') {
+        if (cmCode) cmCode.textContent = 'No code required';
+        if (cmCopy) {
+          cmCopy.disabled = true;
+          cmCopy.style.opacity = '0.6';
+          cmCopy.style.cursor = 'not-allowed';
+        }
+      }
+      
+      history.replaceState({}, '', window.location.pathname);
+    }
+  } catch (e) {
+    console.log('URL params not supported');
+  }
+});
+
+// Brands Carousel Functionality
+let currentSlideIndex = 0;
+const brandsSlider = document.getElementById('brandsSlider');
+const brandItems = document.querySelectorAll('.brand-item');
+const itemsPerSlide = 6; // Show 6 brands per slide
+const totalSlides = Math.ceil(brandItems.length / itemsPerSlide);
+
+function moveCarousel(direction) {
+    currentSlideIndex += direction;
+    
+    if (currentSlideIndex >= totalSlides) {
+        currentSlideIndex = 0;
+    } else if (currentSlideIndex < 0) {
+        currentSlideIndex = totalSlides - 1;
+    }
+    
+    updateCarousel();
+    updateDots();
+}
+
+function currentSlide(slideNumber) {
+    currentSlideIndex = slideNumber - 1;
+    updateCarousel();
+    updateDots();
+}
+
+function updateCarousel() {
+    const translateX = -currentSlideIndex * (100 / totalSlides);
+    brandsSlider.style.transform = `translateX(${translateX}%)`;
+}
+
+function updateDots() {
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlideIndex);
+    });
+}
+
+// Auto-play carousel
+setInterval(() => {
+    if (totalSlides > 1) {
+        moveCarousel(1);
+    }
+}, 4000);
+
+// Generate pagination dots dynamically
+function generateDots() {
+    const dotsContainer = document.getElementById('carouselDots');
+    dotsContainer.innerHTML = '';
+    
+    for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('span');
+        dot.className = 'dot';
+        if (i === 0) dot.classList.add('active');
+        dot.onclick = () => currentSlide(i + 1);
+        dotsContainer.appendChild(dot);
+    }
+}
+
+// Initialize carousel
+if (totalSlides > 0) {
+    generateDots();
+    updateDots();
+}
 </script>
 
 @endsection
