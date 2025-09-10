@@ -203,21 +203,23 @@ class StoreSeeder extends Seeder
         ];
 
         foreach ($stores as $storeData) {
-            Store::create([
-                'store_name' => $storeData['store_name'],
-                'seo_url' => $storeData['seo_url'],
-                'status' => true,
-                'sort_order' => rand(1, 100),
-                'show_trending' => rand(0, 1),
-                'featured' => rand(0, 1),
-                'recommended' => rand(0, 1),
-                'store_logo' => 'default-store.png',
-                'affiliate_url' => 'https://example.com/' . $storeData['seo_url'],
-                'content' => 'Sample content for ' . $storeData['store_name'],
-                'detail_description' => 'Detailed description for ' . $storeData['store_name'],
-                'meta_title' => $storeData['store_name'] . ' - Discount Codes & Vouchers',
-                'meta_description' => 'Get the best discount codes and vouchers for ' . $storeData['store_name'] . '. Save money on your purchases.',
-            ]);
+            Store::firstOrCreate(
+                ['seo_url' => $storeData['seo_url']],
+                [
+                    'store_name' => $storeData['store_name'],
+                    'status' => true,
+                    'sort_order' => rand(1, 100),
+                    'show_trending' => rand(0, 1),
+                    'featured' => rand(0, 1),
+                    'recommended' => rand(0, 1),
+                    'store_logo' => 'default-store.png',
+                    'affiliate_url' => 'https://example.com/' . $storeData['seo_url'],
+                    'content' => 'Sample content for ' . $storeData['store_name'],
+                    'detail_description' => 'Detailed description for ' . $storeData['store_name'],
+                    'meta_title' => $storeData['store_name'] . ' - Discount Codes & Vouchers',
+                    'meta_description' => 'Get the best discount codes and vouchers for ' . $storeData['store_name'] . '. Save money on your purchases.',
+                ]
+            );
         }
     }
 }

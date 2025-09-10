@@ -14,7 +14,7 @@ class FrontendController extends Controller
     public function home()
     {
         // Load featured coupons for home page
-        $featuredCoupons = Coupon::where('featured', 1)
+        $featuredCoupons = Coupon::with('store')
             ->where('status', 1)
             ->orderBy('sort_order', 'asc')
             ->take(8)
@@ -34,14 +34,54 @@ class FrontendController extends Controller
             ->take(20)
             ->get();
 
-        // Load categories with store counts
+        // Load featured categories with store counts for home page
         $categories = Category::withCount(['stores' => function($query) {
             $query->where('status', 1);
         }])
         ->where('status', 1)
+        ->where('featured', 1)
         ->orderBy('sort_order', 'asc')
         ->take(8)
         ->get();
+
+        // Load categories with "Show Home" selected and their coupons for Category Deals section
+        $homeCategories = Category::where('status', 1)
+            ->where('show_home', 1)
+            ->orderBy('sort_order', 'asc')
+            ->get()
+            ->map(function($category) {
+                // Load coupons for stores in this category
+                $category->coupons = Coupon::whereHas('store', function($query) use ($category) {
+                    $query->whereHas('categories', function($q) use ($category) {
+                        $q->where('category_id', $category->id);
+                    });
+                })
+                ->where('status', 1)
+                ->orderBy('sort_order', 'asc')
+                ->take(6)
+                ->get();
+                
+                return $category;
+            });
+
+        // Load recommended categories with their stores for Recommended Stores section
+        $recommendedCategories = Category::where('status', 1)
+            ->where('recommended', 1)
+            ->orderBy('sort_order', 'asc')
+            ->take(4)
+            ->get()
+            ->map(function($category) {
+                // Load stores in this category
+                $category->stores = Store::whereHas('categories', function($query) use ($category) {
+                    $query->where('category_id', $category->id);
+                })
+                ->where('status', 1)
+                ->orderBy('sort_order', 'asc')
+                ->take(6)
+                ->get();
+                
+                return $category;
+            });
 
         // Load active events
         $activeEvents = Events::where('status', 1)
@@ -58,6 +98,8 @@ class FrontendController extends Controller
             'featuredStores', 
             'trendingStores',
             'categories',
+            'homeCategories',
+            'recommendedCategories',
             'activeEvents',
             'totalCoupons',
             'totalStores',

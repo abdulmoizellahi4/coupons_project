@@ -24,8 +24,8 @@
 <!-- sidenv: Side Navigation <component:end> -->
 
 <!-- header <component:start> -->
-<header class="header">
-    <div class="VhcWrp">
+<header class="header" >
+    <div class="VhcWrp container">
         <!-- mbtn: Mobile Button, hmbtn: Header Menu Button <start> -->
         <a href="javascript:;" class="mbtn hmbtn" title="Toggle Menu">
             <i class="ico bp_menu"></i>

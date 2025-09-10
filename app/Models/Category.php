@@ -19,7 +19,10 @@ class Category extends Model
         'description',
         'media',
         'status',
-        'sort_order'
+        'sort_order',
+        'featured',
+        'show_home',
+        'recommended'
     ];
 
     public function parent()

@@ -15,15 +15,31 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Create test user if it doesn't exist
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                'password' => bcrypt('password'),
+            ]
+        );
 
+        // Seed categories first (needed for stores)
+        $this->call(CategorySeeder::class);
+        
+        // Seed networks
+        $this->call(NetworkSeeder::class);
+        
+        // Seed events
+        $this->call(EventSeeder::class);
+        
         // Seed stores
         $this->call(StoreSeeder::class);
         
         // Seed coupons
         $this->call(CouponSeeder::class);
+        
+        // Seed pages
+        $this->call(PageSeeder::class);
     }
 }

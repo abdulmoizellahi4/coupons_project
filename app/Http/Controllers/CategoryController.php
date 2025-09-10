@@ -37,6 +37,9 @@ class CategoryController extends Controller
         ]);
 
         $validated['status'] = $request->boolean('status');
+        $validated['featured'] = $request->boolean('featured');
+        $validated['show_home'] = $request->boolean('show_home');
+        $validated['recommended'] = $request->boolean('recommended');
 
         if ($request->hasFile('media')) {
             $validated['media'] = $request->file('media')->store('uploads/categories', 'public');
@@ -75,6 +78,9 @@ class CategoryController extends Controller
         ]);
 
         $validated['status'] = $request->boolean('status');
+        $validated['featured'] = $request->boolean('featured');
+        $validated['show_home'] = $request->boolean('show_home');
+        $validated['recommended'] = $request->boolean('recommended');
 
         if ($request->hasFile('media')) {
             if ($category->media && Storage::disk('public')->exists($category->media)) {

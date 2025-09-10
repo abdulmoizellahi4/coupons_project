@@ -26,6 +26,9 @@
                         <th>SL</th>
                         <th>Category Name</th>
                         <th>Status</th>
+                <th>Featured</th>
+                <th>Show Home</th>
+                <th>Recommended</th>
                         <th>Image</th>
                         <th>Actions</th>
                     </tr>
@@ -44,6 +47,21 @@
                                 {{ $category->status ? 'Enabled' : 'Disabled' }}
                             </span>
                         </td>
+                        <td>
+                            <span class="badge {{ $category->featured ? 'bg-warning' : 'bg-secondary' }}">
+                                {{ $category->featured ? 'Featured' : 'No' }}
+                            </span>
+                        </td>
+                <td>
+                    <span class="badge {{ $category->show_home ? 'bg-info' : 'bg-secondary' }}">
+                        {{ $category->show_home ? 'Yes' : 'No' }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge {{ $category->recommended ? 'bg-success' : 'bg-secondary' }}">
+                        {{ $category->recommended ? 'Yes' : 'No' }}
+                    </span>
+                </td>
                         <td>
                             @if($category->media)
                                 <img src="{{ asset('storage/'.$category->media) }}" width="50" alt="{{ $category->category_name }}">

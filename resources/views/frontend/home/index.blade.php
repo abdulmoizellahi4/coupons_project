@@ -56,55 +56,53 @@
         </div>
     </div>
 </div>
-<!-- Featured Brands Section -->
-<div class="featured-brands-section">
+
+<!-- Featured Store section - Jewelry Style -->
+<div class="featured-stores-jewelry-section">
     <div class="container">
         <div class="section-header">
-            <h2 class="section-title">Featured Brands</h2>
-            <p class="section-subtitle">Shop from your favorite brands with exclusive discounts</p>
+            <h2 class="section-title">
+                <span class="title-normal">Our</span>
+                <span class="title-highlight" style="color: #FF0000 !important;">Featured Stores</span>
+            </h2>
+            <p class="section-subtitle">Discover amazing brands with exclusive offers</p>
         </div>
         
-        <div class="brands-carousel">
-            <div class="carousel-container">
-                <button class="carousel-btn prev-btn" onclick="moveCarousel(-1)">‹</button>
-                <div class="brands-slider" id="brandsSlider">
+        <div class="stores-jewelry-grid">
                     @forelse($featuredStores ?? [] as $store)
-                    <div class="brand-item">
-                        <a href="{{ route('store', $store->seo_url) }}" class="brand-link">
-                            <div class="brand-logo-circle">
+            <div class="store-jewelry-card">
+                <a href="{{ route('store', $store->seo_url) }}" class="store-jewelry-link">
+                    <div class="store-jewelry-image-container">
                                 @if($store->store_logo)
-                                    <img src="{{ asset('storage/' . $store->store_logo) }}" alt="{{ $store->store_name }}" class="brand-logo">
+                            <img src="{{ asset('storage/' . $store->store_logo) }}" alt="{{ $store->store_name }}" class="store-jewelry-image">
                                 @else
-                                    <div class="brand-placeholder">
-                                        <span class="brand-initials">{{ substr($store->store_name, 0, 2) }}</span>
+                            <div class="store-jewelry-placeholder">
+                                <span class="placeholder-text">{{ substr($store->store_name, 0, 2) }}</span>
                                     </div>
                                 @endif
+                            </div>
+                    <div class="store-jewelry-info">
+                        <h3 class="store-jewelry-name">{{ $store->store_name }}</h3>
+                        <span class="store-jewelry-category">{{ \App\Models\Coupon::where('brand_store', $store->store_name)->where('status', 1)->count() }} Offers</span>
                             </div>
                         </a>
                     </div>
                     @empty
-                    <div class="no-brands">
-                        <div class="no-brands-icon">🏪</div>
-                        <h3>No Featured Brands</h3>
-                        <p>We're working on adding amazing brands for you!</p>
+            <div class="no-stores-message">
+                <div class="no-stores-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                        <path d="M3 7V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V7" stroke="currentColor" stroke-width="2"/>
+                        <path d="M3 7L5 21H19L21 7" stroke="currentColor" stroke-width="2"/>
+                        <path d="M8 11H16" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h3>No Featured Stores</h3>
+                <p>We're working on adding amazing stores for you!</p>
                     </div>
                     @endforelse
                 </div>
-                <button class="carousel-btn next-btn" onclick="moveCarousel(1)">›</button>
             </div>
-            
-            <!-- Pagination Dots -->
-            <div class="carousel-dots" id="carouselDots">
-                <!-- Dots will be generated dynamically by JavaScript -->
             </div>
-        </div>
-        
-        <div class="view-all-brands">
-            <a href="{{ route('all-brands-uk') }}" class="btn-outline">View All Brands</a>
-        </div>
-    </div>
-</div>
-<!-- Hot Deals Section -->
 <div class="hot-deals-section">
     <div class="container">
         <div class="section-header">
@@ -124,7 +122,7 @@
                     @else
                         <div class="deal-placeholder-image">
                             <div class="placeholder-icon">🎁</div>
-                            <span>{{ $coupon->store->store_name ?? 'Deal' }}</span>
+                            <span>{{ $coupon->store->store_name ?? $coupon->brand_store ?? 'Deal' }}</span>
                         </div>
                     @endif
                     
@@ -150,7 +148,7 @@
                                 <img src="{{ asset('storage/' . $coupon->store->store_logo) }}" alt="{{ $coupon->store->store_name }}" class="store-logo">
                             @endif
                             <div class="store-details">
-                                <h3 class="store-name">{{ $coupon->store->store_name ?? 'Store' }}</h3>
+                                <h3 class="store-name">{{ $coupon->store->store_name ?? $coupon->brand_store ?? 'Store' }}</h3>
                                 @if($coupon->verified)
                                     <span class="verified-badge">✓ Verified</span>
                                 @endif
@@ -191,7 +189,7 @@
                             <button class="deal-btn reveal-code" 
                                     data-code="{{ $coupon->coupon_code }}" 
                                     data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                    data-store="{{ $coupon->store->store_name ?? 'Store' }}"
+                                    data-store="{{ $coupon->store->store_name ?? $coupon->brand_store ?? 'Store' }}"
                                     data-title="{{ $coupon->coupon_title }}">
                                 <span class="btn-icon">🔓</span>
                                 <span class="btn-text">Reveal Code</span>
@@ -200,7 +198,7 @@
                         @else
                             <button class="deal-btn get-deal" 
                                     data-affiliate="{{ $coupon->affiliate_url }}"
-                                    data-store="{{ $coupon->store->store_name ?? 'Store' }}"
+                                    data-store="{{ $coupon->store->store_name ?? $coupon->brand_store ?? 'Store' }}"
                                     data-title="{{ $coupon->coupon_title }}">
                                 <span class="btn-icon">🎯</span>
                                 <span class="btn-text">Get Deal</span>
@@ -232,430 +230,45 @@
         </div>
         
         <div class="categories-grid">
+            @forelse($categories ?? [] as $category)
             <div class="category-card">
-                <div class="category-icon">👕</div>
-                <h3>Fashion & Style</h3>
-                <p>Clothing, shoes, accessories</p>
-                <a href="{{ route('category', 'clothing-and-accessories') }}" class="category-link">Shop Now →</a>
-            </div>
-            <div class="category-card">
-                <div class="category-icon">🏠</div>
-                <h3>Home & Garden</h3>
-                <p>Furniture, decor, tools</p>
-                <a href="{{ route('category', 'home-and-garden') }}" class="category-link">Shop Now →</a>
-            </div>
-            <div class="category-card">
-                <div class="category-icon">💄</div>
-                <h3>Beauty & Health</h3>
-                <p>Cosmetics, skincare, wellness</p>
-                <a href="{{ route('category', 'health-and-beauty') }}" class="category-link">Shop Now →</a>
-            </div>
-            <div class="category-card">
-                <div class="category-icon">💍</div>
-                <h3>Jewelry & Watches</h3>
-                <p>Luxury accessories, timepieces</p>
-                <a href="{{ route('category', 'jewelry-and-watches') }}" class="category-link">Shop Now →</a>
-            </div>
-            <div class="category-card">
-                <div class="category-icon">👶</div>
-                <h3>Baby & Kids</h3>
-                <p>Toys, clothing, essentials</p>
-                <a href="{{ route('category', 'baby-and-kids') }}" class="category-link">Shop Now →</a>
-            </div>
-            <div class="category-card">
-                <div class="category-icon">🌸</div>
-                <h3>Flowers & Gifts</h3>
-                <p>Bouquets, presents, occasions</p>
-                <a href="{{ route('category', 'flowers-and-gifts') }}" class="category-link">Shop Now →</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Category Deals Section -->
-<div class="category-deals-section">
-    <div class="container">
-        <!-- Clothing & Accessories -->
-        <div class="category-section">
-            <div class="category-header">
-                <h3 class="category-title">👕 Clothing & Accessories</h3>
-                <a href="{{ route('category', 'clothing-and-accessories') }}" class="view-more">View All →</a>
-            </div>
-            <div class="category-deals">
-                @forelse($clothingCoupons ?? [] as $coupon)
-                <div class="mini-deal-card">
-                    <div class="deal-store">
-                        @if($coupon->store && $coupon->store->store_logo)
-                            <img src="{{ asset('storage/' . $coupon->store->store_logo) }}" alt="{{ $coupon->store->store_name }}" class="mini-store-logo">
-                        @endif
-                        <span class="mini-store-name">{{ $coupon->store->store_name ?? 'Store' }}</span>
-                    </div>
-                    <div class="deal-info">
-                        <h4 class="mini-deal-title">{{ Str::limit($coupon->coupon_title, 40) }}</h4>
-                        <div class="deal-actions">
-                            @if($coupon->coupon_code)
-                                <button class="mini-btn reveal-code" 
-                                        data-code="{{ $coupon->coupon_code }}" 
-                                        data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                        data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                                        data-title="{{ $coupon->coupon_title }}">
-                                    Reveal Code
-                                </button>
-                            @else
-                                <button class="mini-btn get-deal" 
-                                        data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                        data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                                        data-title="{{ $coupon->coupon_title }}">
-                                    Get Deal
-                                </button>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                @empty
-                <div class="no-category-deals">
-                    <p>No clothing deals available at the moment.</p>
-                </div>
-                @endforelse
-            </div>
-        </div>
-
-    <!-- Home & Garden <start> -->
-    <div class="slds Sec">
-        <h2><a href="{{ route('category', 'home-and-garden') }}" title="Home & Garden">Home & Garden <i class="bp_drprgt-r"></i></a></h2>
-        <div class="cpns">
-            @forelse($homeGardenCoupons ?? [] as $coupon)
-            <div class="cpn {{ $coupon->coupon_code ? 'dl' : 'cd' }}" data-id="{{ $coupon->id }}">
-                <div class="imgs">
-                    @if($coupon->store && $coupon->store->store_logo)
-                        <a href="{{ route('store', $coupon->store->seo_url) }}" title="{{ $coupon->store->store_name }}">
-                            <img src="{{ asset('storage/' . $coupon->store->store_logo) }}" alt="{{ $coupon->store->store_name }} discount code" title="{{ $coupon->store->store_name }} discount code" decoding="async" loading="lazy" width="80" height="80">
-                        </a>
-                    @endif
-                    <button title="Add to Favourite" aria-label="Add to Favourite" class="cfb bp_save"></button>
-                </div>
-                <div class="cnt">
-                    <div class="str-vrf">
-                        @if($coupon->store)
-                            <a href="{{ route('store', $coupon->store->seo_url) }}">{{ $coupon->store->store_name }}</a>
-                        @endif
-                        @if($coupon->verified)
-                            <span>Verified</span>
-                        @endif
-                    </div>
-                    <h3 role="button" aria-label="{{ $coupon->coupon_code ? 'Reveal Code' : 'Get Deal' }}">
-                        {{ $coupon->coupon_title }}
-                    </h3>
-                    <div class="trm-cnt">
-                        @if($coupon->terms)
-                            <button aria-label="View Terms" class="ctb">View Terms</button>
-                        @endif
-                        <span>{{ number_format($coupon->sort_order ?? rand(500, 5000)) }} Used</span>
-                    </div>
-                    @if($coupon->coupon_code)
-                        <button class="cpBtn reveal-code" aria-label="Reveal Code" 
-                                data-code="{{ $coupon->coupon_code }}" 
-                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                                data-title="{{ $coupon->coupon_title }}">
-                            Reveal Code
-                        </button>
+                <div class="category-icon">
+                    @if($category->media)
+                        <img src="{{ asset('storage/' . $category->media) }}" alt="{{ $category->category_name }}" class="category-image">
                     @else
-                        <button class="cpBtn get-deal" aria-label="Get Deal" 
-                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                                data-title="{{ $coupon->coupon_title }}">
-                            Get Deal
-                        </button>
+                        <span class="default-icon">🏷️</span>
                     @endif
-                </div>
+            </div>
+                <h3>{{ $category->category_name }}</h3>
+                <p>{{ $category->short_content ?: 'Explore amazing deals in this category' }}</p>
+                <div class="category-stats">
+                    <span class="store-count">{{ $category->stores_count }} Stores</span>
+            </div>
+                <a href="{{ route('category', $category->seo_url) }}" class="category-link">Shop Now →</a>
             </div>
             @empty
-            <div class="no-coupons">
-                <p>No home & garden coupons available at the moment.</p>
+            <div class="no-categories">
+                <div class="no-categories-icon">📂</div>
+                <h3>No Featured Categories</h3>
+                <p>We're working on adding amazing categories for you!</p>
             </div>
             @endforelse
-        </div>
-    </div>
-    <!-- Home & Garden <end> -->
-
-    <!-- Chrome extension Section <start> -->
-    <div class="Sec Wrp">
-        <div class="imgCnk">
-            <img src="{{ asset('frontend_assets/images/svg/chormeExtension.svg') }}" alt="Chrome Extension" decoding="async" loading="lazy" width="565" height="384">
-            <div class="txt">
-                <h2>The Search for Discount Codes Ends Here</h2>
-                <p>By adding thousands of store in a single place the Deal Seeker extension by Big Saving Hub, is the perfect haven for all the smart shoppers that love to save big on their sprees.</p>
-                <a href="{{ route('deal-seeker') }}" aria-label="Add to Chrome Extension" title="Deal Seeker">Add to Chrome</a>
+            </div>
             </div>
         </div>
-    </div>
-    <!-- Chrome extension Section <end> -->
 
-    <!-- Health & Beauty <start> -->
-    <div class="slds">
-        <h2><a href="{{ route('category', 'health-and-beauty') }}" title="Health & Beauty">Health & Beauty <i class="bp_drprgt-r"></i></a></h2>
-        <div class="cpns">
-            @forelse($healthBeautyCoupons ?? [] as $coupon)
-            <div class="cpn {{ $coupon->coupon_code ? 'dl' : 'cd' }}" data-id="{{ $coupon->id }}">
-                <div class="imgs">
-                    @if($coupon->store && $coupon->store->store_logo)
-                        <a href="{{ route('store', $coupon->store->seo_url) }}" title="{{ $coupon->store->store_name }}">
-                            <img src="{{ asset('storage/' . $coupon->store->store_logo) }}" alt="{{ $coupon->store->store_name }} discount code" title="{{ $coupon->store->store_name }} discount code" decoding="async" loading="lazy" width="80" height="80">
-                        </a>
-                    @endif
-                    <button title="Add to Favourite" aria-label="Add to Favourite" class="cfb bp_save"></button>
-                </div>
-                <div class="cnt">
-                    <div class="str-vrf">
-                        @if($coupon->store)
-                            <a href="{{ route('store', $coupon->store->seo_url) }}">{{ $coupon->store->store_name }}</a>
-                        @endif
-                        @if($coupon->verified)
-                            <span>Verified</span>
-                        @endif
-                    </div>
-                    <h3 role="button" aria-label="{{ $coupon->coupon_code ? 'Reveal Code' : 'Get Deal' }}">
-                        {{ $coupon->coupon_title }}
-                    </h3>
-                    <div class="trm-cnt">
-                        @if($coupon->terms)
-                            <button aria-label="View Terms" class="ctb">View Terms</button>
-                        @endif
-                        <span>{{ number_format($coupon->sort_order ?? rand(500, 5000)) }} Used</span>
-                    </div>
-                    @if($coupon->coupon_code)
-                        <button class="cpBtn reveal-code" aria-label="Reveal Code" 
-                                data-code="{{ $coupon->coupon_code }}" 
-                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                                data-title="{{ $coupon->coupon_title }}">
-                            Reveal Code
-                        </button>
-                    @else
-                        <button class="cpBtn get-deal" aria-label="Get Deal" 
-                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                                data-title="{{ $coupon->coupon_title }}">
-                            Get Deal
-                        </button>
-                    @endif
-                </div>
-            </div>
-            @empty
-            <div class="no-coupons">
-                <p>No health & beauty coupons available at the moment.</p>
-            </div>
-            @endforelse
-        </div>
-    </div>
-    <!-- Health & Beauty <end> -->
-
-    <!-- Jewelry & Watches <start> -->
-    <div class="slds Sec">
-        <h2><a href="{{ route('category', 'jewelry-and-watches') }}" title="Jewelry & Watches">Jewelry & Watches <i class="bp_drprgt-r"></i></a></h2>
-        <div class="cpns">
-            @forelse($jewelryWatchesCoupons ?? [] as $coupon)
-            <div class="cpn {{ $coupon->coupon_code ? 'dl' : 'cd' }}" data-id="{{ $coupon->id }}">
-                <div class="imgs">
-                    @if($coupon->store && $coupon->store->store_logo)
-                        <a href="{{ route('store', $coupon->store->seo_url) }}" title="{{ $coupon->store->store_name }}">
-                            <img src="{{ asset('storage/' . $coupon->store->store_logo) }}" alt="{{ $coupon->store->store_name }} discount code" title="{{ $coupon->store->store_name }} discount code" decoding="async" loading="lazy" width="80" height="80">
-                        </a>
-                    @endif
-                    <button title="Add to Favourite" aria-label="Add to Favourite" class="cfb bp_save"></button>
-                </div>
-                <div class="cnt">
-                    <div class="str-vrf">
-                        @if($coupon->store)
-                            <a href="{{ route('store', $coupon->store->seo_url) }}">{{ $coupon->store->store_name }}</a>
-                        @endif
-                        @if($coupon->verified)
-                            <span>Verified</span>
-                        @endif
-                    </div>
-                    <h3 role="button" aria-label="{{ $coupon->coupon_code ? 'Reveal Code' : 'Get Deal' }}">
-                        {{ $coupon->coupon_title }}
-                    </h3>
-                    <div class="trm-cnt">
-                        @if($coupon->terms)
-                            <button aria-label="View Terms" class="ctb">View Terms</button>
-                        @endif
-                        <span>{{ number_format($coupon->sort_order ?? rand(500, 5000)) }} Used</span>
-                    </div>
-                    @if($coupon->coupon_code)
-                        <button class="cpBtn reveal-code" aria-label="Reveal Code" 
-                                data-code="{{ $coupon->coupon_code }}" 
-                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                                data-title="{{ $coupon->coupon_title }}">
-                            Reveal Code
-                        </button>
-                    @else
-                        <button class="cpBtn get-deal" aria-label="Get Deal" 
-                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                                data-title="{{ $coupon->coupon_title }}">
-                            Get Deal
-                        </button>
-                    @endif
-                </div>
-            </div>
-            @empty
-            <div class="no-coupons">
-                <p>No jewelry & watches coupons available at the moment.</p>
-            </div>
-            @endforelse
-        </div>
-    </div>
-    <!-- Jewelry & Watches <end> -->
-
-    <!-- App Section <start> -->
-    <div class="Sec Wrp noPd">
-        <div class="imgCnk flxrv">
-            <div class="txt">
-                <h2>Save on the go with the award winning <br>
-                    Big Saving Hub app</h2>
-                <p>Download our free app today! 10 million people can't be wrong</p>
-                <a href="https://play.google.com/store/apps/details?id=com.bigsavinghub" aria-label="Get Big Saving Hub Application at Google Store" title="Get Big Saving Hub Application at Google Store">Get the App</a>
-            </div>
-            <img src="{{ asset('frontend_assets/images/svg/app.svg') }}" alt="Mobile App" decoding="async" loading="lazy" width="565" height="384">
-        </div>
-    </div>
-    <!-- App Section <end> -->
-
-    <!-- Baby & Kids <start> -->
-    <div class="slds Sec">
-        <h2><a href="{{ route('category', 'baby-and-kids') }}" title="Baby & Kids">Baby & Kids <i class="bp_drprgt-r"></i></a></h2>
-        <div class="cpns">
-            @forelse($babyKidsCoupons ?? [] as $coupon)
-            <div class="cpn {{ $coupon->coupon_code ? 'dl' : 'cd' }}" data-id="{{ $coupon->id }}">
-                <div class="imgs">
-                    @if($coupon->store && $coupon->store->store_logo)
-                        <a href="{{ route('store', $coupon->store->seo_url) }}" title="{{ $coupon->store->store_name }}">
-                            <img src="{{ asset('storage/' . $coupon->store->store_logo) }}" alt="{{ $coupon->store->store_name }} discount code" title="{{ $coupon->store->store_name }} discount code" decoding="async" loading="lazy" width="80" height="80">
-                        </a>
-                    @endif
-                    <button title="Add to Favourite" aria-label="Add to Favourite" class="cfb bp_save"></button>
-                </div>
-                <div class="cnt">
-                    <div class="str-vrf">
-                        @if($coupon->store)
-                            <a href="{{ route('store', $coupon->store->seo_url) }}">{{ $coupon->store->store_name }}</a>
-                        @endif
-                        @if($coupon->verified)
-                            <span>Verified</span>
-                        @endif
-                    </div>
-                    <h3 role="button" aria-label="{{ $coupon->coupon_code ? 'Reveal Code' : 'Get Deal' }}">
-                        {{ $coupon->coupon_title }}
-                    </h3>
-                    <div class="trm-cnt">
-                        @if($coupon->terms)
-                            <button aria-label="View Terms" class="ctb">View Terms</button>
-                        @endif
-                        <span>{{ number_format($coupon->sort_order ?? rand(500, 5000)) }} Used</span>
-                    </div>
-                    @if($coupon->coupon_code)
-                        <button class="cpBtn reveal-code" aria-label="Reveal Code" 
-                                data-code="{{ $coupon->coupon_code }}" 
-                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                                data-title="{{ $coupon->coupon_title }}">
-                            Reveal Code
-                        </button>
-                    @else
-                        <button class="cpBtn get-deal" aria-label="Get Deal" 
-                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                                data-title="{{ $coupon->coupon_title }}">
-                            Get Deal
-                        </button>
-                    @endif
-                </div>
-            </div>
-            @empty
-            <div class="no-coupons">
-                <p>No baby & kids coupons available at the moment.</p>
-            </div>
-            @endforelse
-        </div>
-    </div>
-    <!-- Baby & Kids <end> -->
-
-    <!-- Flowers & Gifts <start> -->
-    <div class="slds">
-        <h2><a href="{{ route('category', 'flowers-and-gifts') }}" title="Flowers & Gifts">Flowers & Gifts <i class="bp_drprgt-r"></i></a></h2>
-        <div class="cpns">
-            @forelse($flowersGiftsCoupons ?? [] as $coupon)
-            <div class="cpn {{ $coupon->coupon_code ? 'dl' : 'cd' }}" data-id="{{ $coupon->id }}">
-                <div class="imgs">
-                    @if($coupon->store && $coupon->store->store_logo)
-                        <a href="{{ route('store', $coupon->store->seo_url) }}" title="{{ $coupon->store->store_name }}">
-                            <img src="{{ asset('storage/' . $coupon->store->store_logo) }}" alt="{{ $coupon->store->store_name }} discount code" title="{{ $coupon->store->store_name }} discount code" decoding="async" loading="lazy" width="80" height="80">
-                        </a>
-                    @endif
-                    <button title="Add to Favourite" aria-label="Add to Favourite" class="cfb bp_save"></button>
-                </div>
-                <div class="cnt">
-                    <div class="str-vrf">
-                        @if($coupon->store)
-                            <a href="{{ route('store', $coupon->store->seo_url) }}">{{ $coupon->store->store_name }}</a>
-                        @endif
-                        @if($coupon->verified)
-                            <span>Verified</span>
-                        @endif
-                    </div>
-                    <h3 role="button" aria-label="{{ $coupon->coupon_code ? 'Reveal Code' : 'Get Deal' }}">
-                        {{ $coupon->coupon_title }}
-                    </h3>
-                    <div class="trm-cnt">
-                        @if($coupon->terms)
-                            <button aria-label="View Terms" class="ctb">View Terms</button>
-                        @endif
-                        <span>{{ number_format($coupon->sort_order ?? rand(500, 5000)) }} Used</span>
-                    </div>
-                    @if($coupon->coupon_code)
-                        <button class="cpBtn reveal-code" aria-label="Reveal Code" 
-                                data-code="{{ $coupon->coupon_code }}" 
-                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                                data-title="{{ $coupon->coupon_title }}">
-                            Reveal Code
-                        </button>
-                    @else
-                        <button class="cpBtn get-deal" aria-label="Get Deal" 
-                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
-                                data-store="{{ $coupon->store->store_name ?? 'Store' }}"
-                                data-title="{{ $coupon->coupon_title }}">
-                            Get Deal
-                        </button>
-                    @endif
-                </div>
-            </div>
-            @empty
-            <div class="no-coupons">
-                <p>No flowers & gifts coupons available at the moment.</p>
-            </div>
-            @endforelse
-        </div>
-    </div>
-    <!-- Flowers & Gifts <end> -->
-
-</div>
-<!-- Slider Section <end> -->
 
 <!-- About Big Saving Hub <start> -->
-<div class="Sec abt">
+<div class="Sec abt container">
     <div class="grd">
         <div class="col">
             <img src="{{ asset('frontend_assets/images/svg/oatw.svg') }}" test="{{ $totalCoupons ?? 410 }}" alt="calender check icon" decoding="async" loading="lazy" width="100" height="100">
             <h2><strong>{{ number_format($totalCoupons ?? 410) }}</strong>Offers added this week</h2>
-        </div>
+    </div>
         <div class="col">
             <img src="{{ asset('frontend_assets/images/svg/outw.svg') }}" alt="calender check icon" decoding="async" loading="lazy" width="100" height="100">
             <h2><strong>{{ number_format($totalStores ?? 2680) }}</strong>Offers used this week</h2>
-        </div>
+</div>
         <div class="col cnt">
             <h2>About Big Saving Hub</h2>
             <div class="scrolr">
@@ -667,21 +280,171 @@
     </div>
 </div>
 <!-- About Big Saving Hub <end> -->
+<!-- Category Deals Section -->
+<div class="category-deals-section" style="background-color: #f8fafc; padding: 5rem 0;">
+    <div class="container">
+        @forelse($homeCategories ?? [] as $category)
+        <div class="category-section">
+            <div class="category-header">
+                <h3 class="category-title">
+                    @if($category->media)
+                        <img src="{{ asset('storage/' . $category->media) }}" alt="{{ $category->category_name }}" class="category-title-icon">
+                            @else
+                        <span class="category-emoji">🏷️</span>
+                            @endif
+                    {{ $category->category_name }}
+                    </h3>
+                <a href="{{ route('category', $category->seo_url) }}" class="view-more">View All →</a>
+                    </div>
+            <div class="deals-grid">
+                @forelse($category->coupons ?? [] as $coupon)
+                <div class="deal-card {{ $coupon->coupon_code ? 'has-code' : 'deal-only' }}" data-id="{{ $coupon->id }}">
+                    <!-- Coupon Image Section -->
+                    <div class="deal-image-section">
+                        @if($coupon->cover_logo)
+                            <img src="{{ asset('storage/' . $coupon->cover_logo) }}" alt="{{ $coupon->coupon_title }}" class="deal-cover-image">
+                    @else
+                            <div class="deal-placeholder-image">
+                                <div class="placeholder-icon">🎁</div>
+                                <span>{{ $coupon->store->store_name ?? $coupon->brand_store ?? 'Deal' }}</span>
+                </div>
+                        @endif
+                        
+                        <!-- Discount Badge -->
+                        <div class="discount-badge">
+                            {{ rand(10, 70) }}% OFF
+            </div>
+                        
+                        <!-- Exclusive Badge -->
+                        @if($coupon->exclusive)
+                            <div class="exclusive-badge">
+                                <span class="exclusive-icon">⭐</span>
+                                EXCLUSIVE
+                </div>
+                        @endif
+                    </div>
+                    
+                    <!-- Deal Content -->
+                    <div class="deal-content-wrapper">
+                        <div class="deal-header">
+                            <div class="store-info">
+                    @if($coupon->store && $coupon->store->store_logo)
+                                    <img src="{{ asset('storage/' . $coupon->store->store_logo) }}" alt="{{ $coupon->store->store_name }}" class="store-logo">
+                    @endif
+                                <div class="store-details">
+                                    <h3 class="store-name">{{ $coupon->store->store_name ?? $coupon->brand_store ?? 'Store' }}</h3>
+                        @if($coupon->verified)
+                                        <span class="verified-badge">✓ Verified</span>
+                        @endif
+                    </div>
+                    </div>
+                            <div class="deal-type">
+                    @if($coupon->coupon_code)
+                                    <span class="type-badge code">
+                                        <span class="badge-icon">🔑</span>
+                                        CODE
+                                    </span>
+                    @else
+                                    <span class="type-badge deal">
+                                        <span class="badge-icon">🎯</span>
+                                        DEAL
+                                    </span>
+                    @endif
+                </div>
+            </div>
+                        
+                        <div class="deal-content">
+                            <h4 class="deal-title">{{ $coupon->coupon_title }}</h4>
+                            <div class="deal-meta">
+                                <div class="meta-item">
+                                    <span class="meta-icon">👥</span>
+                                    <span class="usage-count">{{ number_format($coupon->sort_order ?? rand(500, 5000)) }} used</span>
+            </div>
+                                <div class="meta-item">
+                                    <span class="meta-icon">⏰</span>
+                                    <span class="expiry-time">Limited Time</span>
+        </div>
+    </div>
+                </div>
+                        
+                        <div class="deal-footer">
+                    @if($coupon->coupon_code)
+                                <button class="deal-btn reveal-code" 
+                                data-code="{{ $coupon->coupon_code }}" 
+                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
+                                        data-store="{{ $coupon->store->store_name ?? $coupon->brand_store ?? 'Store' }}"
+                                data-title="{{ $coupon->coupon_title }}">
+                                    <span class="btn-icon">🔓</span>
+                                    <span class="btn-text">Reveal Code</span>
+                                    <span class="btn-arrow">→</span>
+                        </button>
+                    @else
+                                <button class="deal-btn get-deal" 
+                                data-affiliate="{{ $coupon->affiliate_url ?? url('/') }}"
+                                        data-store="{{ $coupon->store->store_name ?? $coupon->brand_store ?? 'Store' }}"
+                                data-title="{{ $coupon->coupon_title }}">
+                                    <span class="btn-icon">🎯</span>
+                                    <span class="btn-text">Get Deal</span>
+                                    <span class="btn-arrow">→</span>
+                        </button>
+                    @endif
+                        </div>
+                </div>
+            </div>
+            @empty
+                <div class="no-category-deals">
+                    <p>No {{ $category->category_name }} deals available at the moment.</p>
+            </div>
+            @endforelse
+                </div>
+            </div>
+            @empty
+        <div class="no-categories-section">
+            <div class="no-categories-icon">📂</div>
+            <h3>No Categories Available</h3>
+            <p>We're working on adding amazing category deals for you!</p>
+            </div>
+            @endforelse
+        </div>
+</div>
+<!-- Slider Section <end> -->
 
-<div class="Sec Wrp">
+
+<div class="Sec Wrp container">
     <div class="rsnws">
         <!-- Recommended Stores <Start> -->
         <div class="rs">
             <h2>Recommended Stores</h2>
             <div class="tbs">
                 <div class="tb">
-                    <a class="active" title="Clothing & Accessories" href="javascript:;" data-type="300" data-slug="clothing-and-accessories-voucher-codes" aria-label="Clothing & Accessories">Clothing & Accessories <i class="bp_drprgt-r"></i></a>
-                    <a href="javascript:;" title="Home & Garden" data-type="309" data-slug="home-and-garden-voucher-codes" aria-label="Home & Garden">Home & Garden <i class="bp_drprgt-r"></i></a>
-                    <a href="javascript:;" title="Health & Beauty" data-type="308" data-slug="health-and-beauty-voucher-codes" aria-label="Health & Beauty">Health & Beauty <i class="bp_drprgt-r"></i></a>
-                    <a href="javascript:;" title="Jewelry & Watches" data-type="311" data-slug="jewelry-and-watches-voucher-codes" aria-label="Jewelry & Watches">Jewelry & Watches <i class="bp_drprgt-r"></i></a>
+                    @forelse($recommendedCategories ?? [] as $index => $category)
+                    <a class="{{ $index === 0 ? 'active' : '' }}" 
+                       title="{{ $category->category_name }}" 
+                       href="javascript:;" 
+                       data-type="{{ $category->id }}" 
+                       data-slug="{{ $category->seo_url }}" 
+                       aria-label="{{ $category->category_name }}">
+                        {{ $category->category_name }} <i class="bp_drprgt-r"></i>
+                    </a>
+                    @empty
+                    <a class="active" title="No Categories" href="javascript:;" aria-label="No Categories">No Categories Available <i class="bp_drprgt-r"></i></a>
+                    @endforelse
                 </div>
                 <div class="cnt">
-                    <a class="lst" href="#" title="View All " aria-label="View All ">View All <i class="bp_drprgt-r"></i></a>
+                    @forelse($recommendedCategories ?? [] as $index => $category)
+                    <div class="store-category-content {{ $index === 0 ? 'active' : '' }}" data-category="{{ $category->id }}">
+                        @forelse($category->stores ?? [] as $store)
+                        <a href="{{ route('store', $store->seo_url) }}" title="{{ $store->store_name }}" aria-label="{{ $store->store_name }}">{{ $store->store_name }}</a>
+                        @empty
+                        <span class="no-stores">No stores available in {{ $category->category_name }} category.</span>
+                        @endforelse
+                </div>
+                    @empty
+                    <div class="no-categories">
+                        <span>No recommended categories available.</span>
+                    </div>
+                    @endforelse
+                    <a class="lst" href="{{ route('categories') }}" title="View All Categories" aria-label="View All Categories">View All <i class="bp_drprgt-r"></i></a>
                 </div>
             </div>
         </div>
@@ -689,7 +452,8 @@
 
         <!-- Newsletter <Start> -->
         <div class="snlsec">
-            <img src="{{ asset('frontend_assets/images/svg/nwsltr.svg') }}" alt="paper plan" width="100" height="100" decoding="async" loading="lazy">
+    
+            <img src="assets/images/svg/nwsltr.svg" alt="paper plan" width="100" height="100" decoding="async" loading="lazy">
             <h2>Sign-up To Get Latest Voucher Codes First</h2>
             <p>Be the first one to get notified as soon as we update a new offer or discount.</p>
 
@@ -698,9 +462,8 @@
                 <button class="nfb" title="Subscribe">Subscribe</button>
             </label>
 
-            <p>By signing up I agree to Big Saving Hub's <a href="{{ route('privacy-policy') }}" target="_blank">Privacy Policy</a> and consent to receive emails about offers.</p>
-        </div>
-        <!-- Newsletter <end> -->
+    <p>By signing up I agree to topvoucherscode's <a href="https://www.topvoucherscode.co.uk/privacy-policy" target="_blank">Privacy Policy</a> and consent to receive emails about offers.</p>
+</div>        <!-- Newsletter <end> -->
     </div>
 </div>
 
@@ -1599,15 +1362,14 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .gradient-text {
-    background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+    background: #FF0000;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
 .highlight {
-    color: #ffd93d;
-    text-shadow: 0 0 20px rgba(255, 217, 61, 0.5);
+    color: #FF0000;
 }
 
 .hero-subtitle {
@@ -1652,7 +1414,7 @@ document.addEventListener('DOMContentLoaded', function () {
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+    background: #FF0000;
     border: none;
     border-radius: 50%;
     width: 45px;
@@ -1683,7 +1445,7 @@ document.addEventListener('DOMContentLoaded', function () {
 .stat-number {
     font-size: 2.5rem;
     font-weight: 800;
-    color: #ffd93d;
+    color: #FF0000;
     margin-bottom: 0.5rem;
 }
 
@@ -2580,6 +2342,72 @@ document.addEventListener('DOMContentLoaded', function () {
         padding: 1rem;
     }
 }
+
+/* Recommended Stores Tab Functionality CSS */
+.store-category-content {
+    display: none;
+}
+
+.store-category-content.active {
+    display: block;
+}
+
+.tb a {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tb a:hover {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.tb a.active {
+    background-color: #e9ecef;
+    color: #333;
+    font-weight: 600;
+}
+
+.cnt .store-category-content a {
+    display: inline-block;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-right: 1rem;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.cnt .store-category-content a:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+.cnt .no-stores, .cnt .no-categories {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.cnt .lst {
+    display: block;
+    margin-top: 1rem;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.cnt .lst:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .cnt .store-category-content a {
+        font-size: 0.85rem;
+        margin-right: 0.75rem;
+    }
+}
 </style>
 
 <!-- Enhanced Coupon Modal -->
@@ -2851,6 +2679,34 @@ document.addEventListener('DOMContentLoaded', function () {
 </style>
 
 <script>
+// Recommended Stores Tab Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const tabLinks = document.querySelectorAll('.tb a');
+    const storeContents = document.querySelectorAll('.store-category-content');
+    
+    tabLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all tabs
+            tabLinks.forEach(tab => tab.classList.remove('active'));
+            storeContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            this.classList.add('active');
+            
+            // Show corresponding content
+            const categoryId = this.getAttribute('data-type');
+            const targetContent = document.querySelector(`.store-category-content[data-category="${categoryId}"]`);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        });
+    });
+});
+</script>
+
+<script>
 document.addEventListener('DOMContentLoaded', function () {
   // Prevent double-init
   if (window.__couponModalInit) return;
@@ -3003,70 +2859,160 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-// Brands Carousel Functionality
-let currentSlideIndex = 0;
+// Brands Carousel Functionality - Woodmart Style
+document.addEventListener('DOMContentLoaded', function() {
 const brandsSlider = document.getElementById('brandsSlider');
 const brandItems = document.querySelectorAll('.brand-item');
-const itemsPerSlide = 6; // Show 6 brands per slide
-const totalSlides = Math.ceil(brandItems.length / itemsPerSlide);
-
-function moveCarousel(direction) {
-    currentSlideIndex += direction;
     
-    if (currentSlideIndex >= totalSlides) {
-        currentSlideIndex = 0;
-    } else if (currentSlideIndex < 0) {
-        currentSlideIndex = totalSlides - 1;
+    if (!brandsSlider || brandItems.length === 0) {
+        console.log('No brands slider or items found');
+        return;
     }
     
-    updateCarousel();
-    updateDots();
-}
+    console.log('Found', brandItems.length, 'brand items');
+    
+    // Woodmart-style carousel calculations
+    const itemWidth = 224; // 200px width + 24px gap
+    const containerWidth = brandsSlider.parentElement.offsetWidth - 64; // Subtract padding
+    const visibleItems = Math.floor(containerWidth / itemWidth);
+    const totalSlides = Math.ceil(brandItems.length / visibleItems);
+    let currentSlide = 0;
+    let isTransitioning = false;
+    
+    console.log('Container width:', containerWidth, 'Visible items:', visibleItems, 'Total slides:', totalSlides);
 
-function currentSlide(slideNumber) {
-    currentSlideIndex = slideNumber - 1;
-    updateCarousel();
-    updateDots();
-}
-
-function updateCarousel() {
-    const translateX = -currentSlideIndex * (100 / totalSlides);
-    brandsSlider.style.transform = `translateX(${translateX}%)`;
-}
-
-function updateDots() {
-    const dots = document.querySelectorAll('.dot');
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentSlideIndex);
+function moveCarousel(direction) {
+        if (isTransitioning || totalSlides <= 1) return;
+        
+        isTransitioning = true;
+        currentSlide += direction;
+        
+        // Handle boundaries
+        if (currentSlide >= totalSlides) {
+            currentSlide = 0;
+        } else if (currentSlide < 0) {
+            currentSlide = totalSlides - 1;
+        }
+        
+        // Calculate proper transform - move by visible items only
+        const translateX = -(currentSlide * visibleItems * itemWidth);
+        console.log('Moving to slide:', currentSlide, 'TranslateX:', translateX);
+        
+        // Smooth transition with Woodmart-style easing
+        brandsSlider.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        brandsSlider.style.transform = `translateX(${translateX}px)`;
+        
+        setTimeout(() => {
+            isTransitioning = false;
+        }, 800);
+    }
+    
+    // Auto-play carousel
+    let autoPlayInterval = setInterval(() => {
+        if (totalSlides > 1) {
+            moveCarousel(1);
+        }
+    }, 4000);
+    
+    // Pause auto-play on hover
+    brandsSlider.addEventListener('mouseenter', () => {
+        clearInterval(autoPlayInterval);
     });
-}
-
-// Auto-play carousel
-setInterval(() => {
+    
+    brandsSlider.addEventListener('mouseleave', () => {
+        autoPlayInterval = setInterval(() => {
     if (totalSlides > 1) {
         moveCarousel(1);
     }
 }, 4000);
-
-// Generate pagination dots dynamically
+    });
+    
+    // Touch/swipe support
+    let startX = 0;
+    let endX = 0;
+    
+    brandsSlider.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+    });
+    
+    brandsSlider.addEventListener('touchend', (e) => {
+        endX = e.changedTouches[0].clientX;
+        const diff = startX - endX;
+        
+        if (Math.abs(diff) > 50) { // Minimum swipe distance
+            if (diff > 0) {
+                moveCarousel(1); // Swipe left - next
+            } else {
+                moveCarousel(-1); // Swipe right - previous
+            }
+        }
+    });
+    
+    // Make functions global for onclick handlers
+    window.moveCarousel = moveCarousel;
+    
+    // Generate pagination dots
 function generateDots() {
     const dotsContainer = document.getElementById('carouselDots');
+        if (!dotsContainer || totalSlides <= 1) return;
+        
     dotsContainer.innerHTML = '';
     
     for (let i = 0; i < totalSlides; i++) {
         const dot = document.createElement('span');
         dot.className = 'dot';
         if (i === 0) dot.classList.add('active');
-        dot.onclick = () => currentSlide(i + 1);
+            dot.onclick = () => {
+                currentSlide = i;
+                const translateX = -(currentSlide * visibleItems * itemWidth);
+                brandsSlider.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                brandsSlider.style.transform = `translateX(${translateX}px)`;
+                updateDots();
+            };
         dotsContainer.appendChild(dot);
     }
 }
+    
+    function updateDots() {
+        const dots = document.querySelectorAll('.dot');
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentSlide);
+        });
+}
 
 // Initialize carousel
-if (totalSlides > 0) {
+    if (totalSlides > 1) {
     generateDots();
     updateDots();
-}
+    } else {
+        // Hide navigation buttons if not enough items
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        if (prevBtn) prevBtn.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = 'none';
+    }
+    
+    // Ensure initial position is correct
+    brandsSlider.style.transform = 'translateX(0px)';
+    
+    // Add resize listener to recalculate on window resize
+    window.addEventListener('resize', () => {
+        const newContainerWidth = brandsSlider.parentElement.offsetWidth - 64;
+        const newVisibleItems = Math.floor(newContainerWidth / itemWidth);
+        const newTotalSlides = Math.ceil(brandItems.length / newVisibleItems);
+        
+        if (newTotalSlides !== totalSlides) {
+            console.log('Recalculating carousel on resize');
+            // Reset to first slide
+            currentSlide = 0;
+            brandsSlider.style.transform = 'translateX(0px)';
+            generateDots();
+            updateDots();
+        }
+    });
+    
+    console.log('Carousel initialized successfully');
+});
 </script>
 
 @endsection

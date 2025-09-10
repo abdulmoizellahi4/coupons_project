@@ -20,6 +20,13 @@
       <div class="menu-inner-shadow"></div>
 
 <ul class="menu-inner py-1">
+<li class="menu-item {{ request()->is('admin/dashboard') ? 'active' : '' }}">
+    
+                <a href="{{ route('admin.dashboard') }}" class="menu-link">
+                <i class="menu-icon tf-icons ri-box-3-line"></i>
+                    <div>Dashboard</div>
+                </a>
+            </li>
     {{-- Coupons --}}
     <li class="menu-item {{ request()->is('admin/coupons', 'admin/coupons/*') ? 'active open' : '' }}">
         <a href="javascript:void(0);" class="menu-link menu-toggle">

@@ -17,6 +17,39 @@
     </div>
 </div>
 
+        <!-- Feature Category + Show Home + Recommended -->
+        <div class="form-section">
+            <div class="row mb-3 ms-2">
+                <div class="col-md-4 toggle-switch">
+                    <div class="d-flex">
+                        <label>Feature Category</label>
+                        <div class="form-check form-switch mx-2">
+                            <input class="form-check-input" type="checkbox" role="switch" id="featuredSwitch" name="featured" value="1"
+                                {{ old('featured', $category->featured ?? 0) ? 'checked' : '' }}>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 toggle-switch">
+                    <div class="d-flex">
+                        <label>Show Home</label>
+                        <div class="form-check form-switch mx-2">
+                            <input class="form-check-input" type="checkbox" role="switch" id="showHomeSwitch" name="show_home" value="1"
+                                {{ old('show_home', $category->show_home ?? 0) ? 'checked' : '' }}>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 toggle-switch">
+                    <div class="d-flex">
+                        <label>Recommended</label>
+                        <div class="form-check form-switch mx-2">
+                            <input class="form-check-input" type="checkbox" role="switch" id="recommendedSwitch" name="recommended" value="1"
+                                {{ old('recommended', $category->recommended ?? 0) ? 'checked' : '' }}>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 <!-- Category Name + SEO URL -->
 <div class="form-section">
     <div class="row mb-3">

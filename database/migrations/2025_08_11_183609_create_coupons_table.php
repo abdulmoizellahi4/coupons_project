@@ -22,9 +22,7 @@ return new class extends Migration
             $table->string('brand_store');
             $table->string('coupon_code')->nullable();
 
-            // Pehle string tha, ab integer foreign key banayenge
-            $table->unsignedBigInteger('event_id')->nullable();
-            $table->foreign('event_id')->references('id')->on('events')->onDelete('set null');
+            // event_id will be added in a separate migration after events table is created
 
             $table->string('submitted_by')->nullable();
             $table->string('affiliate_url')->nullable();
@@ -43,11 +41,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('coupons', function (Blueprint $table) {
-            // Foreign key drop
-            $table->dropForeign(['event_id']);
-        });
-
         Schema::dropIfExists('coupons');
     }
 };

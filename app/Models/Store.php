@@ -62,5 +62,9 @@ public function availableNetwork()
     return $this->belongsTo(Networks::class, 'available_network'); // column ka naam wahi jo DB me hai
 }
 
+public function coupons()
+{
+    return $this->hasMany(Coupon::class, 'brand_store', 'store_name');
+}
 
 }
