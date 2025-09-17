@@ -124,5 +124,16 @@
 <!-- Main JS -->
 <script src="{{ asset('assets/js/main.js') }}"></script>
 <script src="{{ asset('assets/js/pages-auth.js') }}"></script>
+
+<!-- Prevent back button navigation to cached pages -->
+<script>
+    // Clear browser history to prevent back button issues
+    if (window.history && window.history.pushState) {
+        window.history.pushState(null, null, window.location.href);
+        window.onpopstate = function(event) {
+            window.history.pushState(null, null, window.location.href);
+        };
+    }
+</script>
 </body>
 </html>

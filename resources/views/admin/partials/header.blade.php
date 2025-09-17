@@ -6,9 +6,16 @@
     <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
 
       <div class="app-brand demo my-3">
+        @php
+            $brandingSettings = \App\Helpers\SettingsHelper::getBranding();
+        @endphp
         <a href="{{ url('/') }}" class="app-brand-link">
           <span class="app-brand-logo demo me-1">
-            <img src="{{asset('assets/img/icons/logo.png')}}" alt="" class="img-fluid" style="width:60%;">
+            @if($brandingSettings['site_logo_url'])
+                <img src="{{ $brandingSettings['site_logo_url'] }}" alt="{{ $brandingSettings['site_name'] }}" class="img-fluid" style="width:60%;">
+            @else
+                <img src="{{asset('assets/img/icons/logo.png')}}" alt="{{ $brandingSettings['site_name'] }}" class="img-fluid" style="width:60%;">
+            @endif
           </span>
         </a>
 
@@ -20,13 +27,12 @@
       <div class="menu-inner-shadow"></div>
 
 <ul class="menu-inner py-1">
-<li class="menu-item {{ request()->is('admin/dashboard') ? 'active' : '' }}">
-    
-                <a href="{{ route('admin.dashboard') }}" class="menu-link">
+        <li class="menu-item {{ request()->is('admin/dashboard') ? 'active' : '' }}">
+            <a href="{{ route('admin.dashboard') }}" class="menu-link">
                 <i class="menu-icon tf-icons ri-box-3-line"></i>
-                    <div>Dashboard</div>
-                </a>
-            </li>
+                <div>Dashboard</div>
+            </a>
+        </li>
     {{-- Coupons --}}
     <li class="menu-item {{ request()->is('admin/coupons', 'admin/coupons/*') ? 'active open' : '' }}">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -71,7 +77,7 @@
     <li class="menu-item {{ request()->is('admin/networks', 'admin/networks/*') ? 'active open' : '' }}">
         <a href="{{ route('admin.networks.index') }}" class="menu-link">
             <i class="menu-icon tf-icons ri-share-line"></i>
-            <div>Manage Networks</div>
+            <div class="">Manage Networks</div>
         </a>
     </li>
 
@@ -133,6 +139,102 @@
                 </a>
             </li>
         </ul>
+    </li>
+
+    {{-- Blogs --}}
+    <li class="menu-item {{ request()->is('admin/blogs', 'admin/blogs/*') ? 'active open' : '' }}">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons ri-article-line"></i>
+            <div>Manage Blogs</div>
+        </a>
+        <ul class="menu-sub">
+            <li class="menu-item {{ request()->is('admin/blogs/create') ? 'active' : '' }}">
+                <a href="{{ route('admin.blogs.create') }}" class="menu-link">
+                    <div>Add Blog Post</div>
+                </a>
+            </li>
+            <li class="menu-item {{ request()->is('admin/blogs') ? 'active' : '' }}">
+                <a href="{{ route('admin.blogs.index') }}" class="menu-link">
+                    <div>View Blog Posts</div>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    {{-- Contact Submissions --}}
+    <li class="menu-item {{ request()->is('admin/contacts', 'admin/contacts/*') ? 'active open' : '' }}">
+        <a href="{{ route('admin.contacts.index') }}" class="menu-link">
+            <i class="menu-icon tf-icons ri-mail-line"></i>
+            <div>Contact Submissions</div>
+            @php
+                $newContactsCount = \App\Models\Contact::where('status', 'new')->count();
+            @endphp
+            @if($newContactsCount > 0)
+                <span class="badge bg-danger ms-auto">{{ $newContactsCount }}</span>
+            @endif
+        </a>
+    </li>
+
+    {{-- Newsletter Subscribers --}}
+    <li class="menu-item {{ request()->is('admin/newsletters', 'admin/newsletters/*') ? 'active open' : '' }}">
+        <a href="{{ route('admin.newsletters.index') }}" class="menu-link">
+            <i class="menu-icon tf-icons ri-newspaper-line"></i>
+            <div>Newsletter Subscribers</div>
+            @php
+                $newsletterCount = \App\Models\Newsletter::where('is_active', true)->count();
+            @endphp
+            @if($newsletterCount > 0)
+                <span class="badge bg-info ms-auto">{{ $newsletterCount }}</span>
+            @endif
+        </a>
+    </li>
+
+    {{-- User Management --}}
+    <li class="menu-item {{ request()->is('admin/users', 'admin/users/*') ? 'active open' : '' }}">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons ri-user-line"></i>
+            <div>User Management</div>
+        </a>
+        <ul class="menu-sub">
+            <li class="menu-item {{ request()->is('admin/users/create') ? 'active' : '' }}">
+                <a href="{{ route('admin.users.create') }}" class="menu-link">
+                    <div>Add New User</div>
+                </a>
+            </li>
+            <li class="menu-item {{ request()->is('admin/users') && !request()->is('admin/users/create') ? 'active' : '' }}">
+                <a href="{{ route('admin.users.index') }}" class="menu-link">
+                    <div>View All Users</div>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    {{-- Customer Management --}}
+    <li class="menu-item {{ request()->is('admin/customers', 'admin/customers/*') ? 'active open' : '' }}">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons ri-customer-service-line"></i>
+            <div>Customer Management</div>
+        </a>
+        <ul class="menu-sub">
+            <li class="menu-item {{ request()->is('admin/customers/create') ? 'active' : '' }}">
+                <a href="{{ route('admin.customers.create') }}" class="menu-link">
+                    <div>Add New Customer</div>
+                </a>
+            </li>
+            <li class="menu-item {{ request()->is('admin/customers') && !request()->is('admin/customers/create') ? 'active' : '' }}">
+                <a href="{{ route('admin.customers.index') }}" class="menu-link">
+                    <div>View All Customers</div>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    {{-- Settings --}}
+    <li class="menu-item {{ request()->is('admin/settings', 'admin/settings/*') ? 'active open' : '' }}">
+        <a href="{{ route('admin.settings.index') }}" class="menu-link">
+            <i class="menu-icon tf-icons ri-settings-3-line"></i>
+            <div>Settings</div>
+        </a>
     </li>
 </ul>
 

@@ -1,19 +1,19 @@
 /* Brand overrides loaded after home.css — sets the CSS variables used by home.css to apply the site theme */
 :root{
-  /* override home.css variables to apply brand consistently */
-  --primaryColor: #FF0000 !important; /* main brand */
-  --secondaryColor: #E80101 !important; /* accent */
-  --secondaryLightColor: #FA364B !important;
-  --tertiaryColor: #fef08e !important;
-  --quaternaryColor: #FAF9F5 !important;
-  --quaternaryDarkColor: #F2F0E6 !important;
-  --greyColor: #4B5563 !important;
-  --lightGreyColor: #f8f9f8 !important;
-  --darkGreyColor: #172730 !important;
-  --primaryTextColor: #0F0F0F !important;
-  --greyTextColor: #6d6e71 !important;
-  --borderColor: #D5D5D5 !important;
-  --scbtc: #FF0000 !important; /* scrollbar/thumb color */
+  /* Dynamic colors from admin settings - these will override the static values below */
+  --primaryColor: var(--primary-color, #FF0000) !important; /* main brand */
+  --secondaryColor: var(--secondary-color, #E80101) !important; /* accent */
+  --secondaryLightColor: var(--primary-color, #FA364B) !important;
+  --tertiaryColor: var(--background-secondary-color, #fef08e) !important;
+  --quaternaryColor: var(--background-primary-color, #FAF9F5) !important;
+  --quaternaryDarkColor: var(--background-secondary-color, #F2F0E6) !important;
+  --greyColor: var(--secondary-color, #4B5563) !important;
+  --lightGreyColor: var(--background-secondary-color, #f8f9f8) !important;
+  --darkGreyColor: var(--secondary-color, #172730) !important;
+  --primaryTextColor: var(--text-color, #0F0F0F) !important;
+  --greyTextColor: var(--text-color, #6d6e71) !important;
+  --borderColor: var(--secondary-color, #D5D5D5) !important;
+  --scbtc: var(--primary-color, #FF0000) !important; /* scrollbar/thumb color */
 }
 
 /* Small helpers that reinforce the brand look */

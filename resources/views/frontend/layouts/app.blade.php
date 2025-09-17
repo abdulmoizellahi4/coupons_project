@@ -10,21 +10,32 @@
     {{-- cache-bust css files using filemtime so browsers pick up updates immediately --}} 
     <link rel="stylesheet" href="{{ asset('frontend_assets/css/home.css') }}?v={{ file_exists(public_path('frontend_assets/css/home.css')) ? filemtime(public_path('frontend_assets/css/home.css')) : time() }}" as="style" crossorigin>
     <link rel="stylesheet" href="{{ asset('frontend_assets/css/brand.css') }}?v={{ file_exists(public_path('frontend_assets/css/brand.css')) ? filemtime(public_path('frontend_assets/css/brand.css')) : time() }}" as="style" crossorigin>
+    <link rel="stylesheet" href="{{ route('colors.css') }}?v={{ time() }}" crossorigin>
     <link rel="preload" href="{{ asset('frontend_assets/js/home.js') }}" as="script" crossorigin>
     
     @stack('styles')
 
-    <link rel="shortcut icon" href="{{ asset('assets/img/icons/logo.png') }}" type="image/png" />
-    <link rel="icon" href="{{ asset('assets/img/icons/logo.png') }}" type="image/png">
-    <link rel="mask-icon" href="{{ asset('assets/img/icons/logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('assets/img/icons/logo.png') }}" />
+    @php
+        $brandingSettings = \App\Helpers\SettingsHelper::getBranding();
+    @endphp
+    @if($brandingSettings['site_favicon_url'])
+        <link rel="shortcut icon" href="{{ $brandingSettings['site_favicon_url'] }}" type="image/png" />
+        <link rel="icon" href="{{ $brandingSettings['site_favicon_url'] }}" type="image/png">
+        <link rel="mask-icon" href="{{ $brandingSettings['site_favicon_url'] }}">
+        <link rel="apple-touch-icon" href="{{ $brandingSettings['site_favicon_url'] }}" />
+    @else
+        <link rel="shortcut icon" href="{{ asset('assets/img/icons/logo.png') }}" type="image/png" />
+        <link rel="icon" href="{{ asset('assets/img/icons/logo.png') }}" type="image/png">
+        <link rel="mask-icon" href="{{ asset('assets/img/icons/logo.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('assets/img/icons/logo.png') }}" />
+    @endif
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <meta name="influencerrate-verification" content="21a3e1d6f5b4bfbf5b07c275a2d57093" />
     <meta http-equiv="Content-Security-Policy" content="script-src * data: https://ssl.gstatic.com 'unsafe-inline' 'unsafe-eval'">
     <meta name="google-site-verification" content="ugHy5OZkkcJbkGO2TNrGqox8Ch_-CzVOC0Oc1PNBgDk" />
 
-    <title>@yield('title', 'Discount Codes, Voucher Codes | Exclusive Deals')</title>
+    <title>@yield('title', $brandingSettings['site_name'] . ' - ' . $brandingSettings['site_tagline'])</title>
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, initial-scale=1.0">
@@ -71,6 +82,7 @@
     <meta name="verify-reviews" content="$2y$10$3k0GNwpUB7YS2lCi8wj/COhbW1TnrT7yNYL6RS1W4D3jSwpxqzh.2">
     <meta name="ahrefs-site-verification" content="eee357cb614244b7172a63301f3120b383a6d0bc6f190dee582ab90938a8ae2f">
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         var app_url = "{{ url('/') }}";
         var app_media = "{{ asset('') }}";

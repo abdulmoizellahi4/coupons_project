@@ -59,6 +59,14 @@ public function create()
 
     // fix: exclude the actual input names (categories, events)
     $data = $request->except(['categories', 'events']);
+    
+    // Handle checkbox fields using Laravel's boolean() method
+    $data['covid_disable'] = $request->boolean('covid_disable');
+    $data['featured'] = $request->boolean('featured');
+    $data['recommended'] = $request->boolean('recommended');
+    $data['auto_sort'] = $request->boolean('auto_sort');
+    $data['show_trending'] = $request->boolean('show_trending');
+    $data['status'] = $request->boolean('status');
 
     // Ensure seo_url is a slug (server-side safeguard)
     if (empty($data['seo_url']) && !empty($request->input('store_name'))) {
@@ -129,6 +137,14 @@ public function edit(Store $store)
         ]);
 
     $data = $request->except(['categories', 'events']);
+    
+    // Handle checkbox fields using Laravel's boolean() method
+    $data['covid_disable'] = $request->boolean('covid_disable');
+    $data['featured'] = $request->boolean('featured');
+    $data['recommended'] = $request->boolean('recommended');
+    $data['auto_sort'] = $request->boolean('auto_sort');
+    $data['show_trending'] = $request->boolean('show_trending');
+    $data['status'] = $request->boolean('status');
 
         // Store Logo Update
         if ($request->hasFile('store_logo')) {

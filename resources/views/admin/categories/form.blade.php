@@ -50,6 +50,21 @@
             </div>
         </div>
 
+        <!-- Show Top Category -->
+        <div class="form-section">
+            <div class="row mb-3 ms-2">
+                <div class="col-md-4 toggle-switch">
+                    <div class="d-flex">
+                        <label>Show Top</label>
+                        <div class="form-check form-switch mx-2">
+                            <input class="form-check-input" type="checkbox" role="switch" id="showTopSwitch" name="show_top" value="1"
+                                {{ old('show_top', $category->show_top ?? 0) ? 'checked' : '' }}>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 <!-- Category Name + SEO URL -->
 <div class="form-section">
     <div class="row mb-3">

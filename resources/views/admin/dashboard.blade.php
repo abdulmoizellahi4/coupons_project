@@ -46,6 +46,28 @@
     </div>
 
     <div class="col-lg-3 col-md-6 col-12 mb-4">
+        <a href="{{ route('admin.newsletters.index') }}" class="text-decoration-none">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="card-info">
+                            <p class="card-text">Newsletter Subscribers</p>
+                            <div class="d-flex align-items-center mb-1">
+                                <h4 class="mb-0 me-1">{{ \App\Models\Newsletter::where('is_active', true)->count() }}</h4>
+                            </div>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-info rounded p-2">
+                                <i class="ri-mail-line ri-24px"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-lg-3 col-md-6 col-12 mb-4">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
@@ -70,14 +92,14 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div class="card-info">
-                        <p class="card-text">Active Events</p>
+                        <p class="card-text">Total Customers</p>
                         <div class="d-flex align-items-center mb-1">
-                            <h4 class="mb-0 me-1">{{ \App\Models\Events::where('status', 1)->count() }}</h4>
+                            <h4 class="mb-0 me-1">{{ \App\Models\Customer::count() }}</h4>
                         </div>
                     </div>
                     <div class="card-icon">
                         <span class="badge bg-label-warning rounded p-2">
-                            <i class="ri-calendar-event-line ri-24px"></i>
+                            <i class="ri-user-line ri-24px"></i>
                         </span>
                     </div>
                 </div>
@@ -159,6 +181,109 @@
                     <a href="{{ route('admin.events.create') }}" class="btn btn-warning">
                         <i class="ri-calendar-event-line me-1"></i> Add New Event
                     </a>
+                    <a href="{{ route('admin.customers.index') }}" class="btn btn-secondary">
+                        <i class="ri-user-line me-1"></i> Manage Customers
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Customers -->
+    <div class="col-lg-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Recent Customers</h5>
+                <a href="{{ route('admin.customers.index') }}" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Subscribed</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse(\App\Models\Customer::latest()->take(5)->get() as $customer)
+                            <tr>
+                                <td>{{ $customer->name }}</td>
+                                <td>{{ $customer->email }}</td>
+                                <td>
+                                    @if($customer->is_subscribed)
+                                        <span class="badge bg-label-success">Yes</span>
+                                    @else
+                                        <span class="badge bg-label-secondary">No</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($customer->status)
+                                        <span class="badge bg-label-success">Active</span>
+                                    @else
+                                        <span class="badge bg-label-danger">Inactive</span>
+                                    @endif
+                                </td>
+                                <td>{{ $customer->created_at->format('M d, Y') }}</td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center">No customers found</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Events -->
+    <div class="col-lg-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Active Events</h5>
+                <a href="{{ route('admin.events.index') }}" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Event Name</th>
+                                <th>Type</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse(\App\Models\Events::where('status', 1)->latest()->take(5)->get() as $event)
+                            <tr>
+                                <td>{{ $event->event_name }}</td>
+                                <td>{{ $event->event_type }}</td>
+                                <td>{{ $event->start_date }}</td>
+                                <td>{{ $event->end_date }}</td>
+                                <td>
+                                    @if($event->status)
+                                        <span class="badge bg-label-success">Active</span>
+                                    @else
+                                        <span class="badge bg-label-danger">Inactive</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center">No active events found</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

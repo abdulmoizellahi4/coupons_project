@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Events;
+use App\Models\Customer;
+use App\Notifications\NewEventNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Notification;
 
 class EventsController extends Controller
 {
@@ -40,6 +43,7 @@ class EventsController extends Controller
         ]);
 
         $validated['status'] = $request->boolean('status');
+        $validated['show_footer'] = $request->boolean('show_footer');
 
         // Files upload
         foreach (['front_image', 'button_icon', 'cover_image', 'no_coupon_cover'] as $field) {
@@ -52,9 +56,15 @@ class EventsController extends Controller
         $last = Events::max('sort_order') ?? 0;
         $validated['sort_order'] = $last + 1;
 
-        Events::create($validated);
+        $event = Events::create($validated);
 
-        return redirect()->route('admin.events.index')->with('success', 'Event created successfully.');
+        // Send email notifications to all subscribed customers
+        $subscribedCustomers = Customer::subscribed()->get();
+        if ($subscribedCustomers->count() > 0) {
+            Notification::send($subscribedCustomers, new NewEventNotification($event));
+        }
+
+        return redirect()->route('admin.events.index')->with('success', 'Event created successfully and notifications sent to ' . $subscribedCustomers->count() . ' subscribers.');
     }
 
     public function edit(Events $event)
@@ -82,6 +92,7 @@ class EventsController extends Controller
         ]);
 
         $validated['status'] = $request->boolean('status');
+        $validated['show_footer'] = $request->boolean('show_footer');
 
         // Replace files (purani file delete karke)
         foreach (['front_image', 'button_icon', 'cover_image', 'no_coupon_cover'] as $field) {

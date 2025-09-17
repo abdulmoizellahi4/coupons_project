@@ -13,7 +13,14 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('auth.login'); // jo aapne banaya login.blade.php
+        $response = response()->view('auth.login');
+        
+        // Prevent caching of login page
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+        
+        return $response;
     }
 
     /**
@@ -51,6 +58,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login.form')->with('success', 'You have been logged out.');
+        return redirect()->route('login')->with('success', 'You have been logged out.');
     }
 }

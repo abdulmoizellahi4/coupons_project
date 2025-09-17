@@ -20,22 +20,19 @@
   <div class="Wrp">
     <!-- Breadcrumb <start> -->
     <ul class="brdcrb" itemscope="" itemtype="http://schema.org/BreadcrumbList">
-  <li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
-    <a href="{{ route('home') }}" class="link" itemprop="item">
-      <span itemprop="name">Home</span>
-      <meta itemprop="position" content="1">
-    </a>
-  </li>
       <li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
-      <a href="javascript:;" class="link" itemprop="item">
-        <span itemprop="name">Top 20 Discount </span>
-        <meta itemprop="position" content="2">
-      </a>
-    </li>
-    
-  
- 
-</ul>
+        <a href="{{ route('home') }}" class="link" itemprop="item">
+          <span itemprop="name">Home</span>
+          <meta itemprop="position" content="1">
+        </a>
+      </li>
+          <li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem">
+          <a href="javascript:;" class="link" itemprop="item">
+            <span itemprop="name">Top 20 Discount </span>
+            <meta itemprop="position" content="2">
+          </a>
+        </li>
+    </ul>
     <!-- Breadcrumb <end> -->
           <!-- Top 20 Discounts Head <start> -->
       <div class="dcHd" style="background-image: url('assets/images/svg/dc20.svg');">
@@ -330,7 +327,7 @@
   margin: auto;
     width: 480px; 
     max-width: calc(50% - 30px); 
-    background: #fff; 
+    background: var(--background-primary-color, #fff); 
     border-radius: 16px; 
     padding: 30px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
@@ -345,7 +342,7 @@
   top: 40px;
     width: 480px; 
     max-width: calc(50% - 30px); 
-    background: #fff; 
+    background: var(--background-primary-color, #fff); 
     border-radius: 16px; 
     padding: 30px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
@@ -361,12 +358,12 @@
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: #666;
+    color: var(--text-color, #666);
     z-index: 3;
 }
 
 .cm-close:hover {
-    color: #000;
+    color: var(--text-color, #000);
 }
 
 .cm-main-content {
@@ -377,7 +374,7 @@
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 20px;
-    color: #333;
+    color: var(--text-color, #333);
 }
 
 .cm-code-section {
@@ -385,19 +382,19 @@
 }
 
 .cm-code-display {
-    background: #f8f9fa;
-    border: 2px dashed #FF0000;
+    background: var(--background-secondary-color, #f8f9fa);
+    border: 2px dashed var(--primary-color, #FF0000);
     border-radius: 8px;
     padding: 15px;
     font-size: 18px;
     font-weight: bold;
-    color: #FF0000;
+    color: var(--primary-color, #FF0000);
     margin-bottom: 15px;
     font-family: monospace;
 }
 
 .cm-copy-btn {
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     color: white;
     border: none;
     padding: 12px 24px;
@@ -408,12 +405,12 @@
 }
 
 .cm-copy-btn:hover {
-    background: #FF0000;
+    background: var(--secondary-color, #FF0000);
 }
 
 .cm-note {
     margin-top: 20px;
-    color: #666;
+    color: var(--text-color, #666);
     font-size: 14px;
 }
 
@@ -429,7 +426,7 @@
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -450,11 +447,11 @@
     font-size: 22px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #333;
+    color: var(--text-color, #333);
 }
 
 .cm-email-subtitle {
-    color: #666;
+    color: var(--text-color, #666);
     margin-bottom: 20px;
     font-size: 14px;
 }
@@ -474,7 +471,7 @@
 
 .cm-email-form button {
     width: 100%;
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     color: white;
     border: none;
     padding: 12px;
@@ -485,12 +482,12 @@
 }
 
 .cm-email-form button:hover {
-    background: #FF0000;
+    background: var(--secondary-color, #FF0000);
 }
 
 .cm-email-privacy {
     font-size: 12px;
-    color: #999;
+    color: var(--text-color, #999);
     margin-top: 15px;
 }
 
@@ -595,11 +592,11 @@ document.addEventListener('DOMContentLoaded', function () {
         navigator.clipboard.writeText(code).then(function() {
           const originalText = cmCopy.textContent;
           cmCopy.textContent = 'Copied!';
-          cmCopy.style.backgroundColor = '#218838';
+          cmCopy.style.backgroundColor = 'var(--secondary-color, #218838)';
           
           setTimeout(function() {
             cmCopy.textContent = originalText;
-            cmCopy.style.backgroundColor = '#28a745';
+            cmCopy.style.backgroundColor = 'var(--primary-color, #28a745)';
           }, 2000);
         }).catch(function(err) {
           console.error('Could not copy text: ', err);

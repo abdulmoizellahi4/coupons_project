@@ -28,13 +28,42 @@
                 </p>
                 
                 <div class="search-container">
-                    <div class="search-box">
-                        <input type="text" placeholder="Search for stores, brands, or products..." class="search-input">
-                        <button class="search-btn">
+                    <div class="search-box" id="searchBox">
+                        <input type="text" placeholder="Search for stores, brands, or products..." class="search-input" id="searchInput" autocomplete="off">
+                        <button type="button" class="search-btn" id="searchBtn">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
+                    </div>
+                </div>
+                
+                <!-- Search Modal -->
+                <div id="searchModal" class="search-modal" style="display: none;">
+                    <div class="search-modal-overlay"></div>
+                    <div class="search-modal-content">
+                        <div class="search-modal-header">
+                            <input type="text" placeholder="Search" class="search-modal-input" id="modalSearchInput" autocomplete="off">
+                            <button class="search-modal-close" id="closeSearchModal">×</button>
+                            <!-- <button type="button" id="testBtn" style="margin-left: 10px; padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">Test Search</button>
+                            <button type="button" id="testBtn2" style="margin-left: 10px; padding: 5px 10px; background: #28a745; color: white; border: none; border-radius: 3px; cursor: pointer;">Test Cath</button> -->
+                        </div>
+                        <div class="search-modal-body">
+                            <div class="search-sections">
+                                <div class="search-section-left">
+                                    <h3>TRENDING OFFERS</h3>
+                                    <div id="trendingOffers" class="offers-list">
+                                        <!-- Trending offers will be loaded here -->
+                                    </div>
+                                </div>
+                                <div class="search-section-right">
+                                    <h3>BRANDS</h3>
+                                    <div id="brandsList" class="brands-list">
+                                        <!-- Brands will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -63,7 +92,7 @@
         <div class="section-header">
             <h2 class="section-title">
                 <span class="title-normal">Our</span>
-                <span class="title-highlight" style="color: #FF0000 !important;">Featured Stores</span>
+                <span class="title-highlight" style="color: var(--primary-color, #FF0000) !important;">Featured Stores</span>
             </h2>
             <p class="section-subtitle">Discover amazing brands with exclusive offers</p>
         </div>
@@ -457,12 +486,14 @@
             <h2>Sign-up To Get Latest Voucher Codes First</h2>
             <p>Be the first one to get notified as soon as we update a new offer or discount.</p>
 
-            <label class="snfld">
-                <input type="text" name="newsletter" value="" placeholder="Enter Your Email Address Here">
-                <button class="nfb" title="Subscribe">Subscribe</button>
-            </label>
+            <form id="newsletterForm" class="snfld">
+                @csrf
+                <input type="email" name="email" id="newsletterEmail" placeholder="Enter Your Email Address Here" required>
+                <button type="submit" class="nfb" title="Subscribe" id="newsletterBtn">Subscribe</button>
+            </form>
+            <div id="newsletterMessage" style="margin-top: 10px; display: none;"></div>
 
-    <p>By signing up I agree to topvoucherscode's <a href="https://www.topvoucherscode.co.uk/privacy-policy" target="_blank">Privacy Policy</a> and consent to receive emails about offers.</p>
+    <p>By signing up I agree to Big Saving Hub's <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a> and consent to receive emails about offers.</p>
 </div>        <!-- Newsletter <end> -->
     </div>
 </div>
@@ -1271,10 +1302,12 @@ document.addEventListener('DOMContentLoaded', function () {
 /* Modern Hero Section */
 .modern-hero {
     position: relative;
-    min-height: 100vh;
+    min-height: 70vh;
     display: flex;
     align-items: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: 
+        linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url('{{ asset('frontend_assets/images/search-bg.webp') }}') center/cover no-repeat;
     overflow: hidden;
 }
 
@@ -1362,14 +1395,14 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .gradient-text {
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
 .highlight {
-    color: #FF0000;
+    color: var(--primary-color, #FF0000);
 }
 
 .hero-subtitle {
@@ -1414,7 +1447,7 @@ document.addEventListener('DOMContentLoaded', function () {
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     border: none;
     border-radius: 50%;
     width: 45px;
@@ -1431,6 +1464,273 @@ document.addEventListener('DOMContentLoaded', function () {
     transform: translateY(-50%) scale(1.1);
 }
 
+/* Search Modal Styles */
+.search-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.search-modal-content {
+    position: relative;
+    background: white;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.search-modal-header {
+    display: flex;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f8f9fa;
+}
+
+.search-modal-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 18px;
+    padding: 10px 0;
+    background: transparent;
+    color: #333;
+}
+
+.search-modal-input::placeholder {
+    color: #999;
+}
+
+.search-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 15px;
+    transition: color 0.3s ease;
+}
+
+.search-modal-close:hover {
+    color: #333;
+}
+
+.search-modal-body {
+    padding: 25px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.search-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.search-section-left,
+.search-section-right {
+    min-height: 200px;
+}
+
+.search-section-left h3,
+.search-section-right h3 {
+    margin: 0 0 20px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.offers-list,
+.brands-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.offer-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.offer-item:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.offer-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.offer-logo-placeholder {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary-color, #FF0000);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.offer-content {
+    flex: 1;
+}
+
+.offer-brand {
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 5px 0;
+    font-size: 14px;
+}
+
+.offer-description {
+    color: #666;
+    font-size: 13px;
+    margin: 0 0 8px 0;
+}
+
+.offer-button {
+    background: var(--primary-color, #FF0000);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.offer-button:hover {
+    background: #cc0000;
+    transform: scale(1.05);
+}
+
+.brand-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+.brand-item:hover {
+    color: var(--primary-color, #FF0000);
+}
+
+.brand-item:last-child {
+    border-bottom: none;
+}
+
+.brand-name {
+    font-weight: 600;
+    color: var(--primary-color, #FF0000);
+    font-size: 14px;
+}
+
+.brand-offers {
+    color: #666;
+    font-size: 12px;
+}
+
+.loading-state {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid var(--primary-color, #FF0000);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+    .search-modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .search-sections {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .search-modal-header {
+        padding: 15px 20px;
+    }
+    
+    .search-modal-body {
+        padding: 20px;
+    }
+}
+
 .hero-stats {
     display: flex;
     justify-content: center;
@@ -1445,7 +1745,7 @@ document.addEventListener('DOMContentLoaded', function () {
 .stat-number {
     font-size: 2.5rem;
     font-weight: 800;
-    color: #FF0000;
+    color: var(--primary-color, #FF0000);
     margin-bottom: 0.5rem;
 }
 
@@ -1457,7 +1757,7 @@ document.addEventListener('DOMContentLoaded', function () {
 /* Featured Brands Section */
 .featured-brands-section {
     padding: 4rem 0;
-    background: #ffffff;
+    background: var(--background-primary-color, #ffffff);
 }
 
 .featured-brands-section .section-header {
@@ -1468,13 +1768,13 @@ document.addEventListener('DOMContentLoaded', function () {
 .featured-brands-section .section-title {
     font-size: 2rem;
     font-weight: 700;
-    color: #333333 !important;
+    color: var(--text-color, #333333) !important;
     margin-bottom: 0.5rem;
 }
 
 .featured-brands-section .section-subtitle {
     font-size: 1rem;
-    color: #666666 !important;
+    color: var(--text-color, #666666) !important;
     max-width: 500px;
     margin: 0 auto;
 }
@@ -1509,7 +1809,7 @@ document.addEventListener('DOMContentLoaded', function () {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     color: white;
     border: none;
     width: 40px;
@@ -1526,7 +1826,7 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .carousel-btn:hover {
-    background: #cc0000;
+    background: var(--secondary-color, #cc0000);
     transform: translateY(-50%) scale(1.1);
 }
 
@@ -1559,8 +1859,8 @@ document.addEventListener('DOMContentLoaded', function () {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: #ffffff;
-    border: 3px solid #f0f0f0;
+    background: var(--background-primary-color, #ffffff);
+    border: 3px solid var(--background-secondary-color, #f0f0f0);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1571,7 +1871,7 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .brand-link:hover .brand-logo-circle {
-    border-color: #FF0000;
+    border-color: var(--primary-color, #FF0000);
     box-shadow: 0 8px 30px rgba(255, 0, 0, 0.2);
     transform: scale(1.05);
 }
@@ -1590,7 +1890,7 @@ document.addEventListener('DOMContentLoaded', function () {
 .brand-placeholder {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, #FF0000, #000000);
+    background: linear-gradient(135deg, var(--primary-color, #FF0000), var(--secondary-color, #000000));
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1637,19 +1937,19 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .dot.active {
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     transform: scale(1.2);
 }
 
 .dot:hover {
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     opacity: 0.7;
 }
 
 .no-brands {
     text-align: center;
     padding: 3rem;
-    color: #666;
+    color: var(--text-color, #666);
 }
 
 .no-brands-icon {
@@ -1660,7 +1960,7 @@ document.addEventListener('DOMContentLoaded', function () {
 .no-brands h3 {
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
-    color: #333;
+    color: var(--text-color, #333);
 }
 
 .view-all-brands {
@@ -1670,8 +1970,8 @@ document.addEventListener('DOMContentLoaded', function () {
 .btn-outline {
     display: inline-block;
     padding: 0.75rem 2rem;
-    border: 2px solid #FF0000;
-    color: #FF0000;
+    border: 2px solid var(--primary-color, #FF0000);
+    color: var(--primary-color, #FF0000);
     text-decoration: none;
     border-radius: 25px;
     font-weight: 600;
@@ -1679,7 +1979,7 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .btn-outline:hover {
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     color: white;
     transform: translateY(-2px);
 }
@@ -1687,11 +1987,11 @@ document.addEventListener('DOMContentLoaded', function () {
 /* Hot Deals Section */
 .hot-deals-section {
     padding: 3rem 0;
-    background: #ffffff;
+    background: var(--background-primary-color, #ffffff);
 }
 
 .section-title {
-    color: #333333 !important;
+    color: var(--text-color, #333333) !important;
     font-size: 2rem;
     font-weight: 700;
     text-align: center;
@@ -1699,13 +1999,13 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .section-subtitle {
-    color: #666666 !important;
+    color: var(--text-color, #666666) !important;
     text-align: center;
     margin-bottom: 2rem;
 }
 
 .view-all-link {
-    color: #FF0000;
+    color: var(--primary-color, #FF0000);
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
@@ -1715,7 +2015,7 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .view-all-link:hover {
-    color: #cc0000;
+    color: var(--secondary-color, #cc0000);
     text-decoration: underline;
 }
 
@@ -1727,11 +2027,11 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .deal-card {
-    background: #ffffff;
+    background: var(--background-primary-color, #ffffff);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e5e5e5;
+    border: 1px solid var(--background-secondary-color, #e5e5e5);
     transition: all 0.3s ease;
     position: relative;
     height: 320px;
@@ -1747,7 +2047,7 @@ document.addEventListener('DOMContentLoaded', function () {
     position: relative;
     height: 140px;
     overflow: hidden;
-    background: #f8f9fa;
+    background: var(--background-secondary-color, #f8f9fa);
 }
 
 .deal-cover-image {
@@ -1768,8 +2068,8 @@ document.addEventListener('DOMContentLoaded', function () {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #f8f9fa;
-    color: #666;
+    background: var(--background-secondary-color, #f8f9fa);
+    color: var(--text-color, #666);
 }
 
 .placeholder-icon {
@@ -1788,13 +2088,12 @@ document.addEventListener('DOMContentLoaded', function () {
     position: absolute;
     top: 8px;
     right: 8px;
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     color: white;
     padding: 0.25rem 0.5rem;
     border-radius: 12px;
     font-size: 0.7rem;
     font-weight: 700;
-    z-index: 3;
 }
 
 /* Exclusive Badge */
@@ -1802,7 +2101,7 @@ document.addEventListener('DOMContentLoaded', function () {
     position: absolute;
     top: 8px;
     left: 8px;
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     color: white;
     padding: 0.2rem 0.4rem;
     border-radius: 8px;
@@ -1811,7 +2110,6 @@ document.addEventListener('DOMContentLoaded', function () {
     display: flex;
     align-items: center;
     gap: 0.1rem;
-    z-index: 3;
 }
 
 .exclusive-icon {
@@ -1851,7 +2149,7 @@ document.addEventListener('DOMContentLoaded', function () {
 .store-details h3 {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #333;
+    color: var(--text-color, #333);
     margin: 0;
 }
 
@@ -1877,12 +2175,12 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .type-badge.code {
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     color: white;
 }
 
 .type-badge.deal {
-    background: #333;
+    background: var(--secondary-color, #333);
     color: white;
 }
 
@@ -1897,14 +2195,14 @@ document.addEventListener('DOMContentLoaded', function () {
 .deal-title {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #333;
+    color: var(--text-color, #333);
     margin-bottom: 0.25rem;
     line-height: 1.2;
 }
 
 .deal-description {
     font-size: 0.75rem;
-    color: #666;
+    color: var(--text-color, #666);
     margin-bottom: 0.5rem;
     line-height: 1.3;
 }
@@ -1920,11 +2218,11 @@ document.addEventListener('DOMContentLoaded', function () {
     align-items: center;
     gap: 0.1rem;
     font-size: 0.65rem;
-    color: #666;
-    background: #f8f9fa;
+    color: var(--text-color, #666);
+    background: var(--background-secondary-color, #f8f9fa);
     padding: 0.2rem 0.4rem;
     border-radius: 8px;
-    border: 1px solid #e5e5e5;
+    border: 1px solid var(--background-secondary-color, #e5e5e5);
 }
 
 .meta-icon {
@@ -1938,9 +2236,9 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .terms-btn {
-    background: #f8f9fa;
-    border: 1px solid #e5e5e5;
-    color: #666;
+    background: var(--background-secondary-color, #f8f9fa);
+    border: 1px solid var(--background-secondary-color, #e5e5e5);
+    color: var(--text-color, #666);
     cursor: pointer;
     font-size: 0.7rem;
     padding: 0.3rem 0.6rem;
@@ -1952,8 +2250,8 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .terms-btn:hover {
-    background: #e2e8f0;
-    color: #374151;
+    background: var(--background-secondary-color, #e2e8f0);
+    color: var(--text-color, #374151);
 }
 
 .terms-icon {
@@ -1976,12 +2274,12 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .deal-btn.reveal-code {
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     color: white;
 }
 
 .deal-btn.get-deal {
-    background: #333;
+    background: var(--secondary-color, #333);
     color: white;
 }
 
@@ -1990,11 +2288,11 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .deal-btn.reveal-code:hover {
-    background: #cc0000;
+    background: var(--secondary-color, #cc0000);
 }
 
 .deal-btn.get-deal:hover {
-    background: #555;
+    background: var(--text-color, #555);
 }
 
 .btn-icon {
@@ -2013,11 +2311,11 @@ document.addEventListener('DOMContentLoaded', function () {
 .no-deals {
     text-align: center;
     padding: 4rem 2rem;
-    color: #64748b;
+    color: var(--text-color, #64748b);
     grid-column: 1 / -1;
-    background: white;
+    background: var(--background-primary-color, white);
     border-radius: 20px;
-    border: 2px dashed #e2e8f0;
+    border: 2px dashed var(--background-secondary-color, #e2e8f0);
 }
 
 .no-deals-icon {
@@ -2028,14 +2326,14 @@ document.addEventListener('DOMContentLoaded', function () {
 .no-deals h3 {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #374151;
+    color: var(--text-color, #374151);
     margin-bottom: 0.5rem;
 }
 
 /* Categories Section */
 .categories-section {
     padding: 5rem 0;
-    background: #f8fafc;
+    background: var(--background-secondary-color, #f8fafc);
 }
 
 .categories-grid {
@@ -2046,13 +2344,13 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .category-card {
-    background: white;
+    background: var(--background-primary-color, white);
     border-radius: 20px;
     padding: 2rem;
     text-align: center;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--background-secondary-color, #e2e8f0);
 }
 
 .category-card:hover {
@@ -2068,30 +2366,30 @@ document.addEventListener('DOMContentLoaded', function () {
 .category-card h3 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #1a202c;
+    color: var(--text-color, #1a202c);
     margin-bottom: 0.5rem;
 }
 
 .category-card p {
-    color: #64748b;
+    color: var(--text-color, #64748b);
     margin-bottom: 1.5rem;
 }
 
 .category-link {
-    color: #667eea;
+    color: var(--primary-color, #667eea);
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
 }
 
 .category-link:hover {
-    color: #5a67d8;
+    color: var(--secondary-color, #5a67d8);
 }
 
 /* Category Deals Section */
 .category-deals-section {
     padding: 5rem 0;
-    background: white;
+    background: var(--background-primary-color, white);
 }
 
 .category-section {
@@ -2108,11 +2406,11 @@ document.addEventListener('DOMContentLoaded', function () {
 .category-title {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #1a202c;
+    color: var(--text-color, #1a202c);
 }
 
 .view-more {
-    color: #667eea;
+    color: var(--primary-color, #667eea);
     text-decoration: none;
     font-weight: 600;
 }
@@ -2124,15 +2422,15 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .mini-deal-card {
-    background: #f8fafc;
+    background: var(--background-secondary-color, #f8fafc);
     border-radius: 12px;
     padding: 1rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--background-secondary-color, #e2e8f0);
     transition: all 0.3s ease;
 }
 
 .mini-deal-card:hover {
-    background: white;
+    background: var(--background-primary-color, white);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -2153,12 +2451,12 @@ document.addEventListener('DOMContentLoaded', function () {
 .mini-store-name {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #1a202c;
+    color: var(--text-color, #1a202c);
 }
 
 .mini-deal-title {
     font-size: 0.95rem;
-    color: #374151;
+    color: var(--text-color, #374151);
     margin-bottom: 0.75rem;
     line-height: 1.4;
 }
@@ -2195,7 +2493,7 @@ document.addEventListener('DOMContentLoaded', function () {
 .no-category-deals {
     text-align: center;
     padding: 2rem;
-    color: #64748b;
+    color: var(--text-color, #64748b);
     grid-column: 1 / -1;
 }
 
@@ -2536,19 +2834,19 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .cm-code-display {
-    background: #f8f9fa;
-    border: 2px dashed #FF0000;
+    background: var(--background-secondary-color, #f8f9fa);
+    border: 2px dashed var(--primary-color, #FF0000);
     border-radius: 8px;
     padding: 15px;
     font-size: 18px;
     font-weight: bold;
-    color: #FF0000;
+    color: var(--primary-color, #FF0000);
     margin-bottom: 15px;
     font-family: monospace;
 }
 
 .cm-copy-btn {
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     color: white;
     border: none;
     padding: 12px 24px;
@@ -2559,12 +2857,12 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .cm-copy-btn:hover {
-    background: #cc0000;
+    background: var(--secondary-color, #cc0000);
 }
 
 .cm-note {
     margin-top: 20px;
-    color: #666;
+    color: var(--text-color, #666);
     font-size: 14px;
 }
 
@@ -2580,7 +2878,7 @@ document.addEventListener('DOMContentLoaded', function () {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2601,11 +2899,11 @@ document.addEventListener('DOMContentLoaded', function () {
     font-size: 22px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #333;
+    color: var(--text-color, #333);
 }
 
 .cm-email-subtitle {
-    color: #666;
+    color: var(--text-color, #666);
     margin-bottom: 20px;
     font-size: 14px;
 }
@@ -2625,7 +2923,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 .cm-email-form button {
     width: 100%;
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     color: white;
     border: none;
     padding: 12px;
@@ -2636,12 +2934,12 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .cm-email-form button:hover {
-    background: #cc0000;
+    background: var(--secondary-color, #cc0000);
 }
 
 .cm-email-privacy {
     font-size: 12px;
-    color: #999;
+    color: var(--text-color, #999);
     margin-top: 15px;
 }
 
@@ -3011,9 +3309,536 @@ function generateDots() {
         }
     });
     
-    console.log('Carousel initialized successfully');
+      console.log('Carousel initialized successfully');
+  });
+</script>
+
+<!-- Search Modal Functionality -->
+<script>
+$(document).ready(function() {
+    // jQuery-based search implementation
+    const $searchBox = $('#searchBox');
+    const $searchInput = $('#searchInput');
+    const $searchBtn = $('#searchBtn');
+    const $searchModal = $('#searchModal');
+    const $modalSearchInput = $('#modalSearchInput');
+    const $closeSearchModal = $('#closeSearchModal');
+    const $trendingOffers = $('#trendingOffers');
+    const $brandsList = $('#brandsList');
+    
+    let searchTimeout;
+
+    if (!$searchBox.length || !$searchModal.length || !$modalSearchInput.length) {
+        console.log('Search modal elements not found');
+        return;
+    }
+
+    // Open modal
+    function openSearchModal() {
+        console.log('Opening search modal...');
+        $searchModal.show();
+        $('body').css('overflow', 'hidden');
+        $modalSearchInput.focus();
+        loadDefaultData();
+    }
+
+    // Close modal
+    function closeModal() {
+        $searchModal.hide();
+        $('body').css('overflow', '');
+        $searchInput.val('');
+        $modalSearchInput.val('');
+    }
+
+    // Show loading state
+    function showLoading() {
+        $trendingOffers.html('<div class="loading-state"><span class="loading-spinner"></span>Loading offers...</div>');
+        $brandsList.html('<div class="loading-state"><span class="loading-spinner"></span>Loading brands...</div>');
+    }
+
+    // Load default data using jQuery AJAX
+    function loadDefaultData() {
+        console.log('Loading default data...');
+        showLoading();
+        
+        $.ajax({
+            url: '/getHeaderSearchDefault',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                console.log('Default data loaded successfully:', data);
+                console.log('Coupons count:', data.coupons ? data.coupons.length : 0);
+                console.log('Stores count:', data.stores ? data.stores.length : 0);
+                renderDefaultData(data);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading default data:', error);
+                console.error('Response:', xhr.responseText);
+                renderDefaultData({ coupons: [], stores: [], categories: [] });
+            }
+        });
+    }
+
+    // Render default data
+    function renderDefaultData(data) {
+        console.log('Rendering default data:', data);
+        
+        // Render trending offers
+        let offersHtml = '';
+        if (data.coupons && data.coupons.length > 0) {
+            $.each(data.coupons.slice(0, 5), function(index, coupon) {
+                const storeName = coupon.store ? coupon.store.store_name : coupon.brand_store || 'Store';
+                const storeLogo = coupon.store ? coupon.store.store_logo : null;
+                
+                offersHtml += '<a href="/search?q=' + encodeURIComponent(coupon.coupon_title) + '" class="offer-item">';
+                if (storeLogo) {
+                    offersHtml += '<img src="/storage/' + storeLogo + '" alt="' + storeName + '" class="offer-logo">';
+                } else {
+                    offersHtml += '<div class="offer-logo-placeholder">' + storeName.substring(0, 2).toUpperCase() + '</div>';
+                }
+                offersHtml += '<div class="offer-content">';
+                offersHtml += '<div class="offer-brand">' + storeName + '</div>';
+                offersHtml += '<div class="offer-description">' + coupon.coupon_title + '</div>';
+                offersHtml += '<button class="offer-button">' + (coupon.coupon_code ? 'Code' : 'Deal') + '</button>';
+                offersHtml += '</div></a>';
+            });
+        } else {
+            offersHtml = '<div class="loading-state">No trending offers available</div>';
+        }
+        $trendingOffers.html(offersHtml);
+
+        // Render brands
+        let brandsHtml = '';
+        if (data.stores && data.stores.length > 0) {
+            $.each(data.stores.slice(0, 5), function(index, store) {
+                brandsHtml += '<a href="/store/' + store.seo_url + '" class="brand-item">';
+                brandsHtml += '<span class="brand-name">' + store.store_name + '</span>';
+                brandsHtml += '<span class="brand-offers">View ' + (Math.floor(Math.random() * 10) + 5) + ' offers</span>';
+                brandsHtml += '</a>';
+            });
+        } else {
+            brandsHtml = '<div class="loading-state">No brands available</div>';
+        }
+        $brandsList.html(brandsHtml);
+    }
+
+    // Perform search using jQuery AJAX
+    function performSearch(query) {
+        console.log('Performing search for:', query);
+        
+        if (query.length < 2) {
+            loadDefaultData();
+            return;
+        }
+
+        showLoading();
+
+        $.ajax({
+            url: '/ajax-search',
+            type: 'GET',
+            data: { q: query },
+            dataType: 'json',
+            success: function(data) {
+                console.log('Search results:', data);
+                console.log('Stores count:', data.stores ? data.stores.length : 0);
+                console.log('Coupons count:', data.coupons ? data.coupons.length : 0);
+                renderSearchResults(data);
+            },
+            error: function(xhr, status, error) {
+                console.error('Search error:', error);
+                console.error('Response:', xhr.responseText);
+                renderSearchResults({ stores: [], coupons: [], categories: [] });
+            }
+        });
+    }
+
+    // Render search results
+    function renderSearchResults(data) {
+        const query = data.query || $modalSearchInput.val() || '';
+        console.log('Rendering search results for query:', query);
+        console.log('Data received:', data);
+        
+        // Render offers from search results
+        let offersHtml = '';
+        if (data.coupons && data.coupons.length > 0) {
+            console.log('Found coupons:', data.coupons.length);
+            $.each(data.coupons.slice(0, 5), function(index, coupon) {
+                const storeName = coupon.store ? coupon.store.store_name : coupon.brand_store || 'Store';
+                const storeLogo = coupon.store ? coupon.store.store_logo : null;
+                
+                offersHtml += '<a href="/search?q=' + encodeURIComponent(query) + '" class="offer-item">';
+                if (storeLogo) {
+                    offersHtml += '<img src="/storage/' + storeLogo + '" alt="' + storeName + '" class="offer-logo">';
+                } else {
+                    offersHtml += '<div class="offer-logo-placeholder">' + storeName.substring(0, 2).toUpperCase() + '</div>';
+                }
+                offersHtml += '<div class="offer-content">';
+                offersHtml += '<div class="offer-brand">' + storeName + '</div>';
+                offersHtml += '<div class="offer-description">' + coupon.coupon_title + '</div>';
+                offersHtml += '<button class="offer-button">' + (coupon.coupon_code ? 'Code' : 'Deal') + '</button>';
+                offersHtml += '</div></a>';
+            });
+        } else {
+            offersHtml = '<div class="loading-state">No offers found for "' + query + '"</div>';
+        }
+        $trendingOffers.html(offersHtml);
+
+        // Render brands from search results
+        let brandsHtml = '';
+        if (data.stores && data.stores.length > 0) {
+            console.log('Found stores:', data.stores.length);
+            $.each(data.stores.slice(0, 5), function(index, store) {
+                brandsHtml += '<a href="/store/' + store.seo_url + '" class="brand-item">';
+                brandsHtml += '<span class="brand-name">' + store.store_name + '</span>';
+                brandsHtml += '<span class="brand-offers">View ' + (Math.floor(Math.random() * 10) + 5) + ' offers</span>';
+                brandsHtml += '</a>';
+            });
+        } else {
+            brandsHtml = '<div class="loading-state">No brands found for "' + query + '"</div>';
+        }
+        $brandsList.html(brandsHtml);
+    }
+
+    // Event listeners using jQuery
+    $searchBox.on('click', openSearchModal);
+    $searchBtn.on('click', openSearchModal);
+    $closeSearchModal.on('click', closeModal);
+    
+    // Test button
+    $('#testBtn').on('click', function() {
+        console.log('Test button clicked');
+        performSearch('cath');
+    });
+    
+    // Close modal when clicking overlay
+    $searchModal.on('click', function(e) {
+        if (e.target === this || $(e.target).hasClass('search-modal-overlay')) {
+            closeModal();
+        }
+    });
+
+    // Handle modal search input with debouncing
+    $modalSearchInput.on('input', function() {
+        const query = $(this).val().trim();
+        
+        clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+            loadDefaultData();
+            return;
+        }
+
+        searchTimeout = setTimeout(function() {
+            performSearch(query);
+        }, 300);
+    });
+
+    // Handle escape key
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' && $searchModal.is(':visible')) {
+            closeModal();
+        }
+    });
+
+    // Handle hero search input (redirect to search page)
+    $searchInput.on('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const query = $(this).val().trim();
+            if (query.length >= 2) {
+                window.location.href = '/search?q=' + encodeURIComponent(query);
+            }
+        }
+    });
+
+    // Test function - can be called from console
+    window.testSearch = function(query) {
+        console.log('Testing search with:', query);
+        performSearch(query);
+    };
+
+    console.log('jQuery search modal initialized successfully');
+    
+    // Debug: Test if jQuery is loaded
+    console.log('jQuery version:', $.fn.jquery);
+    console.log('Search elements found:', {
+        searchBox: $searchBox.length,
+        searchModal: $searchModal.length,
+        modalSearchInput: $modalSearchInput.length,
+        trendingOffers: $trendingOffers.length,
+        brandsList: $brandsList.length
+    });
+    
+    // Debug: Test AJAX call immediately
+    setTimeout(function() {
+        console.log('Testing AJAX call...');
+        $.ajax({
+            url: '{{ url("/ajax-search") }}',
+            type: 'GET',
+            data: { q: 'cath' },
+            dataType: 'json',
+            success: function(data) {
+                console.log('AJAX test successful:', data);
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX test failed:', error, xhr.responseText);
+            }
+        });
+    }, 1000);
 });
 </script>
+
+<!-- Simple jQuery Search Implementation -->
+<style>
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+<script>
+$(document).ready(function() {
+    console.log('Simple jQuery search loaded');
+    console.log('jQuery version:', $.fn.jquery);
+    
+    // Debug: Check if elements exist
+    console.log('Search box found:', $('#searchBox').length);
+    console.log('Search modal found:', $('#searchModal').length);
+    console.log('Modal input found:', $('#modalSearchInput').length);
+    console.log('Trending offers found:', $('#trendingOffers').length);
+    console.log('Brands list found:', $('#brandsList').length);
+    
+    // Simple search functionality
+    $('#searchBox').click(function() {
+        console.log('Search box clicked');
+        $('#searchModal').show();
+        $('body').css('overflow', 'hidden');
+        $('#modalSearchInput').focus();
+        loadDefaultData();
+    });
+    
+    $('#searchBtn').click(function() {
+        console.log('Search button clicked');
+        $('#searchModal').show();
+        $('body').css('overflow', 'hidden');
+        $('#modalSearchInput').focus();
+        loadDefaultData();
+    });
+    
+    $('#closeSearchModal').click(function() {
+        $('#searchModal').hide();
+        $('body').css('overflow', 'auto');
+        $('#modalSearchInput').val('');
+    });
+    
+    // Close modal when clicking overlay
+    $('#searchModal').click(function(e) {
+        if (e.target === this) {
+            $(this).hide();
+            $('body').css('overflow', 'auto');
+        }
+    });
+    
+    // Load default data
+    function loadDefaultData() {
+        console.log('Loading default data...');
+        $('#trendingOffers').html('<div style="text-align: center; padding: 30px; color: #7f8c8d; font-size: 16px;"><div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #3498db; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite; margin-right: 10px;"></div>Loading...</div>');
+        $('#brandsList').html('<div style="text-align: center; padding: 30px; color: #7f8c8d; font-size: 16px;"><div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #3498db; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite; margin-right: 10px;"></div>Loading...</div>');
+        
+        $.ajax({
+            url: '{{ url("/getHeaderSearchDefault") }}',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                console.log('Default data loaded:', data);
+                renderDefaultData(data);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading default data:', error);
+                $('#trendingOffers').html('<div style="text-align: center; padding: 20px;">No trending offers available</div>');
+                $('#brandsList').html('<div style="text-align: center; padding: 20px;">No brands available</div>');
+            }
+        });
+    }
+    
+    // Render default data
+    function renderDefaultData(data) {
+        var offersHtml = '';
+        var brandsHtml = '';
+        
+        // Render offers
+        if (data.coupons && data.coupons.length > 0) {
+            $.each(data.coupons.slice(0, 5), function(index, coupon) {
+                var storeName = coupon.store ? coupon.store.store_name : coupon.brand_store || 'Store';
+                var storeUrl = coupon.store ? '{{ url("/store") }}/' + coupon.store.seo_url : '{{ url("/search") }}?q=' + encodeURIComponent(storeName);
+                offersHtml += '<div style="padding: 15px; border: 1px solid #e0e0e0; margin: 8px 0; border-radius: 8px; cursor: pointer; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.3s ease;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 8px rgba(0,0,0,0.15)\'" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 4px rgba(0,0,0,0.1)\'" onclick="window.location.href=\'' + storeUrl + '\'">';
+                offersHtml += '<div style="font-weight: 600; color: #2c3e50; font-size: 16px; margin-bottom: 5px;">' + storeName + '</div>';
+                offersHtml += '<div style="color: #7f8c8d; font-size: 14px;">' + coupon.coupon_title + '</div>';
+                offersHtml += '</div>';
+            });
+        } else {
+            offersHtml = '<div style="text-align: center; padding: 30px; color: #95a5a6; font-size: 16px;"><div style="font-size: 48px; margin-bottom: 15px;">📋</div>No trending offers available</div>';
+        }
+        
+        // Render brands
+        if (data.stores && data.stores.length > 0) {
+            $.each(data.stores.slice(0, 5), function(index, store) {
+                brandsHtml += '<div style="padding: 15px; border: 1px solid #e0e0e0; margin: 8px 0; border-radius: 8px; cursor: pointer; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.3s ease;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 8px rgba(0,0,0,0.15)\'" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 4px rgba(0,0,0,0.1)\'" onclick="window.location.href=\'{{ url("/store") }}/' + store.seo_url + '\'">';
+                brandsHtml += '<div style="font-weight: 600; color: #2c3e50; font-size: 16px; margin-bottom: 5px;">' + store.store_name + '</div>';
+                brandsHtml += '<div style="color: #7f8c8d; font-size: 14px;">View offers</div>';
+                brandsHtml += '</div>';
+            });
+        } else {
+            brandsHtml = '<div style="text-align: center; padding: 30px; color: #95a5a6; font-size: 16px;"><div style="font-size: 48px; margin-bottom: 15px;">🏪</div>No brands available</div>';
+        }
+        
+        $('#trendingOffers').html(offersHtml);
+        $('#brandsList').html(brandsHtml);
+    }
+    
+    // Search input handler
+    var searchTimeout;
+    $('#modalSearchInput').on('input', function() {
+        var query = $(this).val().trim();
+        
+        clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+            loadDefaultData();
+            return;
+        }
+        
+        searchTimeout = setTimeout(function() {
+            performSearch(query);
+        }, 300);
+    });
+    
+    // Perform search
+    function performSearch(query) {
+        console.log('Searching for:', query);
+        
+        $('#trendingOffers').html('<div style="text-align: center; padding: 30px; color: #7f8c8d; font-size: 16px;"><div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #e74c3c; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite; margin-right: 10px;"></div>Searching...</div>');
+        $('#brandsList').html('<div style="text-align: center; padding: 30px; color: #7f8c8d; font-size: 16px;"><div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #e74c3c; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite; margin-right: 10px;"></div>Searching...</div>');
+        
+        $.ajax({
+            url: '{{ url("/ajax-search") }}',
+            type: 'GET',
+            data: { q: query },
+            dataType: 'json',
+            success: function(data) {
+                console.log('Search results:', data);
+                renderSearchResults(data, query);
+            },
+            error: function(xhr, status, error) {
+                console.error('Search error:', error);
+                $('#trendingOffers').html('<div style="text-align: center; padding: 20px;">Search failed</div>');
+                $('#brandsList').html('<div style="text-align: center; padding: 20px;">Search failed</div>');
+            }
+        });
+    }
+    
+    // Render search results
+    function renderSearchResults(data, query) {
+        var offersHtml = '';
+        var brandsHtml = '';
+        
+        // Render offers from search results
+        if (data.coupons && data.coupons.length > 0) {
+            $.each(data.coupons.slice(0, 5), function(index, coupon) {
+                var storeName = coupon.store ? coupon.store.store_name : coupon.brand_store || 'Store';
+                var storeUrl = coupon.store ? '{{ url("/store") }}/' + coupon.store.seo_url : '{{ url("/search") }}?q=' + encodeURIComponent(storeName);
+                offersHtml += '<div style="padding: 15px; border: 1px solid #e0e0e0; margin: 8px 0; border-radius: 8px; cursor: pointer; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.3s ease;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 8px rgba(0,0,0,0.15)\'" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 4px rgba(0,0,0,0.1)\'" onclick="window.location.href=\'' + storeUrl + '\'">';
+                offersHtml += '<div style="font-weight: 600; color: #2c3e50; font-size: 16px; margin-bottom: 5px;">' + storeName + '</div>';
+                offersHtml += '<div style="color: #7f8c8d; font-size: 14px;">' + coupon.coupon_title + '</div>';
+                offersHtml += '</div>';
+            });
+        } else {
+            offersHtml = '<div style="text-align: center; padding: 30px; color: #95a5a6; font-size: 16px;"><div style="font-size: 48px; margin-bottom: 15px;">🔍</div>No offers found for "' + query + '"</div>';
+        }
+        
+        // Render brands from search results
+        if (data.stores && data.stores.length > 0) {
+            $.each(data.stores.slice(0, 5), function(index, store) {
+                brandsHtml += '<div style="padding: 15px; border: 1px solid #e0e0e0; margin: 8px 0; border-radius: 8px; cursor: pointer; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.3s ease;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 8px rgba(0,0,0,0.15)\'" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 4px rgba(0,0,0,0.1)\'" onclick="window.location.href=\'{{ url("/store") }}/' + store.seo_url + '\'">';
+                brandsHtml += '<div style="font-weight: 600; color: #2c3e50; font-size: 16px; margin-bottom: 5px;">' + store.store_name + '</div>';
+                brandsHtml += '<div style="color: #7f8c8d; font-size: 14px;">View offers</div>';
+                brandsHtml += '</div>';
+            });
+        } else {
+            brandsHtml = '<div style="text-align: center; padding: 30px; color: #95a5a6; font-size: 16px;"><div style="font-size: 48px; margin-bottom: 15px;">🏪</div>No brands found for "' + query + '"</div>';
+        }
+        
+        $('#trendingOffers').html(offersHtml);
+        $('#brandsList').html(brandsHtml);
+    }
+    
+    // Test function
+    window.testSearch = function(query) {
+        console.log('Testing search with:', query);
+        performSearch(query);
+    };
+    
+    // Test button 2
+    $('#testBtn2').click(function() {
+        console.log('Test Cath button clicked');
+        performSearch('cath');
+    });
+    
+        console.log('Simple search modal initialized successfully');
+    });
+
+    // Newsletter subscription
+    $('#newsletterForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var email = $('#newsletterEmail').val();
+        var btn = $('#newsletterBtn');
+        var messageDiv = $('#newsletterMessage');
+        
+        if (!email) {
+            showMessage('Please enter your email address.', 'error');
+            return;
+        }
+        
+        // Disable button and show loading
+        btn.prop('disabled', true).text('Subscribing...');
+        
+        $.ajax({
+            url: '{{ route("newsletter.subscribe") }}',
+            type: 'POST',
+            data: {
+                email: email,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if (response.success) {
+                    showMessage(response.message, 'success');
+                    $('#newsletterEmail').val('');
+                } else {
+                    showMessage(response.message, 'error');
+                }
+            },
+            error: function(xhr) {
+                var message = 'Something went wrong. Please try again.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                showMessage(message, 'error');
+            },
+            complete: function() {
+                btn.prop('disabled', false).text('Subscribe');
+            }
+        });
+    });
+    
+    function showMessage(message, type) {
+        var messageDiv = $('#newsletterMessage');
+        var color = type === 'success' ? '#27ae60' : '#e74c3c';
+        messageDiv.html('<div style="color: ' + color + '; font-weight: bold;">' + message + '</div>').show();
+        
+        setTimeout(function() {
+            messageDiv.fadeOut();
+        }, 5000);
+    }
+    </script>
 
 @endsection
 

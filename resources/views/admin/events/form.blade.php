@@ -163,6 +163,16 @@
     <label>Enable</label>
 </div>
 
+<!-- Show Footer Switch -->
+<div class="d-flex align-items-center mb-3">
+    <label>Hide from Footer</label>
+    <div class="form-check form-switch mx-2">
+        <input class="form-check-input" type="checkbox" role="switch" id="showFooterSwitch" name="show_footer" value="1"
+            {{ old('show_footer', $event->show_footer ?? 0) ? 'checked' : '' }}>
+    </div>
+    <label>Show in Footer</label>
+</div>
+
 <!-- Save Button -->
 <div class="text-end">
     <button type="submit" class="btn btn-primary">

@@ -8,6 +8,8 @@ use App\Models\Store;
 use App\Models\Category;
 use App\Models\Events;
 use App\Models\Page;
+use App\Models\Newsletter;
+use App\Helpers\SettingsHelper;
 
 class FrontendController extends Controller
 {
@@ -130,27 +132,29 @@ class FrontendController extends Controller
 
     public function categories()
     {
-        // Load all categories with store counts
+        // Load all categories with store counts - sorted alphabetically
         $categories = Category::withCount(['stores' => function($query) {
             $query->where('status', 1);
         }])
         ->where('status', 1)
-        ->orderBy('sort_order', 'asc')
+        ->orderBy('category_name', 'asc') // ABC order
         ->get();
 
-        // Group stores by category
-        $storesByCategory = [];
+        // Load stores for each category
         foreach ($categories as $category) {
-            $storesByCategory[$category->id] = Store::whereHas('categories', function($query) use ($category) {
+            // All stores for text links - organized in columns, sorted alphabetically
+            $category->brands = Store::whereHas('categories', function($query) use ($category) {
                 $query->where('category_id', $category->id);
             })
             ->where('status', 1)
-            ->orderBy('sort_order', 'asc')
-            ->take(4)
+            ->orderBy('store_name', 'asc') // ABC order for stores
             ->get();
         }
 
-        return view('frontend.categories', compact('categories', 'storesByCategory'));
+        // Get settings for dynamic colors
+        $settings = SettingsHelper::getBranding();
+
+        return view('frontend.categories', compact('categories', 'settings'));
     }
 
     public function events()
@@ -173,9 +177,69 @@ class FrontendController extends Controller
         return view('frontend.events', compact('events', 'eventCoupons'));
     }
 
+    public function eventDetail($slug)
+    {
+        // Load event by slug
+        $event = Events::where('seo_url', $slug)
+            ->where('status', 1)
+            ->firstOrFail();
+
+        // Load stores associated with this event
+        $eventStores = $event->stores()->where('status', 1)->get();
+
+        // Load coupons for this event
+        $eventCoupons = Coupon::where('event_id', $event->id)
+            ->where('status', 1)
+            ->orderBy('sort_order', 'asc')
+            ->get();
+
+        // Load related events (same type or similar)
+        $relatedEvents = Events::where('event_type', $event->event_type)
+            ->where('id', '!=', $event->id)
+            ->where('status', 1)
+            ->orderBy('sort_order', 'asc')
+            ->take(6)
+            ->get();
+
+        return view('frontend.event-detail', compact(
+            'event', 
+            'eventStores', 
+            'eventCoupons', 
+            'relatedEvents'
+        ));
+    }
+
     public function contact()
     {
-        return view('frontend.contact');
+        // Get settings for dynamic colors
+        $settings = SettingsHelper::getBranding();
+        
+        return view('frontend.contact', compact('settings'));
+    }
+
+    public function contactSubmit(Request $request)
+    {
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string|max:2000',
+        ]);
+
+        // Create contact submission
+        \App\Models\Contact::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'subject' => $request->subject,
+            'message' => $request->message,
+            'status' => 'new'
+        ]);
+
+        return back()->with('success', 'Thank you for your message! We will get back to you soon.');
     }
 
     public function mobileApp()
@@ -277,12 +341,10 @@ class FrontendController extends Controller
 
     public function aboutUs()
     {
-        // Load about us page content from admin
-        $aboutPage = Page::where('page_slug', 'about-us')
-            ->where('status', 1)
-            ->first();
-
-        return view('frontend.about-us', compact('aboutPage'));
+        // Get settings for dynamic colors
+        $settings = SettingsHelper::getBranding();
+        
+        return view('frontend.about-us', compact('settings'));
     }
 
     public function advertiseWithUs()
@@ -297,18 +359,44 @@ class FrontendController extends Controller
 
     public function privacyPolicy()
     {
-        // Load privacy policy page content from admin
-        $privacyPage = Page::where('page_slug', 'privacy-policy')
-            ->where('status', 1)
-            ->first();
-
-        return view('frontend.privacy-policy', compact('privacyPage'));
+        // Get settings for dynamic colors
+        $settings = SettingsHelper::getBranding();
+        
+        return view('frontend.privacy-policy', compact('settings'));
     }
 
     public function blog()
     {
-        // Load blog posts from admin (if you have a blog system)
-        return view('frontend.blog');
+        // Load published blog posts
+        $blogs = \App\Models\Blog::published()
+            ->ordered()
+            ->paginate(6);
+        
+        // Get settings for dynamic colors
+        $settings = SettingsHelper::getBranding();
+        
+        return view('frontend.blog', compact('blogs', 'settings'));
+    }
+
+    public function blogShow($slug)
+    {
+        $blog = \App\Models\Blog::where('slug', $slug)
+            ->where('status', 'published')
+            ->firstOrFail();
+        
+        // Get settings for dynamic colors
+        $settings = SettingsHelper::getBranding();
+        
+        return view('frontend.blog-single', compact('blog', 'settings'));
+    }
+
+    public function blogView($slug)
+    {
+        $blog = \App\Models\Blog::where('slug', $slug)->first();
+        if ($blog) {
+            $blog->increment('views_count');
+        }
+        return response()->json(['success' => true]);
     }
 
     public function allBrandsUk(Request $request)
@@ -361,8 +449,8 @@ class FrontendController extends Controller
 
     public function category($slug)
     {
-        // Load category by slug
-        $category = Category::where('category_slug', $slug)
+        // Load category by seo_url
+        $category = Category::where('seo_url', $slug)
             ->where('status', 1)
             ->firstOrFail();
 
@@ -385,7 +473,21 @@ class FrontendController extends Controller
         ->take(12)
         ->get();
 
-        return view('frontend.category', compact('category', 'stores', 'categoryCoupons'));
+        // Load related categories
+        $relatedCategories = Category::where('status', 1)
+            ->where('id', '!=', $category->id)
+            ->orderBy('sort_order', 'asc')
+            ->take(6)
+            ->get();
+
+        // Load trending stores for sidebar
+        $trendingStores = Store::where('show_trending', 1)
+            ->where('status', 1)
+            ->orderBy('sort_order', 'asc')
+            ->take(30)
+            ->get();
+
+        return view('frontend.single_category', compact('category', 'stores', 'categoryCoupons', 'relatedCategories', 'trendingStores'));
     }
 
     public function store($slug)
@@ -435,16 +537,20 @@ class FrontendController extends Controller
         }
 
         // Search in stores
-        $stores = Store::where('store_name', 'like', "%{$query}%")
-            ->orWhere('content', 'like', "%{$query}%")
-            ->where('status', 1)
+        $stores = Store::where('status', 1)
+            ->where(function($q) use ($query) {
+                $q->where('store_name', 'like', "%{$query}%")
+                  ->orWhere('content', 'like', "%{$query}%");
+            })
             ->orderBy('sort_order', 'asc')
             ->paginate(20);
 
         // Search in coupons
-        $coupons = Coupon::where('coupon_title', 'like', "%{$query}%")
-            ->orWhere('description', 'like', "%{$query}%")
-            ->where('status', 1)
+        $coupons = Coupon::where('status', 1)
+            ->where(function($q) use ($query) {
+                $q->where('coupon_title', 'like', "%{$query}%")
+                  ->orWhere('description', 'like', "%{$query}%");
+            })
             ->orderBy('sort_order', 'asc')
             ->paginate(20);
 
@@ -457,15 +563,201 @@ class FrontendController extends Controller
         return view('frontend.search', compact('query', 'stores', 'coupons', 'categories'));
     }
 
+    public function getHeaderSearchDefault(Request $request)
+    {
+        // Return default search data for the header search overlay
+        $featuredCoupons = Coupon::with('store')
+            ->where('status', 1)
+            ->where('featured', 1)
+            ->orderBy('sort_order', 'asc')
+            ->take(6)
+            ->get();
+
+        // If no featured coupons, get some regular coupons
+        if ($featuredCoupons->isEmpty()) {
+            $featuredCoupons = Coupon::with('store')
+                ->where('status', 1)
+                ->orderBy('sort_order', 'asc')
+                ->take(6)
+                ->get();
+        }
+
+        $trendingStores = Store::where('show_trending', 1)
+            ->where('status', 1)
+            ->orderBy('sort_order', 'asc')
+            ->take(8)
+            ->get();
+
+        // If no trending stores, get some regular stores
+        if ($trendingStores->isEmpty()) {
+            $trendingStores = Store::where('status', 1)
+                ->orderBy('sort_order', 'asc')
+                ->take(8)
+                ->get();
+        }
+
+        $featuredCategories = Category::where('status', 1)
+            ->where('featured', 1)
+            ->orderBy('sort_order', 'asc')
+            ->take(6)
+            ->get();
+
+        // If no featured categories, get some regular categories
+        if ($featuredCategories->isEmpty()) {
+            $featuredCategories = Category::where('status', 1)
+                ->orderBy('sort_order', 'asc')
+                ->take(6)
+                ->get();
+        }
+
+        return response()->json([
+            'coupons' => $featuredCoupons,
+            'stores' => $trendingStores,
+            'categories' => $featuredCategories
+        ]);
+    }
+
+    public function ajaxSearch(Request $request)
+    {
+        $query = $request->get('q');
+        
+        if (!$query || strlen($query) < 2) {
+            return response()->json([
+                'stores' => [],
+                'coupons' => [],
+                'categories' => [],
+                'message' => 'Please enter at least 2 characters',
+                'total_results' => 0
+            ]);
+        }
+
+        // Search in stores
+        $stores = Store::where('status', 1)
+            ->where(function($q) use ($query) {
+                $q->where('store_name', 'like', "%{$query}%")
+                  ->orWhere('content', 'like', "%{$query}%");
+            })
+            ->orderBy('sort_order', 'asc')
+            ->take(10)
+            ->get();
+
+        // Search in coupons with store relationship
+        $coupons = Coupon::with('store')
+            ->where('status', 1)
+            ->where(function($q) use ($query) {
+                $q->where('coupon_title', 'like', "%{$query}%")
+                  ->orWhere('description', 'like', "%{$query}%")
+                  ->orWhere('brand_store', 'like', "%{$query}%");
+            })
+            ->orderBy('sort_order', 'asc')
+            ->take(10)
+            ->get();
+
+        // Search in categories
+        $categories = Category::where('status', 1)
+            ->where('category_name', 'like', "%{$query}%")
+            ->orderBy('sort_order', 'asc')
+            ->take(10)
+            ->get();
+
+        return response()->json([
+            'stores' => $stores,
+            'coupons' => $coupons,
+            'categories' => $categories,
+            'query' => $query,
+            'total_results' => $stores->count() + $coupons->count() + $categories->count()
+        ]);
+    }
+
+    public function testSearch($query)
+    {
+        // Test search functionality
+        $stores = Store::where('status', 1)
+            ->where(function($q) use ($query) {
+                $q->where('store_name', 'like', "%{$query}%")
+                  ->orWhere('content', 'like', "%{$query}%");
+            })
+            ->orderBy('sort_order', 'asc')
+            ->take(10)
+            ->get();
+
+        $coupons = Coupon::with('store')
+            ->where('status', 1)
+            ->where(function($q) use ($query) {
+                $q->where('coupon_title', 'like', "%{$query}%")
+                  ->orWhere('description', 'like', "%{$query}%")
+                  ->orWhere('brand_store', 'like', "%{$query}%");
+            })
+            ->orderBy('sort_order', 'asc')
+            ->take(10)
+            ->get();
+
+        return response()->json([
+            'query' => $query,
+            'stores_count' => $stores->count(),
+            'coupons_count' => $coupons->count(),
+            'stores' => $stores->pluck('store_name'),
+            'coupons' => $coupons->pluck('coupon_title'),
+            'debug' => [
+                'total_stores' => Store::where('status', 1)->count(),
+                'total_coupons' => Coupon::where('status', 1)->count(),
+                'search_query' => $query
+            ]
+        ]);
+    }
+
     public function newsletterSubscribe(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|unique:newsletter_subscribers,email'
+            'email' => 'required|email|unique:newsletters,email'
         ]);
 
-        // Here you would typically save to a newsletter_subscribers table
-        // For now, we'll just return a success message
+        try {
+            Newsletter::create([
+                'email' => $request->email,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'is_active' => true,
+                'subscribed_at' => now()
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Thank you for subscribing to our newsletter!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong. Please try again.'
+            ], 500);
+        }
+    }
+
+    public function adminNewsletters(Request $request)
+    {
+        $newsletters = Newsletter::orderBy('created_at', 'desc')->paginate(15);
         
-        return back()->with('success', 'Thank you for subscribing to our newsletter!');
+        return view('admin.newsletters.index', compact('newsletters'));
+    }
+
+    public function adminNewsletterDelete(Newsletter $newsletter)
+    {
+        $newsletter->delete();
+        
+        return redirect()->route('admin.newsletters.index')
+                        ->with('success', 'Newsletter subscriber deleted successfully!');
+    }
+
+    public function adminNewsletterBulkDelete(Request $request)
+    {
+        $request->validate([
+            'newsletter_ids' => 'required|array|min:1',
+            'newsletter_ids.*' => 'exists:newsletters,id',
+        ]);
+
+        Newsletter::whereIn('id', $request->newsletter_ids)->delete();
+
+        return redirect()->route('admin.newsletters.index')
+                        ->with('success', 'Selected newsletter subscribers deleted successfully!');
     }
 }

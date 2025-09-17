@@ -22,6 +22,7 @@ class Events extends Model
         'event_short_content',
         'detail_description',
         'status',
+        'show_footer',
         'sort_order'
     ];
     
@@ -31,7 +32,7 @@ class Events extends Model
 }
 public function stores()
 {
-    return $this->belongsToMany(Store::class, 'event_store');
+    return $this->belongsToMany(Store::class, 'event_store', 'event_id', 'store_id');
 }
 
 

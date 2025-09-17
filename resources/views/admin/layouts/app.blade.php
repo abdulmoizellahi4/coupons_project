@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'My Laravel Site')</title>
+    @php
+        $brandingSettings = \App\Helpers\SettingsHelper::getBranding();
+    @endphp
+    <title>@yield('title', $brandingSettings['site_name'] . ' - Admin Dashboard')</title>
     <!-- Canonical SEO -->
-    <link rel="canonical" href="https://themeselection.com/item/materio-bootstrap-html-admin-template/">
+    <link rel="canonical" href="{{ url('/') }}">
     
     
     <!-- ? PROD Only: Google Tag Manager (Default ThemeSelection: GTM-5DDHKGP, PixInvent: GTM-5J3LMKC) -->
@@ -17,7 +20,11 @@
     <!-- End Google Tag Manager -->
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="https://demos.themeselection.com/materio-bootstrap-html-admin-template/assets/img/favicon/favicon.ico" />
+    @if($brandingSettings['site_favicon_url'])
+        <link rel="icon" type="image/x-icon" href="{{ $brandingSettings['site_favicon_url'] }}" />
+    @else
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    @endif
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com/">
@@ -27,6 +34,9 @@
     <!-- Icons -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/remixicon/remixicon.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/flag-icons.css') }}" />
+    
+    <!-- Dynamic Colors -->
+    <link rel="stylesheet" href="{{ route('colors.css') }}?v={{ time() }}" />
     
     <!-- Menu waves for no-customizer fix -->
         <!-- Quill & icon related vendor CSS (load before core to avoid overrides) -->
@@ -136,6 +146,7 @@
     background : linear-gradient(270deg, #8c57ff 0%, #c3a8ff 100%);
     color : #fff;
 }
+
 </style>
 <body>
 

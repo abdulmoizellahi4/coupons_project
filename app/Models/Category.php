@@ -22,7 +22,8 @@ class Category extends Model
         'sort_order',
         'featured',
         'show_home',
-        'recommended'
+        'recommended',
+        'show_top'
     ];
 
     public function parent()

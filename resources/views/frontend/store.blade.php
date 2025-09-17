@@ -479,7 +479,7 @@
   margin: auto;
     width: 480px; 
     max-width: calc(50% - 30px); 
-    background: #fff; 
+    background: var(--background-primary-color, #fff); 
     border-radius: 16px; 
     padding: 30px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
@@ -494,7 +494,7 @@
   top: 40px;
     width: 480px; 
     max-width: calc(50% - 30px); 
-    background: #fff; 
+    background: var(--background-primary-color, #fff); 
     border-radius: 16px; 
     padding: 30px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
@@ -510,12 +510,12 @@
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: #666;
+    color: var(--text-color, #666);
     z-index: 3;
 }
 
 .cm-close:hover {
-    color: #000;
+    color: var(--text-color, #000);
 }
 
 .cm-main-content {
@@ -523,11 +523,10 @@
 }
 
 .cm-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: #111827;
-    margin: 0 0 25px;
-    line-height: 1.2;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: var(--text-color, #333);
 }
 
 .cm-code-section {
@@ -535,19 +534,19 @@
 }
 
 .cm-code-display {
-    background: #f8f9fa;
-    border: 2px dashed #FF0000;
+    background: var(--background-secondary-color, #f8f9fa);
+    border: 2px dashed var(--primary-color, #FF0000);
     border-radius: 8px;
     padding: 15px;
     font-size: 18px;
     font-weight: bold;
-    color: #FF0000;
+    color: var(--primary-color, #FF0000);
     margin-bottom: 15px;
     font-family: monospace;
 }
 
 .cm-copy-btn {
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     color: white;
     border: none;
     padding: 12px 24px;
@@ -558,29 +557,25 @@
 }
 
 .cm-copy-btn:hover {
-    background: #FF0000;
+    background: var(--secondary-color, #FF0000);
 }
 
-.cm-note { 
-    color: #6b7280; 
-    font-size: 15px; 
-    margin: 20px 0; 
-    line-height: 1.6;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
+.cm-note {
+    margin-top: 20px;
+    color: var(--text-color, #666);
+    font-size: 14px;
 }
 
 /* Feedback Section */
 .cm-feedback {
     margin: 25px 0;
     padding: 20px 0;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--background-secondary-color, #f0f0f0);
 }
 
 .cm-feedback p {
     margin: 0 0 15px;
-    color: #6b7280;
+    color: var(--text-color, #6b7280);
     font-size: 15px;
     font-weight: 500;
 }
@@ -593,7 +588,7 @@
 
 .cm-feedback-btn {
     background: transparent;
-    border: 2px solid #d1d5db;
+    border: 2px solid var(--background-secondary-color, #d1d5db);
     border-radius: 50%;
     width: 45px;
     height: 45px;
@@ -606,8 +601,8 @@
 }
 
 .cm-feedback-btn:hover {
-    border-color: #10b981;
-    background: #f0fdf4;
+    border-color: var(--primary-color, #10b981);
+    background: var(--background-secondary-color, #f0fdf4);
     transform: scale(1.1);
 }
 
@@ -619,7 +614,7 @@
 .cm-more-btn {
     background: transparent;
     border: none;
-    color: #6b7280;
+    color: var(--text-color, #6b7280);
     font-size: 14px;
     cursor: pointer;
     display: flex;
@@ -632,7 +627,7 @@
 }
 
 .cm-more-btn:hover {
-    background: #f3f4f6;
+    background: var(--background-secondary-color, #f3f4f6);
 }
 
 .cm-chevron {
@@ -654,7 +649,7 @@
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -669,41 +664,25 @@
   font-size: 22px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #333;
+    color: var(--text-color, #333);
 }
 
 .cm-email-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.cm-email-form label {
-    font-size: 13px;
-    font-weight: 500;
-    color: #374151;
-    text-align: left;
-    margin-bottom: 3px;
+    margin: 20px 0;
 }
 
 .cm-email-form input {
-    padding: 12px 14px;
-    border: 1px solid #d1d5db;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
     border-radius: 6px;
+    margin-bottom: 10px;
     font-size: 14px;
-    transition: border-color 0.2s;
-}
-
-.cm-email-form input:focus {
-    outline: none;
-    border-color: #10b981;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .cm-email-form button {
     width: 100%;
-    background: #FF0000;
+    background: var(--primary-color, #FF0000);
     color: white;
     border: none;
     padding: 12px;
@@ -714,18 +693,24 @@
 }
 
 .cm-email-form button:hover {
-    background: #FF0000;
+    background: var(--secondary-color, #FF0000);
+}
+
+.cm-email-privacy {
+    font-size: 12px;
+    color: var(--text-color, #999);
+    margin-top: 15px;
 }
 
 .cm-email-consent {
     font-size: 11px;
-    color: #6b7280;
+    color: var(--text-color, #6b7280);
     line-height: 1.4;
     margin: 0;
 }
 
 .cm-email-consent a {
-    color: #ef4444;
+    color: var(--primary-color, #ef4444);
     text-decoration: underline;
     font-weight: 500;
 }
@@ -733,47 +718,47 @@
 /* Website Logo */
 .cm-website-logo {
     padding: 15px;
-    border-top: 1px solid #e5e7eb;
-    background: #fff;
+    border-top: 1px solid var(--background-secondary-color, #e5e7eb);
+    background: var(--background-primary-color, #fff);
     text-align: center;
 }
 
 .cm-website-name {
     font-size: 14px;
     font-weight: 600;
-    color: #111827;
+    color: var(--text-color, #111827);
     letter-spacing: 0.5px;
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
-    #couponModal {
-        gap: 15px;
-    }
-    
     .cm-main-popup {
-        width: 95%;
-        max-width: 450px;
+        top: 20px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-width: none;
     }
     
     .cm-email-popup {
-        width: 95%;
-        max-width: 450px;
+        top: 400px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-width: none;
     }
     
     .cm-main-content {
-        padding: 25px 20px 20px;
+        padding: 20px;
     }
     
-    .cm-email-content {
-        padding: 20px 15px 15px;
+    .cm-title {
+        font-size: 20px;
     }
-}
-
-@media (max-width: 480px) {
-    .cm-code-wrap {
-        flex-direction: column;
-        gap: 10px;
+    
+    .cm-code-display {
+        font-size: 16px;
+        padding: 12px;
     }
 }
 </style>
@@ -797,25 +782,20 @@ document.addEventListener('DOMContentLoaded', function () {
   const cmEmailInput = document.getElementById('cmEmailInput');
 
   function openModal(code, affiliate, store, title) {
-    if (cmCode) cmCode.textContent = code || '';
+    if (cmCode) cmCode.textContent = code;
     if (cmTitle) cmTitle.textContent = title || 'Here is your code';
-    if (cmNote) cmNote.textContent = `This ${store} website has been opened in a new tab. Simply copy and paste the code ${code} and enter it at the checkout.`;
-    if (cmEmailTitle) cmEmailTitle.textContent = `${store} straight to your inbox`;
-
-    // update brand logo - preserve <img> if present
-    const brandLogo = document.getElementById('cmBrandLogo');
-    if (brandLogo) {
-      const img = brandLogo.querySelector('img');
-      if (img) {
-        img.alt = store + ' logo';
-        // optionally replace src: img.src = someUrl;
+    if (cmEmailTitle) cmEmailTitle.textContent = `Get More ${store} Deals!`;
+    
+    if (cmBrandLogo && cmBrandText) {
+      if (store && store !== 'Store') {
+        cmBrandText.textContent = store.substring(0,5).toUpperCase();
       } else {
-        brandLogo.textContent = (store || 'STORE').substring(0,5).toUpperCase();
+        cmBrandText.textContent = 'STORE';
       }
     }
 
     modal.style.display = 'block';
-    modal.setAttribute('aria-hidden', 'false');
+    modal.setAttribute('aria-hidden','false');
     document.body.style.overflow = 'hidden';
   }
 
@@ -867,11 +847,11 @@ document.addEventListener('DOMContentLoaded', function () {
         navigator.clipboard.writeText(code).then(function() {
           const originalText = cmCopy.textContent;
           cmCopy.textContent = 'Copied!';
-          cmCopy.style.backgroundColor = '#218838';
+          cmCopy.style.backgroundColor = 'var(--secondary-color, #218838)';
           
           setTimeout(function() {
             cmCopy.textContent = originalText;
-            cmCopy.style.backgroundColor = '#28a745';
+            cmCopy.style.backgroundColor = 'var(--primary-color, #28a745)';
           }, 2000);
         }).catch(function(err) {
           console.error('Could not copy text: ', err);
@@ -898,10 +878,10 @@ document.addEventListener('DOMContentLoaded', function () {
   // feedback & more toggle (guards added)
   document.querySelectorAll('.cm-feedback-btn').forEach(btn => {
     btn.addEventListener('click', function () {
-      document.querySelectorAll('.cm-feedback-btn').forEach(b => { b.style.background = 'transparent'; b.style.borderColor = '#d1d5db'; });
+      document.querySelectorAll('.cm-feedback-btn').forEach(b => { b.style.background = 'transparent'; b.style.borderColor = 'var(--background-secondary-color, #d1d5db)'; });
       const feedback = this.dataset.feedback;
-      this.style.background = feedback === 'positive' ? '#f0fdf4' : '#fef2f2';
-      this.style.borderColor = feedback === 'positive' ? '#10b981' : '#ef4444';
+      this.style.background = feedback === 'positive' ? 'var(--background-secondary-color, #f0fdf4)' : 'var(--background-secondary-color, #fef2f2)';
+      this.style.borderColor = feedback === 'positive' ? 'var(--primary-color, #10b981)' : 'var(--primary-color, #ef4444)';
     });
   });
 

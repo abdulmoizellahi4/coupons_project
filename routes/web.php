@@ -10,14 +10,20 @@ use App\Http\Controllers\NetworksController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\CustomerAuthController;
+use App\Http\Controllers\CustomerController;
 
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.form');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
@@ -38,7 +44,14 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/dashboard', function () {
-        return view('admin.dashboard'); // resources/views/admin/dashboard.blade.php
+        $response = response()->view('admin.dashboard');
+        
+        // Prevent caching of dashboard page to avoid back button issues after logout
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+        
+        return $response;
     })->name('dashboard');
 
     /*
@@ -94,9 +107,71 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('stores', StoreController::class)->except(['show']);
     Route::delete('stores', [StoreController::class, 'bulkDelete'])->name('stores.bulkDelete');
     Route::post('stores/reorder', [StoreController::class, 'reorder'])->name('stores.reorder');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Blog Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('blogs', BlogController::class);
+    Route::delete('blogs/bulk-delete', [BlogController::class, 'bulkDelete'])->name('blogs.bulk-delete');
+    Route::post('blogs/reorder', [BlogController::class, 'reorder'])->name('blogs.reorder');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Contact Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('contacts', ContactController::class)->except(['create', 'edit', 'store', 'update']);
+    Route::patch('contacts/{contact}/status', [ContactController::class, 'updateStatus'])->name('contacts.update-status');
+    Route::delete('contacts/bulk-delete', [ContactController::class, 'bulkDelete'])->name('contacts.bulk-delete');
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Management Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('users', UserController::class);
+    Route::patch('users/{user}/status', [UserController::class, 'updateStatus'])->name('users.update-status');
+    Route::delete('users/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulk-delete');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Customer Management Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('customers', CustomerController::class);
+    Route::patch('customers/{customer}/status', [CustomerController::class, 'updateStatus'])->name('customers.update-status');
+    Route::delete('customers/bulk-delete', [CustomerController::class, 'bulkDelete'])->name('customers.bulk-delete');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Settings Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('settings', [SettingsController::class, 'update'])->name('settings.update');
+    Route::post('settings/reset', [SettingsController::class, 'reset'])->name('settings.reset');
+    Route::get('settings/colors.css', [SettingsController::class, 'generateColorCss'])->name('settings.colors.css');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Newsletter Management Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::get('newsletters', [FrontendController::class, 'adminNewsletters'])->name('newsletters.index');
+    Route::delete('newsletters/{newsletter}', [FrontendController::class, 'adminNewsletterDelete'])->name('newsletters.destroy');
+    Route::delete('newsletters/bulk-delete', [FrontendController::class, 'adminNewsletterBulkDelete'])->name('newsletters.bulk-delete');
 });
 
 
+
+/*
+|--------------------------------------------------------------------------
+| Dynamic CSS Route (Public)
+|--------------------------------------------------------------------------
+*/
+Route::get('/css/colors.css', [SettingsController::class, 'generateColorCss'])->name('colors.css');
 
 /*
 |--------------------------------------------------------------------------
@@ -109,7 +184,9 @@ Route::get('/top-discounts', [FrontendController::class, 'topDiscounts'])->name(
 Route::get('/categories', [FrontendController::class, 'categories'])->name('categories');
 
 Route::get('/events', [FrontendController::class, 'events'])->name('events');
+Route::get('/event/{slug}', [FrontendController::class, 'eventDetail'])->name('event.detail');
 Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
+Route::post('/contact', [FrontendController::class, 'contactSubmit'])->name('contact.submit');
 Route::get('/mobile-app', [FrontendController::class, 'mobileApp'])->name('mobile-app');
 
 Route::get('/share', [FrontendController::class, 'share'])->name('share');
@@ -126,6 +203,8 @@ Route::get('/advertise-with-us', [FrontendController::class, 'advertiseWithUs'])
 
 Route::get('/privacy-policy', [FrontendController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/blog', [FrontendController::class, 'blog'])->name('blog');
+Route::get('/blog/{slug}', [FrontendController::class, 'blogShow'])->name('blog.show');
+Route::post('/blog/{slug}/view', [FrontendController::class, 'blogView'])->name('blog.view');
 Route::get('/all-brands-uk', [FrontendController::class, 'allBrandsUk'])->name('all-brands-uk');
 Route::get('/all-stores', [FrontendController::class, 'allBrandsUk'])->name('all-stores');
 
@@ -135,9 +214,24 @@ Route::get('/store/{slug}', [FrontendController::class, 'store'])->name('store')
 
 // Search functionality
 Route::get('/search', [FrontendController::class, 'search'])->name('search');
+Route::get('/storesearch', [FrontendController::class, 'search'])->name('storesearch');
+Route::get('/getHeaderSearchDefault', [FrontendController::class, 'getHeaderSearchDefault'])->name('getHeaderSearchDefault');
+Route::get('/ajax-search', [FrontendController::class, 'ajaxSearch'])->name('ajax.search');
+Route::get('/test-search/{query}', [FrontendController::class, 'testSearch'])->name('test.search');
 
 // Newsletter subscription
 Route::post('/newsletter/subscribe', [FrontendController::class, 'newsletterSubscribe'])->name('newsletter.subscribe');
+
+/*
+|--------------------------------------------------------------------------
+| Customer Authentication Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/customer/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
+Route::post('/customer/login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
+Route::get('/customer/register', [CustomerAuthController::class, 'showRegisterForm'])->name('customer.register');
+Route::post('/customer/register', [CustomerAuthController::class, 'register'])->name('customer.register.submit');
+Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
 
 /*
 |--------------------------------------------------------------------------
